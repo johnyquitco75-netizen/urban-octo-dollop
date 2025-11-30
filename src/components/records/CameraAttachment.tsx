@@ -48,11 +48,15 @@ const CameraAttachment: React.FC<CameraAttachmentProps> = ({
 
   const handleLoadedMetadata = useCallback(() => {
     if (videoRef.current) {
+      setIsVideoReady(true); // Set to true here, as metadata is loaded and video is ready for capture
       videoRef.current.play().then(() => {
-        setIsVideoReady(true);
-      }).catch(e => console.error("Error playing video:", e));
+        // Video started playing successfully
+      }).catch(e => {
+        console.error("Error playing video:", e);
+        showAlert('Video playback failed, but camera might still be active for capture.', 'info');
+      });
     }
-  }, [videoRef, setIsVideoReady]);
+  }, [videoRef, setIsVideoReady, showAlert]);
 
   const startCamera = async () => {
     try {
@@ -67,10 +71,12 @@ const CameraAttachment: React.FC<CameraAttachmentProps> = ({
       }
       setIsCameraActive(true);
       setIsPhotoCaptured(false);
-      setIsVideoReady(false);
+      // isVideoReady will be set by handleLoadedMetadata
     } catch (error) {
       console.error('Error accessing camera:', error);
       showAlert('Unable to access camera. Please check browser permissions and ensure no other application is using the camera.', 'error');
+      setIsCameraActive(false); // Ensure camera is not active if it fails
+      setIsVideoReady(false); // Ensure video is not ready if it fails
     }
   };
 
