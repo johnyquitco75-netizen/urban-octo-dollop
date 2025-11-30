@@ -12,6 +12,7 @@ const SettingsSection = () => {
   const {
     db, showAlert, currentUserRole,
     schoolName, setSchoolName,
+    schoolAddress, setSchoolAddress, // Added schoolAddress
     customPhrase, setCustomPhrase,
     logoData, setLogoData,
     guidanceOfficer, setGuidanceOfficer,
@@ -28,6 +29,7 @@ const SettingsSection = () => {
 
   const saveSettings = async () => {
     await db.setSetting('schoolName', schoolName);
+    await db.setSetting('schoolAddress', schoolAddress); // Save school address
     await db.setSetting('customPhrase', customPhrase);
     await db.setSetting('guidanceOfficer', guidanceOfficer);
     await db.setSetting('cpcGuidanceOfficerName', cpcGuidanceOfficerName);
@@ -111,6 +113,20 @@ const SettingsSection = () => {
           placeholder="Enter your school name"
           value={schoolName}
           onChange={(e) => setSchoolName(e.target.value)}
+          rows={2}
+          className="w-full min-h-[60px]"
+        />
+      </div>
+
+      <div>
+        <Label htmlFor="settingsSchoolAddress" className="block text-gray-700 dark:text-gray-200 text-sm font-semibold mb-2">
+          School Address
+        </Label>
+        <Textarea
+          id="settingsSchoolAddress"
+          placeholder="Enter your school address"
+          value={schoolAddress}
+          onChange={(e) => setSchoolAddress(e.target.value)}
           rows={2}
           className="w-full min-h-[60px]"
         />

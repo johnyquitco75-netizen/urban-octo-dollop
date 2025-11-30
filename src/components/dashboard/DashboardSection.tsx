@@ -7,7 +7,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { useAppContext } from "@/context/AppContext";
 
 const DashboardSection = () => {
-  const { db, schoolName, logoData, currentUserRole, setIsLoggedIn, setCurrentUserRole, showAlert, setModalPhotoSrc, setIsPhotoModalOpen, setConfirmMessage, confirmActionRef, setIsConfirmModalOpen } = useAppContext();
+  const { db, schoolName, schoolAddress, logoData, currentUserRole, setIsLoggedIn, setCurrentUserRole, showAlert, setModalPhotoSrc, setIsPhotoModalOpen, setConfirmMessage, confirmActionRef, setIsConfirmModalOpen } = useAppContext();
 
   // Dashboard state
   const [totalRecords, setTotalRecords] = useState(0);
@@ -152,7 +152,7 @@ const DashboardSection = () => {
         />
         <div className="flex-1 text-center md:text-left">
           <h2 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100 mb-1">{schoolName}</h2>
-          <p className="text-gray-600 dark:text-gray-300 text-lg">Rizal Street, Brgy. III, Poblacion, Pontevedra, Negros Occidental</p>
+          <p className="text-gray-600 dark:text-gray-300 text-lg">{schoolAddress}</p>
         </div>
         <div className="flex flex-col items-center md:items-end gap-3">
           <div className="bg-indigo-600 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-md">

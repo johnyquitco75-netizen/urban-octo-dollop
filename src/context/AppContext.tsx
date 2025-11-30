@@ -15,6 +15,8 @@ interface AppContextType {
   db: typeof db;
   schoolName: string;
   setSchoolName: (name: string) => void;
+  schoolAddress: string; // Added schoolAddress
+  setSchoolAddress: (address: string) => void; // Added setter for schoolAddress
   customPhrase: string;
   setCustomPhrase: (phrase: string) => void;
   logoData: string | null;
@@ -57,6 +59,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Settings state
   const [schoolName, setSchoolName] = useState("Sample Elementary School");
+  const [schoolAddress, setSchoolAddress] = useState("Rizal Street, Brgy. III, Poblacion, Pontevedra, Negros Occidental"); // Initial state for school address
   const [customPhrase, setCustomPhrase] = useState("add custom phrase here:");
   const [logoData, setLogoData] = useState<string | null>(null);
   const [guidanceOfficer, setGuidanceOfficer] = useState("");
@@ -84,6 +87,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
 
   const loadSettings = useCallback(async () => {
     const savedSchoolName = await db.getSetting('schoolName') || 'Sample Elementary School';
+    const savedSchoolAddress = await db.getSetting('schoolAddress') || 'Rizal Street, Brgy. III, Poblacion, Pontevedra, Negros Occidental'; // Load school address
     const savedCustomPhrase = await db.getSetting('customPhrase') || 'add custom phrase here:';
     const savedLogoData = await db.getSetting('logoData');
     const savedGuidanceOfficer = await db.getSetting('guidanceOfficer') || '';
@@ -93,6 +97,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     const savedTheme = await db.getSetting('theme') || 'default';
 
     setSchoolName(savedSchoolName);
+    setSchoolAddress(savedSchoolAddress); // Set school address
     setCustomPhrase(savedCustomPhrase);
     setLogoData(savedLogoData);
     setGuidanceOfficer(savedGuidanceOfficer);
@@ -246,6 +251,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     showAlert,
     db,
     schoolName, setSchoolName,
+    schoolAddress, setSchoolAddress, // Added to context value
     customPhrase, setCustomPhrase,
     logoData, setLogoData,
     guidanceOfficer, setGuidanceOfficer,
