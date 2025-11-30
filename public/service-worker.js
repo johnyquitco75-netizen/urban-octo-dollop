@@ -1,4 +1,4 @@
-const CACHE_NAME = 'egrs-cache-v5'; // Increment cache version to force update
+const CACHE_NAME = 'egrs-cache-v6'; // Increment cache version to force update
 const urlsToCache = [
   '/',
   '/index.html',
@@ -19,6 +19,7 @@ self.addEventListener('install', (event) => {
         console.log('Service Worker: Pre-caching static assets');
         return cache.addAll(urlsToCache);
       })
+      .then(() => self.skipWaiting()) // Activate new service worker immediately
       .catch(error => {
         console.error('Service Worker: Failed to pre-cache initial assets during install', error);
       })
@@ -31,42 +32,65 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Strategy: Cache First, then Network (for all requests)
-  event.respondWith(
-    caches.match(event.request)
-      .then((cachedResponse) => {
-        // If the request is in the cache, return the cached response immediately
+  const url = new URL(event.request.url);
+
+  // Always serve index.html from cache if available, otherwise fetch and cache
+  if (url.pathname === '/' || url.pathname === '/index.html') {
+    event.respondWith(
+      caches.match(event.request).then((cachedResponse) => {
         if (cachedResponse) {
-          console.log('Service Worker: Serving from cache:', event.request.url);
+          console.log('Service Worker: Serving index.html from cache:', event.request.url);
           return cachedResponse;
         }
-
-        // If not in cache, try to fetch from the network
-        console.log('Service Worker: Fetching from network and caching:', event.request.url);
-        return fetch(event.request)
-          .then((networkResponse) => {
-            // Check if we received a valid response to cache
-            // Don't cache non-200 responses or opaque responses (e.g., cross-origin without CORS)
-            if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
-              const responseToCache = networkResponse.clone();
-              caches.open(CACHE_NAME).then((cache) => {
-                cache.put(event.request, responseToCache);
-              });
-            }
-            return networkResponse;
-          })
-          .catch((error) => {
-            console.error('Service Worker: Network fetch failed for:', event.request.url, error);
-            // If both cache and network fail, and it's a navigation request,
-            // try to fallback to the cached index.html
-            if (event.request.mode === 'navigate') {
-              console.log('Service Worker: Network failed for navigation, falling back to index.html');
-              return caches.match('/index.html');
-            }
-            // For other requests, return a generic offline response
-            return new Response('Offline', { status: 503, statusText: 'Service Unavailable' });
-          });
+        console.log('Service Worker: Fetching index.html from network and caching:', event.request.url);
+        return fetch(event.request).then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
+            const responseToCache = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, responseToCache);
+            });
+          }
+          return networkResponse;
+        }).catch((error) => {
+          console.error('Service Worker: Failed to fetch index.html from network:', error);
+          return new Response('Offline', { status: 503, statusText: 'Service Unavailable' });
+        });
       })
+    );
+    return; // Stop processing after handling index.html
+  }
+
+  // Stale-While-Revalidate strategy for all other assets
+  event.respondWith(
+    caches.match(event.request).then((cachedResponse) => {
+      const fetchPromise = fetch(event.request).then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
+          const responseToCache = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            console.log('Service Worker: Updating cache with fresh network response:', event.request.url);
+            cache.put(event.request, responseToCache);
+          });
+        }
+        return networkResponse;
+      }).catch((error) => {
+        console.error('Service Worker: Network fetch failed for:', event.request.url, error);
+        // If network fails, and there's no cached response, try to fallback to index.html for navigation
+        if (!cachedResponse && event.request.mode === 'navigate') {
+          console.log('Service Worker: Network failed for navigation, falling back to index.html');
+          return caches.match('/index.html');
+        }
+        // If network fails and no cached response, return a generic offline response
+        if (!cachedResponse) {
+          console.log('Service Worker: Network failed and no cache for:', event.request.url);
+          return new Response('Offline', { status: 503, statusText: 'Service Unavailable' });
+        }
+        // If network fails but there's a cached response, the cachedResponse will be returned below
+        throw error; // Re-throw to propagate error if no fallback
+      });
+
+      // Return cached response immediately if available, otherwise wait for network
+      return cachedResponse || fetchPromise;
+    })
   );
 });
 
@@ -84,7 +108,6 @@ self.addEventListener('activate', (event) => {
         })
       );
     }).then(() => {
-      // Ensure the service worker takes control of all clients immediately
       console.log('Service Worker: Claiming clients');
       return self.clients.claim();
     })
