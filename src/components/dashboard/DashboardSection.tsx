@@ -21,6 +21,9 @@ const DashboardSection = () => {
   const [violationChartData, setViolationChartData] = useState<any[]>([]);
   const [severityChartData, setSeverityChartData] = useState<any[]>([]);
 
+  // Define a color palette for the bar chart
+  const BAR_COLORS = ['#4f46e5', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899', '#6366f1', '#22c55e', '#f97316'];
+
   const getFirstAndLastName = (fullName: string) => {
     const parts = (fullName || '').trim().split(/\s+/);
     return {
@@ -34,10 +37,11 @@ const DashboardSection = () => {
     records.forEach(record => {
       violationCounts[record.violationType] = (violationCounts[record.violationType] || 0) + 1;
     });
-    const chartData = Object.entries(violationCounts).map(([name, count]) => ({
+    const chartData = Object.entries(violationCounts).map(([name, count], index) => ({
       name,
       count,
-      percentage: records.length > 0 ? Math.round((count / records.length) * 100) : 0
+      percentage: records.length > 0 ? Math.round((count / records.length) * 100) : 0,
+      color: BAR_COLORS[index % BAR_COLORS.length] // Assign color from palette
     }));
     setViolationChartData(chartData);
   };
@@ -143,7 +147,7 @@ const DashboardSection = () => {
         <img
           id="dashboardLogo"
           className="w-24 h-24 rounded-xl object-cover border-2 border-gray-200 dark:border-gray-700"
-          src={logoData || "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiByeD0iMTIiIGZpbGw9IiM0ZjQ2ZTUiLz4KPHN2ZyB4PSIyNSIgeT0iMjUiIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+CjxwYXRoIGQ9Im0xNCAyLTMgMyAyLjUgMi41TDEwIDExbDMgMyA0LTQgMi41IDIuNUwyMiA5eiIvPgo8cGF0aCBkPSJmNSAxMS0zIDNMMTAgMjIgMTMgMTkgNS41IDExLjVaIi8+CjxwYXRoIGQ9Im0yIDEzIDMgM0w5IDEyIDYgOXoiLz4KPC9zdmc+Cjwvc3ZnPgo="}
+          src={logoData || "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiByeD0iMTIiIGZpbGw9IiM0ZjQ2ZTUiLz4KPHN2ZyB4PSIyNSI yeT0iMjUiIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+CjxwYXRoIGQ9Im0xNCAyLTMgMyAyLjUgMi41TDEwIDExbDMgMyA0LTQgMi41IDIuNUwyMiA5eiIvPgo8cGF0aCBkPSJmNSAxMS0zIDNMMTAgMjIgMTMgMTkgNS41IDExLjVaIi8+CjxwYXRoIGQ9Im0yIDEzIDMgM0w5IDEyIDYgOXoiLz4KPC9zdmc+Cjwvc3ZnPgo="}
           alt="School Logo"
         />
         <div className="flex-1 text-center md:text-left">
@@ -202,7 +206,7 @@ const DashboardSection = () => {
                 itemStyle={{ color: '#333' }}
                 formatter={(value: number, name: string, props: any) => [`${value} (${props.payload.percentage}%)`, name]}
               />
-              <Bar dataKey="count" fill="#10b981" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="count" fill={(entry) => entry.color} radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </Card>
