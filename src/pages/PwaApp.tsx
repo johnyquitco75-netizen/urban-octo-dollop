@@ -102,43 +102,43 @@ export const PwaApp = () => {
       {/* Navigation */}
       <nav className="flex flex-wrap justify-center gap-2 p-3 bg-gray-50 dark:bg-gray-800 shadow-sm">
         <Button
-          className={`flex-1 min-w-[120px] md:flex-none ${currentSection === "dashboard" ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md hover:from-indigo-700 hover:to-purple-700" : ""}`}
-          variant={currentSection === "dashboard" ? "ghost" : "outline"} // Use ghost to prevent default variant styling
+          className={`flex-1 min-w-[120px] md:flex-none ${currentSection === "dashboard" ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md hover:from-indigo-700 hover:to-purple-700" : "bg-secondary text-secondary-foreground hover:bg-secondary/80"}`}
+          variant="ghost"
           onClick={() => switchSection("dashboard")}
         >
           📊 Dashboard
         </Button>
         <Button
-          className={`flex-1 min-w-[120px] md:flex-none ${currentSection === "add-record" ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md hover:from-indigo-700 hover:to-purple-700" : ""}`}
-          variant={currentSection === "add-record" ? "ghost" : "outline"}
+          className={`flex-1 min-w-[120px] md:flex-none ${currentSection === "add-record" ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md hover:from-indigo-700 hover:to-purple-700" : "bg-secondary text-secondary-foreground hover:bg-secondary/80"}`}
+          variant="ghost"
           onClick={() => switchSection("add-record")}
         >
           ➕ Add Record
         </Button>
         <Button
-          className={`flex-1 min-w-[120px] md:flex-none ${currentSection === "reports" ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md hover:from-indigo-700 hover:to-purple-700" : ""}`}
-          variant={currentSection === "reports" ? "ghost" : "outline"}
+          className={`flex-1 min-w-[120px] md:flex-none ${currentSection === "reports" ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md hover:from-indigo-700 hover:to-purple-700" : "bg-secondary text-secondary-foreground hover:bg-secondary/80"}`}
+          variant="ghost"
           onClick={() => switchSection("reports")}
         >
           📄 Reports
         </Button>
         <Button
-          className={`flex-1 min-w-[120px] md:flex-none ${currentSection === "settings" ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md hover:from-indigo-700 hover:to-purple-700" : ""}`}
-          variant={currentSection === "settings" ? "ghost" : "outline"}
+          className={`flex-1 min-w-[120px] md:flex-none ${currentSection === "settings" ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md hover:from-indigo-700 hover:to-purple-700" : "bg-secondary text-secondary-foreground hover:bg-secondary/80"}`}
+          variant="ghost"
           onClick={() => switchSection("settings")}
         >
           ⚙️ Settings
         </Button>
         <Button
-          className={`flex-1 min-w-[120px] md:flex-none ${currentSection === "certificates" ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md hover:from-indigo-700 hover:to-purple-700" : ""}`}
-          variant={currentSection === "certificates" ? "ghost" : "outline"}
+          className={`flex-1 min-w-[120px] md:flex-none ${currentSection === "certificates" ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md hover:from-indigo-700 hover:to-purple-700" : "bg-secondary text-secondary-foreground hover:bg-secondary/80"}`}
+          variant="ghost"
           onClick={() => switchSection("certificates")}
         >
           📜 Certificates
         </Button>
         <Button
-          className={`flex-1 min-w-[120px] md:flex-none ${currentSection === "about-egrs" ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md hover:from-indigo-700 hover:to-purple-700" : ""}`}
-          variant={currentSection === "about-egrs" ? "ghost" : "outline"}
+          className={`flex-1 min-w-[120px] md:flex-none ${currentSection === "about-egrs" ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md hover:from-indigo-700 hover:to-purple-700" : "bg-secondary text-secondary-foreground hover:bg-secondary/80"}`}
+          variant="ghost"
           onClick={() => switchSection("about-egrs")}
         >
           🧾 About eGRS
