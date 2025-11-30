@@ -40,24 +40,11 @@ const CameraAttachment: React.FC<CameraAttachmentProps> = ({
     }
     if (videoRef.current) {
       videoRef.current.srcObject = null;
-      videoRef.current.removeEventListener('loadedmetadata', handleLoadedMetadata);
+      // Removed event listener as handleLoadedMetadata is no longer used
     }
     setIsCameraActive(false);
     setIsVideoReady(false); // Reset isVideoReady when camera stops
   }, [mediaStreamRef, videoRef, setIsCameraActive, setIsVideoReady]);
-
-  // This function is primarily for attempting video playback.
-  // isVideoReady is now set in startCamera.
-  const handleLoadedMetadata = useCallback(() => {
-    if (videoRef.current) {
-      videoRef.current.play().then(() => {
-        console.log("Video playback started successfully.");
-      }).catch(e => {
-        console.warn("Video playback failed (autoplay blocked or other issue):", e);
-        showAlert('Camera stream loaded, but video playback might be blocked by browser. You can still capture.', 'info');
-      });
-    }
-  }, [videoRef, showAlert]);
 
   const startCamera = async () => {
     try {
@@ -68,11 +55,11 @@ const CameraAttachment: React.FC<CameraAttachmentProps> = ({
 
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
-        videoRef.current.addEventListener('loadedmetadata', handleLoadedMetadata);
+        // Relying on autoplay and playsInline attributes for video playback
       }
       setIsCameraActive(true); // Camera is now active
       setIsPhotoCaptured(false); // No photo captured yet
-      setIsVideoReady(true); // Assume video is ready for capture as soon as stream is attached
+      setIsVideoReady(true); // Set video ready immediately after stream is attached, mirroring HTML behavior
     } catch (error) {
       console.error('Error accessing camera:', error);
       showAlert('Unable to access camera. Please check browser permissions and ensure no other application is using the camera.', 'error');
@@ -127,7 +114,7 @@ const CameraAttachment: React.FC<CameraAttachmentProps> = ({
     <div className="p-6 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl text-center bg-gray-50 dark:bg-gray-800">
       <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">📸 Attach Photo (Optional)</h4>
       {isCameraActive && (
-        <video ref={videoRef} className="w-full max-w-sm aspect-square object-contain rounded-lg shadow-md mb-4 mx-auto border border-gray-300 dark:border-gray-600" autoPlay playsInline></video>
+        <video ref={videoRef} className="w-full max-w-sm aspect-square object-cover rounded-lg shadow-md mb-4 mx-auto border border-gray-300 dark:border-gray-600" autoPlay playsInline></video>
       )}
       {isPhotoCaptured && capturedPhoto && (
         <img src={capturedPhoto} className="w-full max-w-sm aspect-square object-cover rounded-lg shadow-md mb-4 mx-auto border border-gray-300 dark:border-gray-600" alt="Captured" />
