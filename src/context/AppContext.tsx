@@ -147,8 +147,8 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
         '--popover-foreground': '222.2 84% 4.9%',
         '--primary': '245 65% 50%', // Representative indigo/purple for default theme
         '--primary-foreground': '210 40% 98%', // White
-        '--secondary': '210 40% 96.1%',
-        '--secondary-foreground': '222.2 47.4% 11.2%',
+        '--secondary': '190 80% 95%', // Light Cyan Blue
+        '--secondary-foreground': '190 80% 20%', // Dark Cyan Blue
         '--muted': '210 40% 96.1%',
         '--muted-foreground': '215.4 16.3% 46.9%',
         '--accent': '210 40% 96.1%',
@@ -190,8 +190,8 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
         // Green specific colors
         '--primary': '142.1 76.2% 36.3%', // A strong green
         '--primary-foreground': '0 0% 98%', // White
-        '--secondary': '142.1 76.2% 36.3% / 0.1', // Light green tint
-        '--secondary-foreground': '142.1 76.2% 36.3%', // Dark green text
+        '--secondary': '190 80% 95%', // Light Cyan Blue
+        '--secondary-foreground': '190 80% 20%', // Dark Cyan Blue
         '--sidebar-background': '142.1 76.2% 36.3%', // Green sidebar
         '--sidebar-foreground': '0 0% 98%', // White text
         '--sidebar-primary': '142.1 76.2% 36.3%', // Green primary for sidebar
@@ -222,8 +222,8 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
         // Purple specific colors
         '--primary': '262.1 83.3% 57.8%', // A strong purple
         '--primary-foreground': '210 40% 98%', // White
-        '--secondary': '262.1 83.3% 57.8% / 0.1', // Light purple tint
-        '--secondary-foreground': '262.1 83.3% 57.8%', // Dark purple text
+        '--secondary': '190 80% 95%', // Light Cyan Blue
+        '--secondary-foreground': '190 80% 20%', // Dark Cyan Blue
         '--sidebar-background': '262.1 83.3% 57.8%', // Purple sidebar
         '--sidebar-foreground': '210 40% 98%', // White text
         '--sidebar-primary': '262.1 83.3% 57.8%', // Purple primary for sidebar
