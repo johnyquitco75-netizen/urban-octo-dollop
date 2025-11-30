@@ -102,44 +102,44 @@ export const PwaApp = () => {
       {/* Navigation */}
       <nav className="flex flex-wrap justify-center gap-2 p-3 bg-gray-50 dark:bg-gray-800 shadow-sm">
         <Button
-          variant={currentSection === "dashboard" ? "default" : "outline"}
+          className={`flex-1 min-w-[120px] md:flex-none ${currentSection === "dashboard" ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md hover:from-indigo-700 hover:to-purple-700" : ""}`}
+          variant={currentSection === "dashboard" ? "ghost" : "outline"} // Use ghost to prevent default variant styling
           onClick={() => switchSection("dashboard")}
-          className="flex-1 min-w-[120px] md:flex-none"
         >
           📊 Dashboard
         </Button>
         <Button
-          variant={currentSection === "add-record" ? "default" : "outline"}
+          className={`flex-1 min-w-[120px] md:flex-none ${currentSection === "add-record" ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md hover:from-indigo-700 hover:to-purple-700" : ""}`}
+          variant={currentSection === "add-record" ? "ghost" : "outline"}
           onClick={() => switchSection("add-record")}
-          className="flex-1 min-w-[120px] md:flex-none"
         >
           ➕ Add Record
         </Button>
         <Button
-          variant={currentSection === "reports" ? "default" : "outline"}
+          className={`flex-1 min-w-[120px] md:flex-none ${currentSection === "reports" ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md hover:from-indigo-700 hover:to-purple-700" : ""}`}
+          variant={currentSection === "reports" ? "ghost" : "outline"}
           onClick={() => switchSection("reports")}
-          className="flex-1 min-w-[120px] md:flex-none"
         >
           📄 Reports
         </Button>
         <Button
-          variant={currentSection === "settings" ? "default" : "outline"}
+          className={`flex-1 min-w-[120px] md:flex-none ${currentSection === "settings" ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md hover:from-indigo-700 hover:to-purple-700" : ""}`}
+          variant={currentSection === "settings" ? "ghost" : "outline"}
           onClick={() => switchSection("settings")}
-          className="flex-1 min-w-[120px] md:flex-none"
         >
           ⚙️ Settings
         </Button>
         <Button
-          variant={currentSection === "certificates" ? "default" : "outline"}
+          className={`flex-1 min-w-[120px] md:flex-none ${currentSection === "certificates" ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md hover:from-indigo-700 hover:to-purple-700" : ""}`}
+          variant={currentSection === "certificates" ? "ghost" : "outline"}
           onClick={() => switchSection("certificates")}
-          className="flex-1 min-w-[120px] md:flex-none"
         >
           📜 Certificates
         </Button>
         <Button
-          variant={currentSection === "about-egrs" ? "default" : "outline"}
+          className={`flex-1 min-w-[120px] md:flex-none ${currentSection === "about-egrs" ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md hover:from-indigo-700 hover:to-purple-700" : ""}`}
+          variant={currentSection === "about-egrs" ? "ghost" : "outline"}
           onClick={() => switchSection("about-egrs")}
-          className="flex-1 min-w-[120px] md:flex-none"
         >
           🧾 About eGRS
         </Button>
