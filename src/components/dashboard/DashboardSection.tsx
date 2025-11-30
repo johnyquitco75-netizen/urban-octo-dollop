@@ -41,7 +41,7 @@ const DashboardSection = () => {
       name,
       count,
       percentage: records.length > 0 ? Math.round((count / records.length) * 100) : 0,
-      color: BAR_COLORS[index % BAR_COLORS.length] // Assign color from palette
+      fill: BAR_COLORS[index % BAR_COLORS.length] // Assign color to 'fill' property
     }));
     setViolationChartData(chartData);
   };
@@ -206,7 +206,7 @@ const DashboardSection = () => {
                 itemStyle={{ color: '#333' }}
                 formatter={(value: number, name: string, props: any) => [`${value} (${props.payload.percentage}%)`, name]}
               />
-              <Bar dataKey="count" fill={(entry) => entry.color} radius={[4, 4, 0, 0]} />
+              <Bar dataKey="count" fill="fill" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </Card>
