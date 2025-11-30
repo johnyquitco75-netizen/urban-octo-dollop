@@ -51,6 +51,82 @@ const AddRecordSection = () => {
     setCurrentDateTime();
   }, []);
 
+  // Camera functions
+  const stopCamera = useCallback(() => {
+    if (mediaStreamRef.current) {
+      mediaStreamRef.current.getTracks().forEach(track => track.stop());
+      mediaStreamRef.current = null;
+    }
+    if (videoRef.current) {
+      videoRef.current.srcObject = null; // Clear the video source
+      videoRef.current.removeEventListener('loadedmetadata', handleLoadedMetadata); // Remove listener
+    }
+    setIsCameraActive(false);
+  }, []);
+
+  const handleLoadedMetadata = useCallback(() => {
+    if (videoRef.current) {
+      videoRef.current.play().catch(e => console.error("Error playing video:", e));
+    }
+  }, []);
+
+  const startCamera = async () => {
+    try {
+      stopCamera(); // Ensure any previous stream is stopped and listeners removed
+
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      mediaStreamRef.current = stream;
+
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        videoRef.current.addEventListener('loadedmetadata', handleLoadedMetadata);
+      }
+      setIsCameraActive(true);
+      setIsPhotoCaptured(false);
+    } catch (error) {
+      console.error('Error accessing camera:', error);
+      showAlert('Unable to access camera. Please check browser permissions and ensure no other application is using the camera.', 'error');
+    }
+  };
+
+  const capturePhoto = () => {
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    if (video && canvas) {
+      // Ensure video has valid dimensions before drawing
+      if (video.videoWidth === 0 || video.videoHeight === 0) {
+        showAlert('Camera not ready or video stream has no dimensions. Please try again.', 'error');
+        return;
+      }
+
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const photoData = canvas.toDataURL('image/jpeg', 0.8);
+        setCapturedPhoto(photoData);
+        setIsPhotoCaptured(true);
+        stopCamera(); // Stop camera after capturing
+      }
+    } else {
+      showAlert('Camera or canvas element not found.', 'error');
+    }
+  };
+
+  const retakePhoto = () => {
+    setCapturedPhoto(null);
+    setIsPhotoCaptured(false);
+    startCamera();
+  };
+
+  // Add a useEffect cleanup for when the component unmounts
+  useEffect(() => {
+    return () => {
+      stopCamera();
+    };
+  }, [stopCamera]);
+
   const clearForm = () => {
     setRecordType("student");
     setFullName("");
@@ -60,13 +136,9 @@ const AddRecordSection = () => {
     setViolationType("");
     setDetails("");
     setCapturedPhoto(null);
-    setIsCameraActive(false);
     setIsPhotoCaptured(false);
     setCurrentEditId(null);
-    if (mediaStreamRef.current) {
-      mediaStreamRef.current.getTracks().forEach(track => track.stop());
-      mediaStreamRef.current = null;
-    }
+    stopCamera(); // Use the new stopCamera function
     setCurrentDateTime();
   };
 
@@ -119,55 +191,6 @@ const AddRecordSection = () => {
       console.error('Error saving record:', error);
       showAlert('Failed to save record. Please try again.', 'error');
     }
-  };
-
-  // Camera functions
-  const startCamera = async () => {
-    try {
-      // Stop any existing stream before starting a new one
-      if (mediaStreamRef.current) {
-        mediaStreamRef.current.getTracks().forEach(track => track.stop());
-      }
-
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      mediaStreamRef.current = stream;
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        videoRef.current.play(); // Explicitly play the video
-      }
-      setIsCameraActive(true);
-      setIsPhotoCaptured(false);
-    } catch (error) {
-      console.error('Error accessing camera:', error);
-      showAlert('Unable to access camera. Please check browser permissions and ensure no other application is using the camera.', 'error');
-    }
-  };
-
-  const capturePhoto = () => {
-    const video = videoRef.current;
-    const canvas = canvasRef.current;
-    if (video && canvas) {
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      const ctx = canvas.getContext('2d');
-      if (ctx) {
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height); // Draw image with explicit dimensions
-        const photoData = canvas.toDataURL('image/jpeg', 0.8);
-        setCapturedPhoto(photoData);
-        setIsPhotoCaptured(true);
-        setIsCameraActive(false);
-        if (mediaStreamRef.current) {
-          mediaStreamRef.current.getTracks().forEach(track => track.stop());
-          mediaStreamRef.current = null;
-        }
-      }
-    }
-  };
-
-  const retakePhoto = () => {
-    setCapturedPhoto(null);
-    setIsPhotoCaptured(false);
-    startCamera();
   };
 
   // Custom violations
@@ -291,11 +314,7 @@ const AddRecordSection = () => {
     setDetails(record.details || "");
     setCapturedPhoto(record.photoData || null);
     setIsPhotoCaptured(!!record.photoData);
-    setIsCameraActive(false); // Ensure camera is off when editing
-    if (mediaStreamRef.current) {
-      mediaStreamRef.current.getTracks().forEach(track => track.stop());
-      mediaStreamRef.current = null;
-    }
+    stopCamera(); // Ensure camera is off when editing
 
     setSearchQuery(""); // Clear search results
   };
