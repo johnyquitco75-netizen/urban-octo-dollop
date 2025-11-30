@@ -8,6 +8,7 @@ import { useAppContext } from "@/context/AppContext";
 import LoginScreen from "@/components/LoginScreen";
 import PhotoModal from "@/components/modals/PhotoModal";
 import ConfirmModal from "@/components/modals/ConfirmModal";
+import PwaInstallPrompt from "@/components/PwaInstallPrompt"; // Import the new component
 
 // Placeholder for future modular components
 const DashboardSection = React.lazy(() => import("@/components/dashboard/DashboardSection"));
@@ -149,6 +150,7 @@ export const PwaApp = () => {
 
       <PhotoModal />
       <ConfirmModal />
+      <PwaInstallPrompt /> {/* Add the PWA install prompt component */}
 
       <MadeWithDyad />
     </div>
