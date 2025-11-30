@@ -8,7 +8,7 @@ import { useAppContext } from "@/context/AppContext";
 import LoginScreen from "@/components/LoginScreen";
 import PhotoModal from "@/components/modals/PhotoModal";
 import ConfirmModal from "@/components/modals/ConfirmModal";
-import PwaInstallPrompt from "@/components/PwaInstallPrompt"; // Import the new component
+import PwaInstallPrompt from "@/components/PwaInstallPrompt";
 
 // Placeholder for future modular components
 const DashboardSection = React.lazy(() => import("@/components/dashboard/DashboardSection"));
@@ -25,8 +25,7 @@ export const PwaApp = () => {
     currentUserRole, setCurrentUserRole,
     schoolName, customPhrase, logoData,
     showAlert,
-    loadSettings, loadCustomViolations,
-    isAppInitialized, // New: Import isAppInitialized
+    isAppInitialized,
   } = useAppContext();
 
   const [currentTime, setCurrentTime] = useState("");
@@ -52,27 +51,28 @@ export const PwaApp = () => {
   }, []);
 
   useEffect(() => {
-    if (isLoggedIn) {
-      loadSettings();
-      loadCustomViolations();
+    if (isLoggedIn && isAppInitialized) { // Only update date/time if logged in AND app is initialized
       updateDateTime();
       const interval = setInterval(updateDateTime, 1000);
       return () => clearInterval(interval);
     }
-  }, [isLoggedIn, updateDateTime, loadSettings, loadCustomViolations]);
+  }, [isLoggedIn, isAppInitialized, updateDateTime]); // Added isAppInitialized to dependency array
+
+  // --- Navigation ---
+  const switchSection = (sectionName: string) => {
+    setCurrentSection(sectionName);
+  };
 
   if (!isLoggedIn) {
     return <LoginScreen />;
   }
 
-  // New: Show loading state if app is not yet initialized
   if (!isAppInitialized) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
         <Card className="p-8 rounded-2xl shadow-lg text-center">
           <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">Loading Application...</h1>
           <p className="text-gray-600 dark:text-gray-300">Please wait while we prepare your data.</p>
-          {/* You could add a spinner here if desired */}
         </Card>
       </div>
     );
