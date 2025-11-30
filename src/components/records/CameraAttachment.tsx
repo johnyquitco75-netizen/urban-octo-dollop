@@ -43,24 +43,25 @@ const CameraAttachment: React.FC<CameraAttachmentProps> = ({
       videoRef.current.removeEventListener('loadedmetadata', handleLoadedMetadata);
     }
     setIsCameraActive(false);
-    setIsVideoReady(false);
+    setIsVideoReady(false); // Reset isVideoReady when camera stops
   }, [mediaStreamRef, videoRef, setIsCameraActive, setIsVideoReady]);
 
+  // This function is primarily for attempting video playback.
+  // isVideoReady is now set in startCamera.
   const handleLoadedMetadata = useCallback(() => {
     if (videoRef.current) {
-      setIsVideoReady(true); // Set to true here, as metadata is loaded and video is ready for capture
       videoRef.current.play().then(() => {
-        // Video started playing successfully
+        console.log("Video playback started successfully.");
       }).catch(e => {
-        console.error("Error playing video:", e);
-        showAlert('Video playback failed, but camera might still be active for capture.', 'info');
+        console.warn("Video playback failed (autoplay blocked or other issue):", e);
+        showAlert('Camera stream loaded, but video playback might be blocked by browser. You can still capture.', 'info');
       });
     }
-  }, [videoRef, setIsVideoReady, showAlert]);
+  }, [videoRef, showAlert]);
 
   const startCamera = async () => {
     try {
-      stopCamera();
+      stopCamera(); // Always stop existing stream first
 
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
       mediaStreamRef.current = stream;
@@ -69,14 +70,14 @@ const CameraAttachment: React.FC<CameraAttachmentProps> = ({
         videoRef.current.srcObject = stream;
         videoRef.current.addEventListener('loadedmetadata', handleLoadedMetadata);
       }
-      setIsCameraActive(true);
-      setIsPhotoCaptured(false);
-      // isVideoReady will be set by handleLoadedMetadata
+      setIsCameraActive(true); // Camera is now active
+      setIsPhotoCaptured(false); // No photo captured yet
+      setIsVideoReady(true); // Assume video is ready for capture as soon as stream is attached
     } catch (error) {
       console.error('Error accessing camera:', error);
       showAlert('Unable to access camera. Please check browser permissions and ensure no other application is using the camera.', 'error');
-      setIsCameraActive(false); // Ensure camera is not active if it fails
-      setIsVideoReady(false); // Ensure video is not ready if it fails
+      setIsCameraActive(false);
+      setIsVideoReady(false);
     }
   };
 
