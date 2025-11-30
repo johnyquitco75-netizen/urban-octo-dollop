@@ -26,6 +26,7 @@ const AddRecordSection = () => {
   const mediaStreamRef = useRef<MediaStream | null>(null);
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [isPhotoCaptured, setIsPhotoCaptured] = useState(false);
+  const [isVideoReady, setIsVideoReady] = useState(false); // New state for video readiness
   const [newCustomViolation, setNewCustomViolation] = useState("");
   const [currentEditId, setCurrentEditId] = useState<number | null>(null);
 
@@ -62,11 +63,14 @@ const AddRecordSection = () => {
       videoRef.current.removeEventListener('loadedmetadata', handleLoadedMetadata); // Remove listener
     }
     setIsCameraActive(false);
+    setIsVideoReady(false); // Reset video readiness
   }, []);
 
   const handleLoadedMetadata = useCallback(() => {
     if (videoRef.current) {
-      videoRef.current.play().catch(e => console.error("Error playing video:", e));
+      videoRef.current.play().then(() => {
+        setIsVideoReady(true); // Set video ready after successful play
+      }).catch(e => console.error("Error playing video:", e));
     }
   }, []);
 
@@ -83,6 +87,7 @@ const AddRecordSection = () => {
       }
       setIsCameraActive(true);
       setIsPhotoCaptured(false);
+      setIsVideoReady(false); // Reset video readiness until metadata loads
     } catch (error) {
       console.error('Error accessing camera:', error);
       showAlert('Unable to access camera. Please check browser permissions and ensure no other application is using the camera.', 'error');
@@ -92,13 +97,7 @@ const AddRecordSection = () => {
   const capturePhoto = () => {
     const video = videoRef.current;
     const canvas = canvasRef.current;
-    if (video && canvas) {
-      // Ensure video has valid dimensions before drawing
-      if (video.videoWidth === 0 || video.videoHeight === 0) {
-        showAlert('Camera not ready or video stream has no dimensions. Please try again.', 'error');
-        return;
-      }
-
+    if (video && canvas && isVideoReady) { // Only capture if video is ready
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
       const ctx = canvas.getContext('2d');
@@ -110,7 +109,7 @@ const AddRecordSection = () => {
         stopCamera(); // Stop camera after capturing
       }
     } else {
-      showAlert('Camera or canvas element not found.', 'error');
+      showAlert('Camera not ready or elements not found for capture.', 'error');
     }
   };
 
@@ -572,7 +571,7 @@ const AddRecordSection = () => {
               </Button>
             )}
             {isCameraActive && (
-              <Button type="button" onClick={capturePhoto}>
+              <Button type="button" onClick={capturePhoto} disabled={!isVideoReady}> {/* Disabled until video is ready */}
                 📸 Capture
               </Button>
             )}
