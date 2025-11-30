@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import { MadeWithDyad } from "@/components/made-with-dyad";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useAppContext } from "@/context/AppContext";
@@ -160,8 +159,6 @@ export const PwaApp = () => {
       <PhotoModal />
       <ConfirmModal />
       <PwaInstallPrompt />
-
-      <MadeWithDyad />
     </div>
   );
 };
