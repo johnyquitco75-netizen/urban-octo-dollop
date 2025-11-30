@@ -70,8 +70,8 @@ class DatabaseManager {
     const store = transaction.objectStore('settings');
     return new Promise((resolve, reject) => {
       const request = store.get(key);
-      req.onsuccess = () => resolve(req.result?.value);
-      req.onerror = () => reject(req.error);
+      request.onsuccess = () => resolve(request.result?.value);
+      request.onerror = () => reject(request.error);
     });
   }
 
