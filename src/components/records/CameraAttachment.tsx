@@ -120,10 +120,10 @@ const CameraAttachment: React.FC<CameraAttachmentProps> = ({
     <div className="p-6 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl text-center bg-gray-50 dark:bg-gray-800">
       <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">📸 Attach Photo (Optional)</h4>
       {isCameraActive && (
-        <video ref={videoRef} className="w-full max-h-80 object-cover rounded-lg shadow-md mb-4 aspect-square mx-auto" autoPlay playsInline></video>
+        <video ref={videoRef} className="w-full max-w-sm aspect-square object-contain rounded-lg shadow-md mb-4 mx-auto border border-gray-300 dark:border-gray-600" autoPlay playsInline></video>
       )}
       {isPhotoCaptured && capturedPhoto && (
-        <img src={capturedPhoto} className="w-full max-h-80 object-cover rounded-lg shadow-md mb-4 aspect-square mx-auto" alt="Captured" />
+        <img src={capturedPhoto} className="w-full max-w-sm aspect-square object-cover rounded-lg shadow-md mb-4 mx-auto border border-gray-300 dark:border-gray-600" alt="Captured" />
       )}
       <canvas ref={canvasRef} className="hidden"></canvas>
       <div className="flex justify-center gap-3 flex-wrap">
