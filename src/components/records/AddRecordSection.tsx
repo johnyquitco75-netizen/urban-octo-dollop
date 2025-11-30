@@ -124,16 +124,22 @@ const AddRecordSection = () => {
   // Camera functions
   const startCamera = async () => {
     try {
+      // Stop any existing stream before starting a new one
+      if (mediaStreamRef.current) {
+        mediaStreamRef.current.getTracks().forEach(track => track.stop());
+      }
+
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
       mediaStreamRef.current = stream;
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
+        videoRef.current.play(); // Explicitly play the video
       }
       setIsCameraActive(true);
       setIsPhotoCaptured(false);
     } catch (error) {
       console.error('Error accessing camera:', error);
-      showAlert('Unable to access camera. Please check permissions.', 'error');
+      showAlert('Unable to access camera. Please check browser permissions and ensure no other application is using the camera.', 'error');
     }
   };
 
@@ -145,7 +151,7 @@ const AddRecordSection = () => {
       canvas.height = video.videoHeight;
       const ctx = canvas.getContext('2d');
       if (ctx) {
-        ctx.drawImage(video, 0, 0);
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height); // Draw image with explicit dimensions
         const photoData = canvas.toDataURL('image/jpeg', 0.8);
         setCapturedPhoto(photoData);
         setIsPhotoCaptured(true);
