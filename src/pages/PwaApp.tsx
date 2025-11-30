@@ -81,7 +81,7 @@ export const PwaApp = () => {
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       {/* Header */}
-      <header className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-6 shadow-md flex flex-col md:flex-row items-center justify-between gap-4">
+      <header className="bg-primary text-primary-foreground p-6 shadow-md flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-4 flex-1">
           <div className="bg-white/20 border border-white/30 rounded-xl p-3 text-sm font-medium backdrop-blur-sm min-w-[200px] text-center md:text-left">
             {customPhrase}
@@ -103,43 +103,43 @@ export const PwaApp = () => {
       <nav className="flex flex-wrap justify-center gap-2 p-3 bg-gray-50 dark:bg-gray-800 shadow-sm">
         <Button
           variant={currentSection === "dashboard" ? "default" : "outline"}
-          className={`flex-1 min-w-[120px] md:flex-none ${currentSection === "dashboard" ? "bg-yellow-500 hover:bg-yellow-600 text-white" : "bg-yellow-400 hover:bg-yellow-500 text-white"}`}
           onClick={() => switchSection("dashboard")}
+          className="flex-1 min-w-[120px] md:flex-none"
         >
           📊 Dashboard
         </Button>
         <Button
           variant={currentSection === "add-record" ? "default" : "outline"}
-          className={`flex-1 min-w-[120px] md:flex-none ${currentSection === "add-record" ? "bg-orange-500 hover:bg-orange-600 text-white" : "bg-orange-400 hover:bg-orange-500 text-white"}`}
           onClick={() => switchSection("add-record")}
+          className="flex-1 min-w-[120px] md:flex-none"
         >
           ➕ Add Record
         </Button>
         <Button
           variant={currentSection === "reports" ? "default" : "outline"}
-          className={`flex-1 min-w-[120px] md:flex-none ${currentSection === "reports" ? "bg-pink-600 hover:bg-pink-700 text-white" : "bg-pink-500 hover:bg-pink-600 text-white"}`}
           onClick={() => switchSection("reports")}
+          className="flex-1 min-w-[120px] md:flex-none"
         >
           📄 Reports
         </Button>
         <Button
           variant={currentSection === "settings" ? "default" : "outline"}
-          className={`flex-1 min-w-[120px] md:flex-none ${currentSection === "settings" ? "bg-emerald-600 hover:bg-emerald-700 text-white" : "bg-emerald-500 hover:bg-emerald-600 text-white"}`}
           onClick={() => switchSection("settings")}
+          className="flex-1 min-w-[120px] md:flex-none"
         >
           ⚙️ Settings
         </Button>
         <Button
           variant={currentSection === "certificates" ? "default" : "outline"}
-          className={`flex-1 min-w-[120px] md:flex-none ${currentSection === "certificates" ? "bg-cyan-600 hover:bg-cyan-700 text-white" : "bg-cyan-500 hover:bg-cyan-600 text-white"}`}
           onClick={() => switchSection("certificates")}
+          className="flex-1 min-w-[120px] md:flex-none"
         >
           📜 Certificates
         </Button>
         <Button
           variant={currentSection === "about-egrs" ? "default" : "outline"}
-          className={`flex-1 min-w-[120px] md:flex-none ${currentSection === "about-egrs" ? "bg-lime-600 hover:bg-lime-700 text-white" : "bg-lime-500 hover:bg-lime-600 text-white"}`}
           onClick={() => switchSection("about-egrs")}
+          className="flex-1 min-w-[120px] md:flex-none"
         >
           🧾 About eGRS
         </Button>

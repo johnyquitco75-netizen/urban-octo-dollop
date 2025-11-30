@@ -133,28 +133,100 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     const root = document.documentElement;
     const themes: { [key: string]: { [key: string]: string } } = {
       default: {
-        '--primary': '222.2 47.4% 11.2%', '--primary-foreground': '210 40% 98%',
-        '--secondary': '210 40% 96.1%', '--secondary-foreground': '222.2 47.4% 11.2%',
-        '--sidebar-background': '0 0% 98%', '--sidebar-foreground': '240 5.3% 26.1%',
-        '--sidebar-primary': '240 5.9% 10%', '--sidebar-primary-foreground': '0 0% 98%',
-        '--sidebar-accent': '240 4.8% 95.9%', '--sidebar-accent-foreground': '240 5.9% 10%',
-        '--sidebar-border': '220 13% 91%', '--sidebar-ring': '217.2 91.2% 59.8%',
+        // Base colors from globals.css :root
+        '--background': '0 0% 100%',
+        '--foreground': '222.2 84% 4.9%',
+        '--card': '0 0% 100%',
+        '--card-foreground': '222.2 84% 4.9%',
+        '--popover': '0 0% 100%',
+        '--popover-foreground': '222.2 84% 4.9%',
+        '--primary': '245 65% 50%', // Representative indigo/purple for default theme
+        '--primary-foreground': '210 40% 98%', // White
+        '--secondary': '210 40% 96.1%',
+        '--secondary-foreground': '222.2 47.4% 11.2%',
+        '--muted': '210 40% 96.1%',
+        '--muted-foreground': '215.4 16.3% 46.9%',
+        '--accent': '210 40% 96.1%',
+        '--accent-foreground': '222.2 47.4% 11.2%',
+        '--destructive': '0 84.2% 60.2%',
+        '--destructive-foreground': '210 40% 98%',
+        '--border': '214.3 31.8% 91.4%',
+        '--input': '214.3 31.8% 91.4%',
+        '--ring': '222.2 84% 4.9%',
+        '--radius': '0.5rem',
+        // Sidebar colors for default
+        '--sidebar-background': '0 0% 98%',
+        '--sidebar-foreground': '240 5.3% 26.1%',
+        '--sidebar-primary': '240 5.9% 10%',
+        '--sidebar-primary-foreground': '0 0% 98%',
+        '--sidebar-accent': '240 4.8% 95.9%',
+        '--sidebar-accent-foreground': '240 5.9% 10%',
+        '--sidebar-border': '220 13% 91%',
+        '--sidebar-ring': '217.2 91.2% 59.8%',
       },
       green: {
-        '--primary': '142.1 76.2% 36.3%', '--primary-foreground': '355.7 100% 97.3%',
-        '--secondary': '142.1 76.2% 36.3% / 0.1', '--secondary-foreground': '142.1 76.2% 36.3%',
-        '--sidebar-background': '142.1 76.2% 36.3%', '--sidebar-foreground': '0 0% 98%',
-        '--sidebar-primary': '142.1 76.2% 36.3%', '--sidebar-primary-foreground': '0 0% 98%',
-        '--sidebar-accent': '142.1 76.2% 36.3% / 0.1', '--sidebar-accent-foreground': '142.1 76.2% 36.3%',
-        '--sidebar-border': '142.1 76.2% 36.3% / 0.2', '--sidebar-ring': '142.1 76.2% 36.3%',
+        // Base colors (can inherit or redefine if needed)
+        '--background': '0 0% 100%',
+        '--foreground': '222.2 84% 4.9%',
+        '--card': '0 0% 100%',
+        '--card-foreground': '222.2 84% 4.9%',
+        '--popover': '0 0% 100%',
+        '--popover-foreground': '222.2 84% 4.9%',
+        '--muted': '210 40% 96.1%',
+        '--muted-foreground': '215.4 16.3% 46.9%',
+        '--accent': '210 40% 96.1%',
+        '--accent-foreground': '222.2 47.4% 11.2%',
+        '--destructive': '0 84.2% 60.2%',
+        '--destructive-foreground': '210 40% 98%',
+        '--border': '214.3 31.8% 91.4%',
+        '--input': '214.3 31.8% 91.4%',
+        '--ring': '222.2 84% 4.9%',
+        '--radius': '0.5rem',
+        // Green specific colors
+        '--primary': '142.1 76.2% 36.3%', // A strong green
+        '--primary-foreground': '0 0% 98%', // White
+        '--secondary': '142.1 76.2% 36.3% / 0.1', // Light green tint
+        '--secondary-foreground': '142.1 76.2% 36.3%', // Dark green text
+        '--sidebar-background': '142.1 76.2% 36.3%', // Green sidebar
+        '--sidebar-foreground': '0 0% 98%', // White text
+        '--sidebar-primary': '142.1 76.2% 36.3%', // Green primary for sidebar
+        '--sidebar-primary-foreground': '0 0% 98%', // White
+        '--sidebar-accent': '142.1 76.2% 36.3% / 0.1', // Light green accent
+        '--sidebar-accent-foreground': '142.1 76.2% 36.3%', // Dark green
+        '--sidebar-border': '142.1 76.2% 36.3% / 0.2',
+        '--sidebar-ring': '142.1 76.2% 36.3%',
       },
       purple: {
-        '--primary': '262.1 83.3% 57.8%', '--primary-foreground': '210 40% 98%',
-        '--secondary': '262.1 83.3% 57.8% / 0.1', '--secondary-foreground': '262.1 83.3% 57.8%',
-        '--sidebar-background': '262.1 83.3% 57.8%', '--sidebar-foreground': '210 40% 98%',
-        '--sidebar-primary': '262.1 83.3% 57.8%', '--sidebar-primary-foreground': '210 40% 98%',
-        '--sidebar-accent': '262.1 83.3% 57.8% / 0.1', '--sidebar-accent-foreground': '262.1 83.3% 57.8%',
-        '--sidebar-border': '262.1 83.3% 57.8% / 0.2', '--sidebar-ring': '262.1 83.3% 57.8%',
+        // Base colors (can inherit or redefine if needed)
+        '--background': '0 0% 100%',
+        '--foreground': '222.2 84% 4.9%',
+        '--card': '0 0% 100%',
+        '--card-foreground': '222.2 84% 4.9%',
+        '--popover': '0 0% 100%',
+        '--popover-foreground': '222.2 84% 4.9%',
+        '--muted': '210 40% 96.1%',
+        '--muted-foreground': '215.4 16.3% 46.9%',
+        '--accent': '210 40% 96.1%',
+        '--accent-foreground': '222.2 47.4% 11.2%',
+        '--destructive': '0 84.2% 60.2%',
+        '--destructive-foreground': '210 40% 98%',
+        '--border': '214.3 31.8% 91.4%',
+        '--input': '214.3 31.8% 91.4%',
+        '--ring': '222.2 84% 4.9%',
+        '--radius': '0.5rem',
+        // Purple specific colors
+        '--primary': '262.1 83.3% 57.8%', // A strong purple
+        '--primary-foreground': '210 40% 98%', // White
+        '--secondary': '262.1 83.3% 57.8% / 0.1', // Light purple tint
+        '--secondary-foreground': '262.1 83.3% 57.8%', // Dark purple text
+        '--sidebar-background': '262.1 83.3% 57.8%', // Purple sidebar
+        '--sidebar-foreground': '210 40% 98%', // White text
+        '--sidebar-primary': '262.1 83.3% 57.8%', // Purple primary for sidebar
+        '--sidebar-primary-foreground': '210 40% 98%', // White
+        '--sidebar-accent': '262.1 83.3% 57.8% / 0.1', // Light purple accent
+        '--sidebar-accent-foreground': '262.1 83.3% 57.8%', // Dark purple
+        '--sidebar-border': '262.1 83.3% 57.8% / 0.2',
+        '--sidebar-ring': '262.1 83.3% 57.8%',
       },
     };
 
