@@ -36,30 +36,55 @@ const CameraAttachment: React.FC<CameraAttachmentProps> = ({
   const stopCamera = useCallback(() => {
     if (mediaStreamRef.current) {
       mediaStreamRef.current.getTracks().forEach(track => track.stop());
-      mediaStreamRef.current = null;
+      mediaStreamRef.current = null; // Clear the stream reference
     }
     if (videoRef.current) {
       videoRef.current.srcObject = null;
-      // Removed event listener as handleLoadedMetadata is no longer used
     }
     setIsCameraActive(false);
     setIsVideoReady(false); // Reset isVideoReady when camera stops
   }, [mediaStreamRef, videoRef, setIsCameraActive, setIsVideoReady]);
+
+  // Effect to attach/detach the media stream to the video element
+  useEffect(() => {
+    const videoElement = videoRef.current;
+    const mediaStream = mediaStreamRef.current;
+
+    if (isCameraActive && videoElement && mediaStream) {
+      videoElement.srcObject = mediaStream;
+      // Relying on autoplay and playsInline attributes for video playback
+      // Set video ready here, after srcObject is assigned
+      setIsVideoReady(true); 
+    } else if (!isCameraActive && videoElement) {
+      // When camera is deactivated, clear srcObject
+      videoElement.srcObject = null;
+    }
+
+    // Cleanup for this specific effect
+    return () => {
+      if (videoElement) {
+        videoElement.srcObject = null;
+      }
+    };
+  }, [isCameraActive, videoRef, mediaStreamRef, setIsVideoReady]);
+
+  // Effect to stop camera when component unmounts
+  useEffect(() => {
+    return () => {
+      stopCamera();
+    };
+  }, [stopCamera]);
 
   const startCamera = async () => {
     try {
       stopCamera(); // Always stop existing stream first
 
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      mediaStreamRef.current = stream;
+      mediaStreamRef.current = stream; // Store the stream in ref
 
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        // Relying on autoplay and playsInline attributes for video playback
-      }
-      setIsCameraActive(true); // Camera is now active
+      setIsCameraActive(true); // This will trigger the useEffect above to attach the stream
       setIsPhotoCaptured(false); // No photo captured yet
-      setIsVideoReady(true); // Set video ready immediately after stream is attached, mirroring HTML behavior
+      // isVideoReady will be set to true in the useEffect after srcObject is assigned
     } catch (error) {
       console.error('Error accessing camera:', error);
       showAlert('Unable to access camera. Please check browser permissions and ensure no other application is using the camera.', 'error');
@@ -103,12 +128,6 @@ const CameraAttachment: React.FC<CameraAttachmentProps> = ({
     setIsPhotoCaptured(false);
     startCamera();
   };
-
-  useEffect(() => {
-    return () => {
-      stopCamera();
-    };
-  }, [stopCamera]);
 
   return (
     <div className="p-6 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl text-center bg-gray-50 dark:bg-gray-800">
