@@ -696,8 +696,10 @@ export const PwaApp = () => {
     } else if (reportType === 'custom') {
       if (reportFromDate && reportToDate) {
         filteredRecords = filteredRecords.filter(r => {
-          const recordDate = new Date(r.dateTime);
-          return recordDate >= new Date(reportFromDate) && recordDate <= new Date(reportToDate);
+          const recordDate = new Date(reportFromDate);
+          const toDate = new Date(reportToDate);
+          toDate.setHours(23, 59, 59, 999); // Include the entire end day
+          return recordDate >= new Date(reportFromDate) && recordDate <= toDate;
         });
       }
     }
@@ -936,7 +938,7 @@ export const PwaApp = () => {
               th { background: #f9fafb; font-weight: 600; color: #374151; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; }
               tr:nth-child(even) { background-color: #fcfcfc; }
               .print-signatures { margin-top: 4rem; display: flex; justify-content: space-between; page-break-inside: avoid; gap: 4rem; padding: 0 2rem; }
-              .signature-block { text-align: center; min-width: 200px; flex: 1; }
+              .signature-block { text-align: center; min-w: 200px; flex: 1; }
               .signature-name { font-weight: bold; color: #000; margin-bottom: 0.5rem; font-size: 12pt; text-transform: uppercase; letter-spacing: 1px; }
               .signature-line { border-bottom: 2px solid #000; margin-bottom: 0.5rem; height: 50px; width: 100%; }
               .signature-title { font-weight: 600; color: #000; font-size: 11pt; margin-top: 0.5rem; }
@@ -1556,7 +1558,7 @@ This certification is issued upon the request of the above-mentioned student for
               <img
                 id="dashboardLogo"
                 className="w-24 h-24 rounded-xl object-cover border-2 border-gray-200 dark:border-gray-700"
-                src={logoData || "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiByeD0iMTIiIGZpbGw9IiM0ZjQ2ZTUiLz4KPHN2ZyB4PSIyNSIgeT0iMjUiIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+CjxwYXRoIGQ9Im0xNCAyLTMgMyAyLjUgMi41TDEwIDExbDMgMyA0LTQgMi41IDIuNUwyMiA5eiIvPgo8cGF0aCBkPSJtNSAxMS0zIDNMMTAgMjIgMTMgMTkgNS41IDExLjVaIi8+CjxwYXRoIGQ9Im0yIDEzIDMgM0w5IDEyIDYgOXoiLz4KPC9zdmc+Cjwvc3ZnPgo="}
+                src={logoData || "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiByeD0iMTIiIGZpbGw9IiM0ZjQ2ZTUiLz4KPHN2ZyB4PSIyNSIgeT0iMjUiIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+CjxwYXRoIGQ9Im0xNCAyLTMgMyAyLjUgMi41TDEwIDExbDMgMyA0LTQgMi41IDIuNUwyMiA5eiIvPgo8cGF0aCBkPSJmNSAxMS0zIDNMMTAgMjIgMTMgMTkgNS41IDExLjVaIi8+CjxwYXRoIGQ9Im0yIDEzIDMgM0w5IDEyIDYgOXoiLz4KPC9zdmc+Cjwvc3ZnPgo="}
                 alt="School Logo"
               />
               <div className="flex-1 text-center md:text-left">
@@ -1844,7 +1846,6 @@ This certification is issued upon the request of the above-mentioned student for
                       <SelectValue placeholder="Select Grade" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Select Grade</SelectItem>
                       {Array.from({ length: 12 }, (_, i) => `Grade ${i + 1}`).map(grade => (
                         <SelectItem key={grade} value={grade}>{grade}</SelectItem>
                       ))}
@@ -1891,7 +1892,6 @@ This certification is issued upon the request of the above-mentioned student for
                     <SelectValue placeholder="Select Violation Type" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Select Violation Type</SelectItem>
                     <SelectItem value="Late Arrival">Late Arrival</SelectItem>
                     <SelectItem value="Uniform Violation">Uniform Violation</SelectItem>
                     <SelectItem value="Disruptive Behavior">Disruptive Behavior</SelectItem>
@@ -2090,7 +2090,7 @@ This certification is issued upon the request of the above-mentioned student for
                   <SelectValue placeholder="All Types" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Types</SelectItem>
+                  <SelectItem value="all">All Types</SelectItem> {/* Changed value from empty string to "all" */}
                   <SelectItem value="Late Arrival">Late Arrival</SelectItem>
                   <SelectItem value="Uniform Violation">Uniform Violation</SelectItem>
                   <SelectItem value="Disruptive Behavior">Disruptive Behavior</SelectItem>
