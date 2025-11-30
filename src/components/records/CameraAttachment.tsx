@@ -78,11 +78,22 @@ const CameraAttachment: React.FC<CameraAttachmentProps> = ({
     const video = videoRef.current;
     const canvas = canvasRef.current;
     if (video && canvas && isVideoReady) {
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
+      const videoWidth = video.videoWidth;
+      const videoHeight = video.videoHeight;
+
+      // Determine the size for a square crop
+      const size = Math.min(videoWidth, videoHeight);
+
+      canvas.width = size;
+      canvas.height = size;
+
       const ctx = canvas.getContext('2d');
       if (ctx) {
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        // Calculate source x, y to center the square crop
+        const sx = (videoWidth - size) / 2;
+        const sy = (videoHeight - size) / 2;
+
+        ctx.drawImage(video, sx, sy, size, size, 0, 0, size, size); // Draw cropped square
         const photoData = canvas.toDataURL('image/jpeg', 0.8);
         setCapturedPhoto(photoData);
         setIsPhotoCaptured(true);
@@ -109,10 +120,10 @@ const CameraAttachment: React.FC<CameraAttachmentProps> = ({
     <div className="p-6 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl text-center bg-gray-50 dark:bg-gray-800">
       <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">📸 Attach Photo (Optional)</h4>
       {isCameraActive && (
-        <video ref={videoRef} className="w-full max-h-80 object-cover rounded-lg shadow-md mb-4" autoPlay playsInline></video>
+        <video ref={videoRef} className="w-full max-h-80 object-cover rounded-lg shadow-md mb-4 aspect-square mx-auto" autoPlay playsInline></video>
       )}
       {isPhotoCaptured && capturedPhoto && (
-        <img src={capturedPhoto} className="w-full max-h-80 object-cover rounded-lg shadow-md mb-4" alt="Captured" />
+        <img src={capturedPhoto} className="w-full max-h-80 object-cover rounded-lg shadow-md mb-4 aspect-square mx-auto" alt="Captured" />
       )}
       <canvas ref={canvasRef} className="hidden"></canvas>
       <div className="flex justify-center gap-3 flex-wrap">

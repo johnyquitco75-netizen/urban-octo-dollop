@@ -26,6 +26,7 @@ export const PwaApp = () => {
     schoolName, customPhrase, logoData,
     showAlert,
     loadSettings, loadCustomViolations,
+    isAppInitialized, // New: Import isAppInitialized
   } = useAppContext();
 
   const [currentTime, setCurrentTime] = useState("");
@@ -60,13 +61,21 @@ export const PwaApp = () => {
     }
   }, [isLoggedIn, updateDateTime, loadSettings, loadCustomViolations]);
 
-  // --- Navigation ---
-  const switchSection = (sectionName: string) => {
-    setCurrentSection(sectionName);
-  };
-
   if (!isLoggedIn) {
     return <LoginScreen />;
+  }
+
+  // New: Show loading state if app is not yet initialized
+  if (!isAppInitialized) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
+        <Card className="p-8 rounded-2xl shadow-lg text-center">
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">Loading Application...</h1>
+          <p className="text-gray-600 dark:text-gray-300">Please wait while we prepare your data.</p>
+          {/* You could add a spinner here if desired */}
+        </Card>
+      </div>
+    );
   }
 
   return (
@@ -150,7 +159,7 @@ export const PwaApp = () => {
 
       <PhotoModal />
       <ConfirmModal />
-      <PwaInstallPrompt /> {/* Add the PWA install prompt component */}
+      <PwaInstallPrompt />
 
       <MadeWithDyad />
     </div>

@@ -42,6 +42,7 @@ interface AppContextType {
   confirmMessage: string;
   setConfirmMessage: (message: string) => void;
   confirmActionRef: React.MutableRefObject<(() => void) | null>;
+  isAppInitialized: boolean; // New: Track if app is fully initialized
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -71,6 +72,8 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [confirmMessage, setConfirmMessage] = useState("");
   const confirmActionRef = useRef<(() => void) | null>(null);
+
+  const [isAppInitialized, setIsAppInitialized] = useState(false); // New state
 
   const showAlert = useCallback((message: string, type: "success" | "error" | "info") => {
     if (type === "success") showSuccess(message);
@@ -115,9 +118,11 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
         await loadSettings();
         await loadCustomViolations();
         showAlert('App loaded successfully!', 'success');
+        setIsAppInitialized(true); // Set to true on successful initialization
       } catch (error) {
         console.error('Failed to initialize app:', error);
         showAlert('Failed to initialize app. Please refresh the page.', 'error');
+        setIsAppInitialized(false); // Ensure it's false on failure
       }
     };
     initApp();
@@ -184,6 +189,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     isConfirmModalOpen, setIsConfirmModalOpen,
     confirmMessage, setConfirmMessage,
     confirmActionRef,
+    isAppInitialized, // New: Export isAppInitialized
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
