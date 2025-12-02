@@ -12,9 +12,11 @@ const SettingsSection = () => {
   const {
     db, showAlert, currentUserRole,
     schoolName, setSchoolName,
-    schoolAddress, setSchoolAddress, // Added schoolAddress
+    schoolAddress, setSchoolAddress,
     customPhrase, setCustomPhrase,
     logoData, setLogoData,
+    leftHeaderLogoData, setLeftHeaderLogoData, // New state
+    rightHeaderLogoData, setRightHeaderLogoData, // New state
     guidanceOfficer, setGuidanceOfficer,
     cpcGuidanceOfficerName, setCpcGuidanceOfficerName,
     principalName, setPrincipalName,
@@ -29,8 +31,10 @@ const SettingsSection = () => {
 
   const saveSettings = async () => {
     await db.setSetting('schoolName', schoolName);
-    await db.setSetting('schoolAddress', schoolAddress); // Save school address
+    await db.setSetting('schoolAddress', schoolAddress);
     await db.setSetting('customPhrase', customPhrase);
+    await db.setSetting('leftHeaderLogoData', leftHeaderLogoData); // Save new setting
+    await db.setSetting('rightHeaderLogoData', rightHeaderLogoData); // Save new setting
     await db.setSetting('guidanceOfficer', guidanceOfficer);
     await db.setSetting('cpcGuidanceOfficerName', cpcGuidanceOfficerName);
     await db.setSetting('principalName', principalName);
@@ -40,7 +44,7 @@ const SettingsSection = () => {
     loadSettings(); // Reload settings to ensure UI reflects changes
   };
 
-  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'school' | 'leftHeader' | 'rightHeader') => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -52,9 +56,17 @@ const SettingsSection = () => {
     const reader = new FileReader();
     reader.onload = async (e) => {
       const data = e.target?.result as string;
-      setLogoData(data);
-      await db.setSetting('logoData', data);
-      showAlert('Logo uploaded successfully!', 'success');
+      if (type === 'school') {
+        setLogoData(data);
+        await db.setSetting('logoData', data);
+      } else if (type === 'leftHeader') {
+        setLeftHeaderLogoData(data);
+        await db.setSetting('leftHeaderLogoData', data);
+      } else if (type === 'rightHeader') {
+        setRightHeaderLogoData(data);
+        await db.setSetting('rightHeaderLogoData', data);
+      }
+      showAlert('Image uploaded successfully!', 'success');
     };
     reader.readAsDataURL(file);
   };
@@ -134,12 +146,12 @@ const SettingsSection = () => {
 
       <div>
         <Label htmlFor="customPhrase" className="block text-gray-700 dark:text-gray-200 text-sm font-semibold mb-2">
-          Custom Phrase
+          Custom Phrase (for App Header)
         </Label>
         <Input
           id="customPhrase"
           type="text"
-          placeholder="Enter custom phrase for header"
+          placeholder="Enter custom phrase for app header"
           value={customPhrase}
           onChange={(e) => setCustomPhrase(e.target.value)}
           className="w-full"
@@ -148,19 +160,55 @@ const SettingsSection = () => {
 
       <div>
         <Label htmlFor="logoUpload" className="block text-gray-700 dark:text-gray-200 text-sm font-semibold mb-2">
-          School Logo
+          School Logo (for Dashboard)
         </Label>
         <div
           className="p-6 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl text-center cursor-pointer bg-gray-50 dark:bg-gray-800 hover:border-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-950 transition-all"
-          onClick={() => document.getElementById('logoFileInput')?.click()}
+          onClick={() => document.getElementById('schoolLogoFileInput')?.click()}
         >
           <div className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">📁 Click to upload school logo</div>
           <div className="text-sm text-gray-600 dark:text-gray-400">Recommended: PNG or JPG, max 2MB</div>
         </div>
-        <Input type="file" id="logoFileInput" accept="image/*" className="hidden" onChange={handleLogoUpload} />
+        <Input type="file" id="schoolLogoFileInput" accept="image/*" className="hidden" onChange={(e) => handleLogoUpload(e, 'school')} />
         {logoData && (
-          <img src={logoData} className="max-w-[200px] mt-4 rounded-xl shadow-md border border-gray-200 dark:border-gray-700" alt="Logo Preview" />
+          <img src={logoData} className="max-w-[200px] mt-4 rounded-xl shadow-md border border-gray-200 dark:border-gray-700" alt="School Logo Preview" />
         )}
+      </div>
+
+      {/* New Header Image Uploads */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <Label htmlFor="leftHeaderLogoUpload" className="block text-gray-700 dark:text-gray-200 text-sm font-semibold mb-2">
+            Left Header Logo (for Reports/Certificates)
+          </Label>
+          <div
+            className="p-6 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl text-center cursor-pointer bg-gray-50 dark:bg-gray-800 hover:border-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-950 transition-all"
+            onClick={() => document.getElementById('leftHeaderLogoFileInput')?.click()}
+          >
+            <div className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">📁 Upload Left Logo</div>
+            <div className="text-sm text-gray-600 dark:text-gray-400">Recommended: PNG or JPG, max 2MB</div>
+          </div>
+          <Input type="file" id="leftHeaderLogoFileInput" accept="image/*" className="hidden" onChange={(e) => handleLogoUpload(e, 'leftHeader')} />
+          {leftHeaderLogoData && (
+            <img src={leftHeaderLogoData} className="max-w-[100px] mt-4 rounded-xl shadow-md border border-gray-200 dark:border-gray-700" alt="Left Header Logo Preview" />
+          )}
+        </div>
+        <div>
+          <Label htmlFor="rightHeaderLogoUpload" className="block text-gray-700 dark:text-gray-200 text-sm font-semibold mb-2">
+            Right Header Logo (for Reports/Certificates)
+          </Label>
+          <div
+            className="p-6 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl text-center cursor-pointer bg-gray-50 dark:bg-gray-800 hover:border-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-950 transition-all"
+            onClick={() => document.getElementById('rightHeaderLogoFileInput')?.click()}
+          >
+            <div className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">📁 Upload Right Logo</div>
+            <div className="text-sm text-gray-600 dark:text-gray-400">Recommended: PNG or JPG, max 2MB</div>
+          </div>
+          <Input type="file" id="rightHeaderLogoFileInput" accept="image/*" className="hidden" onChange={(e) => handleLogoUpload(e, 'rightHeader')} />
+          {rightHeaderLogoData && (
+            <img src={rightHeaderLogoData} className="max-w-[100px] mt-4 rounded-xl shadow-md border border-gray-200 dark:border-gray-700" alt="Right Header Logo Preview" />
+          )}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

@@ -10,7 +10,7 @@ import { useAppContext } from "@/context/AppContext";
 import { jsPDF } from 'jspdf';
 
 const ReportsSection = () => {
-  const { db, showAlert, customViolations, schoolName, logoData, guidanceOfficer, cpcGuidanceOfficerName, principalName, assistantPrincipalName } = useAppContext();
+  const { db, showAlert, customViolations, schoolName, schoolAddress, leftHeaderLogoData, rightHeaderLogoData, guidanceOfficer, cpcGuidanceOfficerName, principalName, assistantPrincipalName } = useAppContext();
 
   // Reports state
   const [reportType, setReportType] = useState("custom");
@@ -105,32 +105,55 @@ const ReportsSection = () => {
   const generatePDFReport = async (records: any[]) => {
     try {
       const pdf = new jsPDF();
-      let yPosition = 20;
+      let yPosition = 10; // Start higher for header
 
-      if (logoData) {
+      // Header Logos and Text
+      if (leftHeaderLogoData) {
         try {
-          pdf.addImage(logoData, 'JPEG', 85, yPosition, 40, 40);
-          yPosition += 50;
+          pdf.addImage(leftHeaderLogoData, 'JPEG', 20, yPosition, 25, 25); // Left logo
         } catch (e) {
-          console.log('Could not add logo to PDF');
+          console.log('Could not add left header logo to PDF');
+        }
+      }
+      if (rightHeaderLogoData) {
+        try {
+          pdf.addImage(rightHeaderLogoData, 'JPEG', 165, yPosition, 25, 25); // Right logo
+        } catch (e) {
+          console.log('Could not add right header logo to PDF');
         }
       }
 
-      pdf.setFontSize(18);
+      yPosition += 5; // Adjust for text below logos
+      pdf.setFontSize(9);
+      pdf.setFont(undefined, 'normal');
+      pdf.text('Republic of the Philippines', 105, yPosition, { align: 'center' });
+      yPosition += 4;
+      pdf.text('Department of Education', 105, yPosition, { align: 'center' });
+      yPosition += 4;
+      pdf.text('Region VII, Central Visayas', 105, yPosition, { align: 'center' });
+      yPosition += 4;
+      pdf.text('Division of Cebu City', 105, yPosition, { align: 'center' });
+      yPosition += 6;
+      pdf.setFontSize(12);
       pdf.setFont(undefined, 'bold');
-      pdf.text(schoolName, 105, yPosition, { align: 'center' });
+      pdf.text(schoolName.toUpperCase(), 105, yPosition, { align: 'center' });
+      yPosition += 5;
+      pdf.setFontSize(9);
+      pdf.setFont(undefined, 'normal');
+      pdf.text(schoolAddress, 105, yPosition, { align: 'center' });
       yPosition += 10;
       pdf.setFontSize(14);
-      pdf.setFont(undefined, 'normal');
+      pdf.setFont(undefined, 'bold');
       pdf.text('E-Guidance Record System Report', 105, yPosition, { align: 'center' });
       yPosition += 15;
+
       pdf.setFontSize(11);
       pdf.setFont(undefined, 'bold');
       pdf.text(`Total Records: ${records.length}`, 190, yPosition, { align: 'right' });
       yPosition += 10;
 
       const headers = ['#', 'NAME', 'TYPE', 'GRADE', 'VIOLATION', 'DATE & TIME', 'DETAILS'];
-      const colWidths = [15, 40, 25, 25, 35, 30, 40];
+      const colWidths = [10, 35, 20, 20, 35, 35, 35]; // Adjusted column widths
       const colPositions = [10];
       for (let i = 0; i < colWidths.length - 1; i++) {
         colPositions.push(colPositions[i] + colWidths[i]);
@@ -150,20 +173,37 @@ const ReportsSection = () => {
       pdf.setFont(undefined, 'normal');
       pdf.setFontSize(8);
       records.forEach((record, index) => {
-        if (yPosition > 270) {
+        if (yPosition > 270) { // Check for page break
           pdf.addPage();
-          yPosition = 20;
+          yPosition = 20; // Reset yPosition for new page
+          // Re-add headers on new page
+          pdf.setFillColor(248, 249, 250);
+          pdf.rect(10, yPosition, 190, 8, 'F');
+          pdf.setFontSize(9);
+          pdf.setFont(undefined, 'bold');
+          headers.forEach((header, idx) => {
+            pdf.text(header, colPositions[idx] + 2, yPosition + 5);
+          });
+          pdf.setLineWidth(0.5);
+          pdf.rect(10, yPosition, 190, 8);
+          yPosition += 8;
+          pdf.setFont(undefined, 'normal');
+          pdf.setFontSize(8);
         }
+        const recordDate = new Date(record.dateTime);
+        const formattedDate = recordDate.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' });
+        const formattedTime = recordDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+
         const rowData = [
           (index + 1).toString(),
           record.name,
           record.type,
           record.gradeLevel || 'N/A',
           record.violationType,
-          `${new Date(record.dateTime).toLocaleDateString()}\n${new Date(record.dateTime).toLocaleTimeString()}`,
+          `${formattedDate}\n${formattedTime}`,
           record.details || 'N/A'
         ];
-        const rowHeight = 12;
+        const rowHeight = 12; // Fixed row height for simplicity, adjust if multi-line details are common
         if (index % 2 === 0) {
           pdf.setFillColor(250, 250, 250);
           pdf.rect(10, yPosition, 190, rowHeight, 'F');
@@ -177,23 +217,38 @@ const ReportsSection = () => {
         yPosition += rowHeight;
       });
 
-      yPosition += 20;
-      const signaturePositions = [40, 80, 120, 160];
-      const officers = [
+      yPosition += 20; // Space before signatures
+
+      // Signature blocks
+      const signatureBlocks = [
         { name: guidanceOfficer, title: 'Guidance Officer' },
         { name: cpcGuidanceOfficerName, title: 'CPC/Guidance Officer' },
         { name: principalName, title: 'Principal' },
         { name: assistantPrincipalName, title: 'Assistant Principal' }
-      ];
-      officers.forEach((officer, index) => {
-        if (officer.name) {
-          pdf.setFont(undefined, 'bold');
-          pdf.text(officer.name.toUpperCase(), signaturePositions[index], yPosition, { align: 'center' });
-          pdf.line(signaturePositions[index] - 30, yPosition + 2, signaturePositions[index] + 30, yPosition + 2);
-          pdf.setFont(undefined, 'normal');
-          pdf.text(officer.title, signaturePositions[index], yPosition + 8, { align: 'center' });
+      ].filter(officer => officer.name); // Only show if name is provided
+
+      const numSignatures = signatureBlocks.length;
+      const blockWidth = 60; // Width for each signature block
+      const spacing = (190 - (numSignatures * blockWidth)) / (numSignatures + 1); // Distribute evenly
+
+      let currentX = 10 + spacing;
+
+      signatureBlocks.forEach((officer, index) => {
+        if (yPosition > 270) { // Check for page break before signatures
+          pdf.addPage();
+          yPosition = 20;
+          currentX = 10 + spacing; // Reset X position for new page
         }
+
+        pdf.setFont(undefined, 'bold');
+        pdf.text(officer.name.toUpperCase(), currentX + (blockWidth / 2), yPosition, { align: 'center' });
+        pdf.line(currentX, yPosition + 2, currentX + blockWidth, yPosition + 2);
+        pdf.setFont(undefined, 'normal');
+        pdf.text(officer.title, currentX + (blockWidth / 2), yPosition + 8, { align: 'center' });
+
+        currentX += blockWidth + spacing;
       });
+
 
       const fileName = `guidance-report-${new Date().toISOString().split('T')[0]}.pdf`;
       pdf.save(fileName);
@@ -230,13 +285,27 @@ const ReportsSection = () => {
   };
 
   const generatePrintPreview = async (records: any[]) => {
-    const content = `
-      <div class="print-header text-center mb-12 border-b-2 border-gray-300 pb-8">
-          ${logoData ? `<img src="${logoData}" class="print-logo w-24 h-24 rounded-xl object-cover mx-auto mb-4 border-2 border-gray-300" alt="School Logo">` : ''}
-          <h1 class="text-3xl font-bold text-gray-900">${schoolName}</h1>
-          <h2 class="text-xl text-gray-700 mt-2">E-Guidance Record System Report</h2>
-          <div class="text-lg text-gray-600 mt-4">Total Records: ${records.length}</div>
+    const headerHtml = `
+      <div class="header-section" style="display: flex; justify-content: center; align-items: flex-start; margin-bottom: 20px; position: relative;">
+          ${leftHeaderLogoData ? `<img src="${leftHeaderLogoData}" class="header-logo left-logo" style="position: absolute; left: 20px; top: 0; width: 60px; height: 60px; object-fit: contain;" alt="Left Logo">` : ''}
+          <div class="text-center" style="flex-grow: 1;">
+              <p style="margin: 0; font-size: 10pt;">Republic of the Philippines</p>
+              <p style="margin: 0; font-size: 10pt;">Department of Education</p>
+              <p style="margin: 0; font-size: 10pt;">Region VII, Central Visayas</p>
+              <p style="margin: 0; font-size: 10pt;">Division of Cebu City</p>
+              <p style="margin: 0; font-size: 12pt; font-weight: bold; margin-top: 5px;">${schoolName.toUpperCase()}</p>
+              <p style="margin: 0; font-size: 10pt;">${schoolAddress}</p>
+          </div>
+          ${rightHeaderLogoData ? `<img src="${rightHeaderLogoData}" class="header-logo right-logo" style="position: absolute; right: 20px; top: 0; width: 60px; height: 60px; object-fit: contain;" alt="Right Logo">` : ''}
       </div>
+      <div class="text-center mb-8">
+          <h2 class="text-xl font-bold text-gray-900 mt-4">E-Guidance Record System Report</h2>
+          <div class="text-lg text-gray-600 mt-4 text-right" style="padding-right: 20px;">Total Records: ${records.length}</div>
+      </div>
+    `;
+
+    const content = `
+      ${headerHtml}
       <div class="overflow-x-auto">
         <table class="w-full border-collapse mt-4 bg-white rounded-lg shadow-sm">
             <thead>
@@ -259,8 +328,8 @@ const ReportsSection = () => {
                         <td class="py-3 px-4">${record.gradeLevel || 'N/A'}</td>
                         <td class="py-3 px-4">${record.violationType}</td>
                         <td class="py-3 px-4">
-                            ${new Date(record.dateTime).toLocaleDateString()}<br>
-                            ${new Date(record.dateTime).toLocaleTimeString()}
+                            ${new Date(record.dateTime).toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' })}<br>
+                            ${new Date(record.dateTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}
                         </td>
                         <td class="py-3 px-4 text-gray-600">${record.details || 'N/A'}</td>
                     </tr>
@@ -268,7 +337,7 @@ const ReportsSection = () => {
             </tbody>
         </table>
       </div>
-      <div class="flex justify-between mt-16 gap-16 px-8 print:flex-wrap print:gap-8">
+      <div class="flex justify-around mt-16 gap-8 px-8 print:flex-wrap print:gap-8">
           ${guidanceOfficer ? `
               <div class="flex-1 text-center min-w-[200px]">
                   <div class="font-bold text-black text-lg uppercase tracking-wide mb-2">${guidanceOfficer.toUpperCase()}</div>
@@ -313,8 +382,12 @@ const ReportsSection = () => {
             <style>
               @page { size: A4; margin: 20mm; }
               body { font-family: sans-serif; margin: 0; padding: 0; }
-              .print-header { text-align: center; margin-bottom: 3rem; border-bottom: 2px solid #e5e7eb; padding-bottom: 2rem; }
-              .print-logo { width: 100px; height: 100px; border-radius: 12px; object-fit: cover; margin: 0 auto 1rem; display: block; border: 2px solid #e5e7eb; }
+              .header-section { display: flex; justify-content: center; align-items: flex-start; margin-bottom: 20px; position: relative; }
+              .header-logo { position: absolute; width: 60px; height: 60px; object-fit: contain; }
+              .left-logo { left: 20px; top: 0; }
+              .right-logo { right: 20px; top: 0; }
+              .text-center { text-align: center; }
+              .mb-8 { margin-bottom: 2rem; }
               h1 { font-size: 24pt; font-weight: bold; margin-bottom: 0.5rem; color: #1f2937; }
               h2 { font-size: 16pt; margin-bottom: 1rem; color: #4b5563; }
               .total-records { font-size: 12pt; color: #6b7280; }

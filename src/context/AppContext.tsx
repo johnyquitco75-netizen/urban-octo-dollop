@@ -15,12 +15,16 @@ interface AppContextType {
   db: typeof db;
   schoolName: string;
   setSchoolName: (name: string) => void;
-  schoolAddress: string; // Added schoolAddress
-  setSchoolAddress: (address: string) => void; // Added setter for schoolAddress
+  schoolAddress: string;
+  setSchoolAddress: (address: string) => void;
   customPhrase: string;
   setCustomPhrase: (phrase: string) => void;
   logoData: string | null;
   setLogoData: (data: string | null) => void;
+  leftHeaderLogoData: string | null; // New state for left header logo
+  setLeftHeaderLogoData: (data: string | null) => void; // Setter for left header logo
+  rightHeaderLogoData: string | null; // New state for right header logo
+  setRightHeaderLogoData: (data: string | null) => void; // Setter for right header logo
   guidanceOfficer: string;
   setGuidanceOfficer: (name: string) => void;
   cpcGuidanceOfficerName: string;
@@ -59,9 +63,11 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Settings state
   const [schoolName, setSchoolName] = useState("Sample Elementary School");
-  const [schoolAddress, setSchoolAddress] = useState("Rizal Street, Brgy. III, Poblacion, Pontevedra, Negros Occidental"); // Initial state for school address
+  const [schoolAddress, setSchoolAddress] = useState("Rizal Street, Brgy. III, Poblacion, Pontevedra, Negros Occidental");
   const [customPhrase, setCustomPhrase] = useState("add custom phrase here:");
   const [logoData, setLogoData] = useState<string | null>(null);
+  const [leftHeaderLogoData, setLeftHeaderLogoData] = useState<string | null>(null); // New state
+  const [rightHeaderLogoData, setRightHeaderLogoData] = useState<string | null>(null); // New state
   const [guidanceOfficer, setGuidanceOfficer] = useState("");
   const [cpcGuidanceOfficerName, setCpcGuidanceOfficerName] = useState("");
   const [principalName, setPrincipalName] = useState("");
@@ -87,9 +93,11 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
 
   const loadSettings = useCallback(async () => {
     const savedSchoolName = await db.getSetting('schoolName') || 'Sample Elementary School';
-    const savedSchoolAddress = await db.getSetting('schoolAddress') || 'Rizal Street, Brgy. III, Poblacion, Pontevedra, Negros Occidental'; // Load school address
+    const savedSchoolAddress = await db.getSetting('schoolAddress') || 'Rizal Street, Brgy. III, Poblacion, Pontevedra, Negros Occidental';
     const savedCustomPhrase = await db.getSetting('customPhrase') || 'add custom phrase here:';
     const savedLogoData = await db.getSetting('logoData');
+    const savedLeftHeaderLogoData = await db.getSetting('leftHeaderLogoData'); // Load new setting
+    const savedRightHeaderLogoData = await db.getSetting('rightHeaderLogoData'); // Load new setting
     const savedGuidanceOfficer = await db.getSetting('guidanceOfficer') || '';
     const savedCpcOfficer = await db.getSetting('cpcGuidanceOfficerName') || '';
     const savedPrincipal = await db.getSetting('principalName') || '';
@@ -97,9 +105,11 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     const savedTheme = await db.getSetting('theme') || 'default';
 
     setSchoolName(savedSchoolName);
-    setSchoolAddress(savedSchoolAddress); // Set school address
+    setSchoolAddress(savedSchoolAddress);
     setCustomPhrase(savedCustomPhrase);
     setLogoData(savedLogoData);
+    setLeftHeaderLogoData(savedLeftHeaderLogoData); // Set new state
+    setRightHeaderLogoData(savedRightHeaderLogoData); // Set new state
     setGuidanceOfficer(savedGuidanceOfficer);
     setCpcGuidanceOfficerName(savedCpcOfficer);
     setPrincipalName(savedPrincipal);
@@ -122,12 +132,12 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
         }
         await loadSettings();
         await loadCustomViolations();
-        setIsAppInitialized(true); // Set to true on successful initialization
+        setIsAppInitialized(true);
         showAlert('App loaded successfully!', 'success');
       } catch (error) {
         console.error('Failed to initialize app:', error);
         showAlert('Failed to initialize app. Please refresh the page.', 'error');
-        setIsAppInitialized(false); // Ensure it's false on failure
+        setIsAppInitialized(false);
       }
     };
     initApp();
@@ -251,9 +261,11 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     showAlert,
     db,
     schoolName, setSchoolName,
-    schoolAddress, setSchoolAddress, // Added to context value
+    schoolAddress, setSchoolAddress,
     customPhrase, setCustomPhrase,
     logoData, setLogoData,
+    leftHeaderLogoData, setLeftHeaderLogoData, // Added to context value
+    rightHeaderLogoData, setRightHeaderLogoData, // Added to context value
     guidanceOfficer, setGuidanceOfficer,
     cpcGuidanceOfficerName, setCpcGuidanceOfficerName,
     principalName, setPrincipalName,

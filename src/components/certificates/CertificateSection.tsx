@@ -10,7 +10,7 @@ import { useAppContext } from "@/context/AppContext";
 import { jsPDF } from 'jspdf';
 
 const CertificateSection = () => {
-  const { db, showAlert, schoolName, logoData, guidanceOfficer, cpcGuidanceOfficerName, principalName, assistantPrincipalName } = useAppContext();
+  const { db, showAlert, schoolName, schoolAddress, leftHeaderLogoData, rightHeaderLogoData, guidanceOfficer, cpcGuidanceOfficerName, principalName, assistantPrincipalName } = useAppContext();
 
   // Certificate state
   const [certificateTemplate, setCertificateTemplate] = useState("standard");
@@ -32,22 +32,37 @@ const CertificateSection = () => {
   }, [db]);
 
   const generateCertificateContent = async (studentName: string, certDate: string, isPreview = false) => {
-    const school = schoolName; // Use from context
-    const logo = logoData; // Use from context
-    const guidance = guidanceOfficer; // Use from context
-    const cpc = cpcGuidanceOfficerName; // Use from context
-    const principal = principalName; // Use from context
-    const assistant = assistantPrincipalName; // Use from context
+    const school = schoolName;
+    const address = schoolAddress;
+    const leftLogo = leftHeaderLogoData;
+    const rightLogo = rightHeaderLogoData;
+    const guidance = guidanceOfficer;
+    const cpc = cpcGuidanceOfficerName;
+    const principal = principalName;
+    const assistant = assistantPrincipalName;
+
+    const headerHtml = `
+      <div class="header-section" style="display: flex; justify-content: center; align-items: flex-start; margin-bottom: 20px; position: relative;">
+          ${leftLogo ? `<img src="${leftLogo}" class="header-logo left-logo" style="position: absolute; left: 20px; top: 0; width: 60px; height: 60px; object-fit: contain;" alt="Left Logo">` : ''}
+          <div class="text-center" style="flex-grow: 1;">
+              <p style="margin: 0; font-size: 10pt;">Republic of the Philippines</p>
+              <p style="margin: 0; font-size: 10pt;">Department of Education</p>
+              <p style="margin: 0; font-size: 10pt;">Region VII, Central Visayas</p>
+              <p style="margin: 0; font-size: 10pt;">Division of Cebu City</p>
+              <p style="margin: 0; font-size: 12pt; font-weight: bold; margin-top: 5px;">${school.toUpperCase()}</p>
+              <p style="margin: 0; font-size: 10pt;">${address}</p>
+          </div>
+          ${rightLogo ? `<img src="${rightLogo}" class="header-logo right-logo" style="position: absolute; right: 20px; top: 0; width: 60px; height: 60px; object-fit: contain;" alt="Right Logo">` : ''}
+      </div>
+      <div class="text-center mb-8">
+          <h2 class="text-xl font-bold text-gray-900 mt-4">CERTIFICATE OF GOOD MORAL CHARACTER</h2>
+      </div>
+    `;
 
     let content = '';
     if (certificateTemplate === 'standard') {
       content = `
-        <div class="text-center mb-12 border-b-2 border-gray-300 pb-8">
-            ${logo ? `<img src="${logo}" class="w-32 h-32 rounded-xl object-cover mx-auto mb-4 border-2 border-gray-300" alt="School Logo">` : ''}
-            <div class="text-3xl font-bold text-gray-900 uppercase">${school}</div>
-            <div class="text-xl text-gray-700 mt-2">Office of Student Affairs</div>
-        </div>
-        <div class="text-2xl font-bold text-gray-900 uppercase tracking-wider text-center my-8">CERTIFICATE OF GOOD MORAL CHARACTER</div>
+        ${headerHtml}
         <div class="text-lg text-gray-800 text-justify my-8 leading-relaxed">
             <p>TO WHOM IT MAY CONCERN:</p>
             <p class="mt-8">This is to certify that <span class="font-bold underline text-black">${studentName.toUpperCase()}</span>,
@@ -64,7 +79,7 @@ const CertificateSection = () => {
                 day: 'numeric'
             })}.
         </div>
-        <div class="flex justify-between mt-16 gap-16 px-8 print:flex-wrap print:gap-8">
+        <div class="flex justify-around mt-16 gap-8 px-8 print:flex-wrap print:gap-8">
             ${guidance ? `
                 <div class="flex-1 text-center min-w-[200px]">
                     <div class="font-bold text-black text-lg uppercase tracking-wide mb-2">${guidance.toUpperCase()}</div>
@@ -99,12 +114,7 @@ const CertificateSection = () => {
       const customText = customCertificateContent ||
         'This is to certify that [STUDENT_NAME] has maintained good moral character during their time at [SCHOOL_NAME].';
       content = `
-        <div class="text-center mb-12 border-b-2 border-gray-300 pb-8">
-            ${logo ? `<img src="${logo}" class="w-32 h-32 rounded-xl object-cover mx-auto mb-4 border-2 border-gray-300" alt="School Logo">` : ''}
-            <div class="text-3xl font-bold text-gray-900 uppercase">${school}</div>
-            <div class="text-xl text-gray-700 mt-2">Office of Student Affairs</div>
-        </div>
-        <div class="text-2xl font-bold text-gray-900 uppercase tracking-wider text-center my-8">CERTIFICATE OF GOOD MORAL CHARACTER</div>
+        ${headerHtml}
         <div class="text-lg text-gray-800 text-justify my-8 leading-relaxed">
             <p>${customText
                 .replace(/\[STUDENT_NAME\]/g, `<span class="font-bold underline text-black">${studentName.toUpperCase()}</span>`)
@@ -120,7 +130,7 @@ const CertificateSection = () => {
                 day: 'numeric'
             })}.
         </div>
-        <div class="flex justify-between mt-16 gap-16 px-8 print:flex-wrap print:gap-8">
+        <div class="flex justify-around mt-16 gap-8 px-8 print:flex-wrap print:gap-8">
             ${guidance ? `
                 <div class="flex-1 text-center min-w-[200px]">
                     <div class="font-bold text-black text-lg uppercase tracking-wide mb-2">${guidance.toUpperCase()}</div>
@@ -167,26 +177,44 @@ const CertificateSection = () => {
 
     try {
       const pdf = new jsPDF();
-      let yPosition = 30;
+      let yPosition = 10;
 
-      if (logoData) {
+      // Header Logos and Text
+      if (leftHeaderLogoData) {
         try {
-          pdf.addImage(logoData, 'JPEG', 85, yPosition, 40, 40);
-          yPosition += 50;
+          pdf.addImage(leftHeaderLogoData, 'JPEG', 20, yPosition, 25, 25); // Left logo
         } catch (e) {
-          console.log('Could not add logo to PDF');
+          console.log('Could not add left header logo to PDF');
+        }
+      }
+      if (rightHeaderLogoData) {
+        try {
+          pdf.addImage(rightHeaderLogoData, 'JPEG', 165, yPosition, 25, 25); // Right logo
+        } catch (e) {
+          console.log('Could not add right header logo to PDF');
         }
       }
 
-      pdf.setFontSize(20);
+      yPosition += 5; // Adjust for text below logos
+      pdf.setFontSize(9);
+      pdf.setFont(undefined, 'normal');
+      pdf.text('Republic of the Philippines', 105, yPosition, { align: 'center' });
+      yPosition += 4;
+      pdf.text('Department of Education', 105, yPosition, { align: 'center' });
+      yPosition += 4;
+      pdf.text('Region VII, Central Visayas', 105, yPosition, { align: 'center' });
+      yPosition += 4;
+      pdf.text('Division of Cebu City', 105, yPosition, { align: 'center' });
+      yPosition += 6;
+      pdf.setFontSize(12);
       pdf.setFont(undefined, 'bold');
       pdf.text(schoolName.toUpperCase(), 105, yPosition, { align: 'center' });
+      yPosition += 5;
+      pdf.setFontSize(9);
+      pdf.setFont(undefined, 'normal');
+      pdf.text(schoolAddress, 105, yPosition, { align: 'center' });
       yPosition += 10;
       pdf.setFontSize(14);
-      pdf.setFont(undefined, 'normal');
-      pdf.text('Office of Student Affairs', 105, yPosition, { align: 'center' });
-      yPosition += 20;
-      pdf.setFontSize(18);
       pdf.setFont(undefined, 'bold');
       pdf.text('CERTIFICATE OF GOOD MORAL CHARACTER', 105, yPosition, { align: 'center' });
       yPosition += 25;
@@ -220,21 +248,34 @@ This certification is issued upon the request of the above-mentioned student for
       })}.`, 150, yPosition, { align: 'right' });
       yPosition += 40;
 
-      const signaturePositions = [40, 80, 120, 160];
-      const officers = [
+      // Signature blocks
+      const signatureBlocks = [
         { name: guidanceOfficer, title: 'Guidance Officer' },
         { name: cpcGuidanceOfficerName, title: 'CPC/Guidance Officer' },
         { name: principalName, title: 'Principal' },
         { name: assistantPrincipalName, title: 'Assistant Principal' }
-      ];
-      officers.forEach((officer, index) => {
-        if (officer.name) {
-          pdf.setFont(undefined, 'bold');
-          pdf.text(officer.name.toUpperCase(), signaturePositions[index], yPosition, { align: 'center' });
-          pdf.line(signaturePositions[index] - 30, yPosition + 2, signaturePositions[index] + 30, yPosition + 2);
-          pdf.setFont(undefined, 'normal');
-          pdf.text(officer.title, signaturePositions[index], yPosition + 8, { align: 'center' });
+      ].filter(officer => officer.name); // Only show if name is provided
+
+      const numSignatures = signatureBlocks.length;
+      const blockWidth = 60; // Width for each signature block
+      const spacing = (190 - (numSignatures * blockWidth)) / (numSignatures + 1); // Distribute evenly
+
+      let currentX = 10 + spacing;
+
+      signatureBlocks.forEach((officer, index) => {
+        if (yPosition > 270) { // Check for page break before signatures
+          pdf.addPage();
+          yPosition = 20;
+          currentX = 10 + spacing; // Reset X position for new page
         }
+
+        pdf.setFont(undefined, 'bold');
+        pdf.text(officer.name.toUpperCase(), currentX + (blockWidth / 2), yPosition, { align: 'center' });
+        pdf.line(currentX, yPosition + 2, currentX + blockWidth, yPosition + 2);
+        pdf.setFont(undefined, 'normal');
+        pdf.text(officer.title, currentX + (blockWidth / 2), yPosition + 8, { align: 'center' });
+
+        currentX += blockWidth + spacing;
       });
 
       const fileName = `good-moral-certificate-${previewStudentName.replace(/\s+/g, '-').toLowerCase()}-${new Date().toISOString().split('T')[0]}.pdf`;
@@ -256,6 +297,10 @@ This certification is issued upon the request of the above-mentioned student for
             <style>
               @page { size: A4; margin: 20mm; }
               body { font-family: 'Times New Roman', serif; margin: 0; padding: 0; line-height: 1.6; color: #000; }
+              .header-section { display: flex; justify-content: center; align-items: flex-start; margin-bottom: 20px; position: relative; }
+              .header-logo { position: absolute; width: 60px; height: 60px; object-fit: contain; }
+              .left-logo { left: 20px; top: 0; }
+              .right-logo { right: 20px; top: 0; }
               .text-center { text-align: center; }
               .mb-12 { margin-bottom: 3rem; }
               .border-b-2 { border-bottom-width: 2px; }
@@ -290,7 +335,7 @@ This certification is issued upon the request of the above-mentioned student for
               .text-right { text-align: right; }
               .mt-16 { margin-top: 4rem; }
               .flex { display: flex; }
-              .justify-between { justify-content: space-between; }
+              .justify-around { justify-content: space-around; } /* Changed from justify-between */
               .gap-16 { gap: 4rem; }
               .px-8 { padding-left: 2rem; padding-right: 2rem; }
               .flex-1 { flex: 1 1 0%; }
