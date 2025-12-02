@@ -49,6 +49,15 @@ interface AppContextType {
   setConfirmMessage: (message: string) => void;
   confirmActionRef: React.MutableRefObject<(() => void) | null>;
   isAppInitialized: boolean;
+  // New editable header fields
+  republicText: string;
+  setRepublicText: (text: string) => void;
+  departmentText: string;
+  setDepartmentText: (text: string) => void;
+  regionText: string;
+  setRegionText: (text: string) => void;
+  divisionText: string;
+  setDivisionText: (text: string) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -62,8 +71,8 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   });
 
   // Settings state
-  const [schoolName, setSchoolName] = useState("Sample Elementary School");
-  const [schoolAddress, setSchoolAddress] = useState("Rizal Street, Brgy. III, Poblacion, Pontevedra, Negros Occidental");
+  const [schoolName, setSchoolName] = useState("SAMPLE ELEMENTARY SCHOOL");
+  const [schoolAddress, setSchoolAddress] = useState("Rizal Street, Brgy. III, Poblacion, Pontevedra, Negros Occidental 6105");
   const [customPhrase, setCustomPhrase] = useState("add custom phrase here:");
   const [logoData, setLogoData] = useState<string | null>(null);
   const [leftHeaderLogoData, setLeftHeaderLogoData] = useState<string | null>(null); // New state
@@ -74,6 +83,13 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const [assistantPrincipalName, setAssistantPrincipalName] = useState("");
   const [customViolations, setCustomViolations] = useState<string[]>([]);
   const [currentTheme, setCurrentTheme] = useState("default");
+
+  // New editable header fields
+  const [republicText, setRepublicText] = useState("Republic of the Philippines");
+  const [departmentText, setDepartmentText] = useState("Department of Education");
+  const [regionText, setRegionText] = useState("Region VII, Central Visayas");
+  const [divisionText, setDivisionText] = useState("Division of Cebu City");
+
 
   // Modals state
   const [isPhotoModalOpen, setIsPhotoModalOpen] = useState(false);
@@ -92,8 +108,8 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const loadSettings = useCallback(async () => {
-    const savedSchoolName = await db.getSetting('schoolName') || 'Sample Elementary School';
-    const savedSchoolAddress = await db.getSetting('schoolAddress') || 'Rizal Street, Brgy. III, Poblacion, Pontevedra, Negros Occidental';
+    const savedSchoolName = await db.getSetting('schoolName') || 'SAMPLE ELEMENTARY SCHOOL';
+    const savedSchoolAddress = await db.getSetting('schoolAddress') || 'Rizal Street, Brgy. III, Poblacion, Pontevedra, Negros Occidental 6105';
     const savedCustomPhrase = await db.getSetting('customPhrase') || 'add custom phrase here:';
     const savedLogoData = await db.getSetting('logoData');
     const savedLeftHeaderLogoData = await db.getSetting('leftHeaderLogoData'); // Load new setting
@@ -103,6 +119,12 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     const savedPrincipal = await db.getSetting('principalName') || '';
     const savedAssistantPrincipal = await db.getSetting('assistantPrincipalName') || '';
     const savedTheme = await db.getSetting('theme') || 'default';
+    // Load new editable header fields
+    const savedRepublicText = await db.getSetting('republicText') || 'Republic of the Philippines';
+    const savedDepartmentText = await db.getSetting('departmentText') || 'Department of Education';
+    const savedRegionText = await db.getSetting('regionText') || 'Region VII, Central Visayas';
+    const savedDivisionText = await db.getSetting('divisionText') || 'Division of Cebu City';
+
 
     setSchoolName(savedSchoolName);
     setSchoolAddress(savedSchoolAddress);
@@ -115,6 +137,11 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     setPrincipalName(savedPrincipal);
     setAssistantPrincipalName(savedAssistantPrincipal);
     setCurrentTheme(savedTheme);
+    // Set new editable header fields
+    setRepublicText(savedRepublicText);
+    setDepartmentText(savedDepartmentText);
+    setRegionText(savedRegionText);
+    setDivisionText(savedDivisionText);
   }, []);
 
   const loadCustomViolations = useCallback(async () => {
@@ -280,6 +307,11 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     confirmMessage, setConfirmMessage,
     confirmActionRef,
     isAppInitialized,
+    // New editable header fields
+    republicText, setRepublicText,
+    departmentText, setDepartmentText,
+    regionText, setRegionText,
+    divisionText, setDivisionText,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

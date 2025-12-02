@@ -11,7 +11,13 @@ import ReportActions from "./ReportActions";
 import ReportPreviewDisplay from "./ReportPreviewDisplay";
 
 const ReportsSection = () => {
-  const { db, showAlert, customViolations, schoolName, schoolAddress, leftHeaderLogoData, rightHeaderLogoData, guidanceOfficer, cpcGuidanceOfficerName, principalName, assistantPrincipalName } = useAppContext();
+  const {
+    db, showAlert, customViolations,
+    schoolName, schoolAddress,
+    leftHeaderLogoData, rightHeaderLogoData,
+    guidanceOfficer, cpcGuidanceOfficerName, principalName, assistantPrincipalName,
+    republicText, departmentText, regionText, divisionText // New editable header fields
+  } = useAppContext();
 
   // Reports state
   const [reportType, setReportType] = useState("custom");
@@ -133,13 +139,13 @@ const ReportsSection = () => {
       yPosition += 5; // Start text slightly below logos
       pdf.setFontSize(9);
       pdf.setFont(undefined, 'normal');
-      pdf.text('Republic of the Philippines', 105, yPosition, { align: 'center' });
+      pdf.text(republicText, 105, yPosition, { align: 'center' });
       yPosition += 4;
-      pdf.text('Department of Education', 105, yPosition, { align: 'center' });
+      pdf.text(departmentText, 105, yPosition, { align: 'center' });
       yPosition += 4;
-      pdf.text('Region VII, Central Visayas', 105, yPosition, { align: 'center' });
+      pdf.text(regionText, 105, yPosition, { align: 'center' });
       yPosition += 4;
-      pdf.text('Division of Cebu City', 105, yPosition, { align: 'center' });
+      pdf.text(divisionText, 105, yPosition, { align: 'center' });
       yPosition += 6;
       pdf.setFontSize(12);
       pdf.setFont(undefined, 'bold');
@@ -343,10 +349,10 @@ const ReportsSection = () => {
       <div class="header-section" style="display: flex; justify-content: center; align-items: flex-start; margin-bottom: 20px; position: relative;">
           ${leftHeaderLogoData ? `<img src="${leftHeaderLogoData}" class="header-logo left-logo" alt="Left Logo">` : ''}
           <div class="text-center" style="flex-grow: 1;">
-              <p style="margin: 0; font-size: 10pt;">Republic of the Philippines</p>
-              <p style="margin: 0; font-size: 10pt;">Department of Education</p>
-              <p style="margin: 0; font-size: 10pt;">Region VII, Central Visayas</p>
-              <p style="margin: 0; font-size: 10pt;">Division of Cebu City</p>
+              <p style="margin: 0; font-size: 10pt;">${republicText}</p>
+              <p style="margin: 0; font-size: 10pt;">${departmentText}</p>
+              <p style="margin: 0; font-size: 10pt;">${regionText}</p>
+              <p style="margin: 0; font-size: 10pt;">${divisionText}</p>
               <p style="margin: 0; font-size: 12pt; font-weight: bold; margin-top: 5px;">${schoolName.toUpperCase()}</p>
               <p style="margin: 0; font-size: 10pt;">${schoolAddress}</p>
           </div>

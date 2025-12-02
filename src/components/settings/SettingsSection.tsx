@@ -24,6 +24,11 @@ const SettingsSection = () => {
     appPasswords, setAppPasswords,
     currentTheme, setCurrentTheme,
     loadSettings,
+    // New editable header fields
+    republicText, setRepublicText,
+    departmentText, setDepartmentText,
+    regionText, setRegionText,
+    divisionText, setDivisionText,
   } = useAppContext();
 
   const [adminPasswordInput, setAdminPasswordInput] = useState("");
@@ -40,6 +45,12 @@ const SettingsSection = () => {
     await db.setSetting('principalName', principalName);
     await db.setSetting('assistantPrincipalName', assistantPrincipalName);
     await db.setSetting('theme', currentTheme);
+    // Save new editable header fields
+    await db.setSetting('republicText', republicText);
+    await db.setSetting('departmentText', departmentText);
+    await db.setSetting('regionText', regionText);
+    await db.setSetting('divisionText', divisionText);
+
     showAlert('Settings saved successfully!', 'success');
     loadSettings(); // Reload settings to ensure UI reflects changes
   };
@@ -115,6 +126,60 @@ const SettingsSection = () => {
   return (
     <section id="settings" className="space-y-6">
       <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6">Settings</h2>
+
+      {/* New Editable Header Fields */}
+      <div>
+        <Label htmlFor="republicText" className="block text-gray-700 dark:text-gray-200 text-sm font-semibold mb-2">
+          Header Line 1 (e.g., Republic of the Philippines)
+        </Label>
+        <Input
+          id="republicText"
+          type="text"
+          placeholder="Enter first line of header"
+          value={republicText}
+          onChange={(e) => setRepublicText(e.target.value)}
+          className="w-full"
+        />
+      </div>
+      <div>
+        <Label htmlFor="departmentText" className="block text-gray-700 dark:text-gray-200 text-sm font-semibold mb-2">
+          Header Line 2 (e.g., Department of Education)
+        </Label>
+        <Input
+          id="departmentText"
+          type="text"
+          placeholder="Enter second line of header"
+          value={departmentText}
+          onChange={(e) => setDepartmentText(e.target.value)}
+          className="w-full"
+        />
+      </div>
+      <div>
+        <Label htmlFor="regionText" className="block text-gray-700 dark:text-gray-200 text-sm font-semibold mb-2">
+          Header Line 3 (e.g., Region VII, Central Visayas)
+        </Label>
+        <Input
+          id="regionText"
+          type="text"
+          placeholder="Enter third line of header"
+          value={regionText}
+          onChange={(e) => setRegionText(e.target.value)}
+          className="w-full"
+        />
+      </div>
+      <div>
+        <Label htmlFor="divisionText" className="block text-gray-700 dark:text-gray-200 text-sm font-semibold mb-2">
+          Header Line 4 (e.g., Division of Cebu City)
+        </Label>
+        <Input
+          id="divisionText"
+          type="text"
+          placeholder="Enter fourth line of header"
+          value={divisionText}
+          onChange={(e) => setDivisionText(e.target.value)}
+          className="w-full"
+        />
+      </div>
 
       <div>
         <Label htmlFor="settingsSchoolName" className="block text-gray-700 dark:text-gray-200 text-sm font-semibold mb-2">
