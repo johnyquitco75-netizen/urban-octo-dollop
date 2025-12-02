@@ -18,9 +18,13 @@ const SettingsSection = () => {
     leftHeaderLogoData, setLeftHeaderLogoData, // New state
     rightHeaderLogoData, setRightHeaderLogoData, // New state
     guidanceOfficer, setGuidanceOfficer,
+    guidanceOfficerPosition, setGuidanceOfficerPosition, // New state
     cpcGuidanceOfficerName, setCpcGuidanceOfficerName,
+    cpcGuidanceOfficerPosition, setCpcGuidanceOfficerPosition, // New state
     principalName, setPrincipalName,
+    principalPosition, setPrincipalPosition, // New state
     assistantPrincipalName, setAssistantPrincipalName,
+    assistantPrincipalPosition, setAssistantPrincipalPosition, // New state
     appPasswords, setAppPasswords,
     currentTheme, setCurrentTheme,
     loadSettings,
@@ -41,9 +45,13 @@ const SettingsSection = () => {
     await db.setSetting('leftHeaderLogoData', leftHeaderLogoData); // Save new setting
     await db.setSetting('rightHeaderLogoData', rightHeaderLogoData); // Save new setting
     await db.setSetting('guidanceOfficer', guidanceOfficer);
+    await db.setSetting('guidanceOfficerPosition', guidanceOfficerPosition); // Save new setting
     await db.setSetting('cpcGuidanceOfficerName', cpcGuidanceOfficerName);
+    await db.setSetting('cpcGuidanceOfficerPosition', cpcGuidanceOfficerPosition); // Save new setting
     await db.setSetting('principalName', principalName);
+    await db.setSetting('principalPosition', principalPosition); // Save new setting
     await db.setSetting('assistantPrincipalName', assistantPrincipalName);
+    await db.setSetting('assistantPrincipalPosition', assistantPrincipalPosition); // Save new setting
     await db.setSetting('theme', currentTheme);
     // Save new editable header fields
     await db.setSetting('republicText', republicText);
@@ -291,6 +299,19 @@ const SettingsSection = () => {
           />
         </div>
         <div>
+          <Label htmlFor="guidanceOfficerPosition" className="block text-gray-700 dark:text-gray-200 text-sm font-semibold mb-2">
+            Guidance Officer Position
+          </Label>
+          <Input
+            id="guidanceOfficerPosition"
+            type="text"
+            placeholder="Officer position for reports"
+            value={guidanceOfficerPosition}
+            onChange={(e) => setGuidanceOfficerPosition(e.target.value)}
+            className="w-full"
+          />
+        </div>
+        <div>
           <Label htmlFor="cpcGuidanceOfficerName" className="block text-gray-700 dark:text-gray-200 text-sm font-semibold mb-2">
             CPC/Guidance Officer Name
           </Label>
@@ -300,6 +321,19 @@ const SettingsSection = () => {
             placeholder="CPC/Guidance Officer name for reports"
             value={cpcGuidanceOfficerName}
             onChange={(e) => setCpcGuidanceOfficerName(e.target.value)}
+            className="w-full"
+          />
+        </div>
+        <div>
+          <Label htmlFor="cpcGuidanceOfficerPosition" className="block text-gray-700 dark:text-gray-200 text-sm font-semibold mb-2">
+            CPC/Guidance Officer Position
+          </Label>
+          <Input
+            id="cpcGuidanceOfficerPosition"
+            type="text"
+            placeholder="CPC/Guidance Officer position for reports"
+            value={cpcGuidanceOfficerPosition}
+            onChange={(e) => setCpcGuidanceOfficerPosition(e.target.value)}
             className="w-full"
           />
         </div>
@@ -317,6 +351,19 @@ const SettingsSection = () => {
           />
         </div>
         <div>
+          <Label htmlFor="principalPosition" className="block text-gray-700 dark:text-gray-200 text-sm font-semibold mb-2">
+            Principal Position
+          </Label>
+          <Input
+            id="principalPosition"
+            type="text"
+            placeholder="Principal position for reports"
+            value={principalPosition}
+            onChange={(e) => setPrincipalPosition(e.target.value)}
+            className="w-full"
+          />
+        </div>
+        <div>
           <Label htmlFor="assistantPrincipalName" className="block text-gray-700 dark:text-gray-200 text-sm font-semibold mb-2">
             Assistant Principal Name
           </Label>
@@ -326,6 +373,19 @@ const SettingsSection = () => {
             placeholder="Assistant Principal name for reports"
             value={assistantPrincipalName}
             onChange={(e) => setAssistantPrincipalName(e.target.value)}
+            className="w-full"
+          />
+        </div>
+        <div>
+          <Label htmlFor="assistantPrincipalPosition" className="block text-gray-700 dark:text-gray-200 text-sm font-semibold mb-2">
+            Assistant Principal Position
+          </Label>
+          <Input
+            id="assistantPrincipalPosition"
+            type="text"
+            placeholder="Assistant Principal position for reports"
+            value={assistantPrincipalPosition}
+            onChange={(e) => setAssistantPrincipalPosition(e.target.value)}
             className="w-full"
           />
         </div>

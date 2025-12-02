@@ -15,7 +15,10 @@ const ReportsSection = () => {
     db, showAlert, customViolations,
     schoolName, schoolAddress,
     leftHeaderLogoData, rightHeaderLogoData,
-    guidanceOfficer, cpcGuidanceOfficerName, principalName, assistantPrincipalName,
+    guidanceOfficer, guidanceOfficerPosition,
+    cpcGuidanceOfficerName, cpcGuidanceOfficerPosition,
+    principalName, principalPosition,
+    assistantPrincipalName, assistantPrincipalPosition,
     republicText, departmentText, regionText, divisionText // New editable header fields
   } = useAppContext();
 
@@ -241,6 +244,7 @@ const ReportsSection = () => {
       const blockWidth = 80; // Width for each signature block
       const leftColX = 20;
       const rightColX = 190 - blockWidth - 20; // Right column X position
+      const lineLength = 70; // Length of the underline
 
       // Row 1: PREPARED BY (CPC/Guidance Officer) and Guidance Officer
       if (cpcGuidanceOfficerName || guidanceOfficer) {
@@ -254,10 +258,10 @@ const ReportsSection = () => {
           pdf.setFontSize(11);
           pdf.setFont(undefined, 'bold');
           pdf.text(cpcGuidanceOfficerName.toUpperCase(), leftColX + (blockWidth / 2), yPosition + 8, { align: 'center' });
-          pdf.line(leftColX, yPosition + 10, leftColX + blockWidth, yPosition + 10);
+          pdf.line(leftColX + (blockWidth - lineLength) / 2, yPosition + 10, leftColX + (blockWidth + lineLength) / 2, yPosition + 10); // Underline
           pdf.setFontSize(9);
           pdf.setFont(undefined, 'normal');
-          pdf.text('CPC/Guidance Officer', leftColX + (blockWidth / 2), yPosition + 15, { align: 'center' });
+          pdf.text(cpcGuidanceOfficerPosition, leftColX + (blockWidth / 2), yPosition + 15, { align: 'center' });
         }
 
         // Guidance Officer (Right)
@@ -265,10 +269,10 @@ const ReportsSection = () => {
           pdf.setFontSize(11);
           pdf.setFont(undefined, 'bold');
           pdf.text(guidanceOfficer.toUpperCase(), rightColX + (blockWidth / 2), yPosition + 8, { align: 'center' });
-          pdf.line(rightColX, yPosition + 10, rightColX + blockWidth, yPosition + 10);
+          pdf.line(rightColX + (blockWidth - lineLength) / 2, yPosition + 10, rightColX + (blockWidth + lineLength) / 2, yPosition + 10); // Underline
           pdf.setFontSize(9);
           pdf.setFont(undefined, 'normal');
-          pdf.text('Guidance Officer', rightColX + (blockWidth / 2), yPosition + 15, { align: 'center' });
+          pdf.text(guidanceOfficerPosition, rightColX + (blockWidth / 2), yPosition + 15, { align: 'center' });
         }
         yPosition += 35; // Move down for next row
       }
@@ -285,10 +289,10 @@ const ReportsSection = () => {
           pdf.setFontSize(11);
           pdf.setFont(undefined, 'bold');
           pdf.text(assistantPrincipalName.toUpperCase(), leftColX + (blockWidth / 2), yPosition + 8, { align: 'center' });
-          pdf.line(leftColX, yPosition + 10, leftColX + blockWidth, yPosition + 10);
+          pdf.line(leftColX + (blockWidth - lineLength) / 2, yPosition + 10, leftColX + (blockWidth + lineLength) / 2, yPosition + 10); // Underline
           pdf.setFontSize(9);
           pdf.setFont(undefined, 'normal');
-          pdf.text('Assistant Principal', leftColX + (blockWidth / 2), yPosition + 15, { align: 'center' });
+          pdf.text(assistantPrincipalPosition, leftColX + (blockWidth / 2), yPosition + 15, { align: 'center' });
         }
 
         // APPROVED BY: Principal (Right)
@@ -299,10 +303,10 @@ const ReportsSection = () => {
           pdf.setFontSize(11);
           pdf.setFont(undefined, 'bold');
           pdf.text(principalName.toUpperCase(), rightColX + (blockWidth / 2), yPosition + 8, { align: 'center' });
-          pdf.line(rightColX, yPosition + 10, rightColX + blockWidth, yPosition + 10);
+          pdf.line(rightColX + (blockWidth - lineLength) / 2, yPosition + 10, rightColX + (blockWidth + lineLength) / 2, yPosition + 10); // Underline
           pdf.setFontSize(9);
           pdf.setFont(undefined, 'normal');
-          pdf.text('Principal', rightColX + (blockWidth / 2), yPosition + 15, { align: 'center' });
+          pdf.text(principalPosition, rightColX + (blockWidth / 2), yPosition + 15, { align: 'center' });
         }
         yPosition += 35; // Move down for next row
       }
@@ -401,7 +405,7 @@ const ReportsSection = () => {
                       <div class="signature-label">PREPARED BY:</div>
                       <div class="signature-name">${cpcGuidanceOfficerName.toUpperCase()}</div>
                       <div class="signature-line"></div>
-                      <div class="signature-title">CPC/Guidance Officer</div>
+                      <div class="signature-title">${cpcGuidanceOfficerPosition}</div>
                   </div>
               ` : '<div class="signature-block"></div>'}
               ${assistantPrincipalName ? `
@@ -409,7 +413,7 @@ const ReportsSection = () => {
                       <div class="signature-label">NOTED BY:</div>
                       <div class="signature-name">${assistantPrincipalName.toUpperCase()}</div>
                       <div class="signature-line"></div>
-                      <div class="signature-title">Assistant Principal</div>
+                      <div class="signature-title">${assistantPrincipalPosition}</div>
                   </div>
               ` : '<div class="signature-block"></div>'}
           </div>
@@ -418,7 +422,7 @@ const ReportsSection = () => {
                   <div class="signature-block">
                       <div class="signature-name">${guidanceOfficer.toUpperCase()}</div>
                       <div class="signature-line"></div>
-                      <div class="signature-title">Guidance Officer</div>
+                      <div class="signature-title">${guidanceOfficerPosition}</div>
                   </div>
               ` : '<div class="signature-block"></div>'}
               ${principalName ? `
@@ -426,7 +430,7 @@ const ReportsSection = () => {
                       <div class="signature-label">APPROVED BY:</div>
                       <div class="signature-name">${principalName.toUpperCase()}</div>
                       <div class="signature-line"></div>
-                      <div class="signature-title">Principal</div>
+                      <div class="signature-title">${principalPosition}</div>
                   </div>
               ` : '<div class="signature-block"></div>'}
           </div>

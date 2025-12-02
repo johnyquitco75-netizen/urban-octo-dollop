@@ -21,7 +21,10 @@ export const useCertificateGenerator = ({
     showAlert,
     schoolName, schoolAddress,
     leftHeaderLogoData, rightHeaderLogoData,
-    guidanceOfficer, cpcGuidanceOfficerName, principalName, assistantPrincipalName,
+    guidanceOfficer, guidanceOfficerPosition,
+    cpcGuidanceOfficerName, cpcGuidanceOfficerPosition,
+    principalName, principalPosition,
+    assistantPrincipalName, assistantPrincipalPosition,
     republicText, departmentText, regionText, divisionText
   } = useAppContext();
 
@@ -33,9 +36,13 @@ export const useCertificateGenerator = ({
     const leftLogo = leftHeaderLogoData;
     const rightLogo = rightHeaderLogoData;
     const guidance = guidanceOfficer;
+    const guidancePos = guidanceOfficerPosition;
     const cpc = cpcGuidanceOfficerName;
+    const cpcPos = cpcGuidanceOfficerPosition;
     const principal = principalName;
+    const principalPos = principalPosition;
     const assistant = assistantPrincipalName;
+    const assistantPos = assistantPrincipalPosition;
 
     const headerHtml = `
       <div class="header-section" style="display: flex; justify-content: center; align-items: flex-start; margin-bottom: 20px; position: relative;">
@@ -82,7 +89,7 @@ export const useCertificateGenerator = ({
                         <div class="signature-label">PREPARED BY:</div>
                         <div class="signature-name">${cpc.toUpperCase()}</div>
                         <div class="signature-line"></div>
-                        <div class="signature-title">CPC/Guidance Officer</div>
+                        <div class="signature-title">${cpcPos}</div>
                     </div>
                 ` : '<div class="signature-block"></div>'}
                 ${assistant ? `
@@ -90,7 +97,7 @@ export const useCertificateGenerator = ({
                         <div class="signature-label">NOTED BY:</div>
                         <div class="signature-name">${assistant.toUpperCase()}</div>
                         <div class="signature-line"></div>
-                        <div class="signature-title">Assistant Principal</div>
+                        <div class="signature-title">${assistantPos}</div>
                     </div>
                 ` : '<div class="signature-block"></div>'}
             </div>
@@ -99,7 +106,7 @@ export const useCertificateGenerator = ({
                     <div class="signature-block">
                         <div class="signature-name">${guidance.toUpperCase()}</div>
                         <div class="signature-line"></div>
-                        <div class="signature-title">Guidance Officer</div>
+                        <div class="signature-title">${guidancePos}</div>
                     </div>
                 ` : '<div class="signature-block"></div>'}
                 ${principal ? `
@@ -107,7 +114,7 @@ export const useCertificateGenerator = ({
                         <div class="signature-label">APPROVED BY:</div>
                         <div class="signature-name">${principal.toUpperCase()}</div>
                         <div class="signature-line"></div>
-                        <div class="signature-title">Principal</div>
+                        <div class="signature-title">${principalPos}</div>
                     </div>
                 ` : '<div class="signature-block"></div>'}
             </div>
@@ -140,7 +147,7 @@ export const useCertificateGenerator = ({
                         <div class="signature-label">PREPARED BY:</div>
                         <div class="signature-name">${cpc.toUpperCase()}</div>
                         <div class="signature-line"></div>
-                        <div class="signature-title">CPC/Guidance Officer</div>
+                        <div class="signature-title">${cpcPos}</div>
                     </div>
                 ` : '<div class="signature-block"></div>'}
                 ${assistant ? `
@@ -148,7 +155,7 @@ export const useCertificateGenerator = ({
                         <div class="signature-label">NOTED BY:</div>
                         <div class="signature-name">${assistant.toUpperCase()}</div>
                         <div class="signature-line"></div>
-                        <div class="signature-title">Assistant Principal</div>
+                        <div class="signature-title">${assistantPos}</div>
                     </div>
                 ` : '<div class="signature-block"></div>'}
             </div>
@@ -157,7 +164,7 @@ export const useCertificateGenerator = ({
                     <div class="signature-block">
                         <div class="signature-name">${guidance.toUpperCase()}</div>
                         <div class="signature-line"></div>
-                        <div class="signature-title">Guidance Officer</div>
+                        <div class="signature-title">${guidancePos}</div>
                     </div>
                 ` : '<div class="signature-block"></div>'}
                 ${principal ? `
@@ -165,7 +172,7 @@ export const useCertificateGenerator = ({
                         <div class="signature-label">APPROVED BY:</div>
                         <div class="signature-name">${principal.toUpperCase()}</div>
                         <div class="signature-line"></div>
-                        <div class="signature-title">Principal</div>
+                        <div class="signature-title">${principalPos}</div>
                     </div>
                 ` : '<div class="signature-block"></div>'}
             </div>
@@ -176,7 +183,7 @@ export const useCertificateGenerator = ({
     if (isPreview) {
       showAlert('Certificate preview generated!', 'success');
     }
-  }, [certificateTemplate, customCertificateContent, schoolName, schoolAddress, leftHeaderLogoData, rightHeaderLogoData, guidanceOfficer, cpcGuidanceOfficerName, principalName, assistantPrincipalName, republicText, departmentText, regionText, divisionText, showAlert]);
+  }, [certificateTemplate, customCertificateContent, schoolName, schoolAddress, leftHeaderLogoData, rightHeaderLogoData, guidanceOfficer, guidanceOfficerPosition, cpcGuidanceOfficerName, cpcGuidanceOfficerPosition, principalName, principalPosition, assistantPrincipalName, assistantPrincipalPosition, republicText, departmentText, regionText, divisionText, showAlert]);
 
   const generateCertificatePDF = useCallback(async () => {
     if (!previewStudentName) {
@@ -269,6 +276,7 @@ This certification is issued upon the request of the above-mentioned student for
       const blockWidth = 80; // Width for each signature block
       const leftColX = 20;
       const rightColX = 190 - blockWidth - 20; // Right column X position
+      const lineLength = 70; // Length of the underline
 
       // Row 1: PREPARED BY (CPC/Guidance Officer) and Guidance Officer
       if (cpcGuidanceOfficerName || guidanceOfficer) {
@@ -282,10 +290,10 @@ This certification is issued upon the request of the above-mentioned student for
           pdf.setFontSize(11);
           pdf.setFont(undefined, 'bold');
           pdf.text(cpcGuidanceOfficerName.toUpperCase(), leftColX + (blockWidth / 2), yPosition + 8, { align: 'center' });
-          pdf.line(leftColX, yPosition + 10, leftColX + blockWidth, yPosition + 10);
+          pdf.line(leftColX + (blockWidth - lineLength) / 2, yPosition + 10, leftColX + (blockWidth + lineLength) / 2, yPosition + 10); // Underline
           pdf.setFontSize(9);
           pdf.setFont(undefined, 'normal');
-          pdf.text('CPC/Guidance Officer', leftColX + (blockWidth / 2), yPosition + 15, { align: 'center' });
+          pdf.text(cpcGuidanceOfficerPosition, leftColX + (blockWidth / 2), yPosition + 15, { align: 'center' });
         }
 
         // Guidance Officer (Right)
@@ -293,10 +301,10 @@ This certification is issued upon the request of the above-mentioned student for
           pdf.setFontSize(11);
           pdf.setFont(undefined, 'bold');
           pdf.text(guidanceOfficer.toUpperCase(), rightColX + (blockWidth / 2), yPosition + 8, { align: 'center' });
-          pdf.line(rightColX, yPosition + 10, rightColX + blockWidth, yPosition + 10);
+          pdf.line(rightColX + (blockWidth - lineLength) / 2, yPosition + 10, rightColX + (blockWidth + lineLength) / 2, yPosition + 10); // Underline
           pdf.setFontSize(9);
           pdf.setFont(undefined, 'normal');
-          pdf.text('Guidance Officer', rightColX + (blockWidth / 2), yPosition + 15, { align: 'center' });
+          pdf.text(guidanceOfficerPosition, rightColX + (blockWidth / 2), yPosition + 15, { align: 'center' });
         }
         yPosition += 35; // Move down for next row
       }
@@ -313,10 +321,10 @@ This certification is issued upon the request of the above-mentioned student for
           pdf.setFontSize(11);
           pdf.setFont(undefined, 'bold');
           pdf.text(assistantPrincipalName.toUpperCase(), leftColX + (blockWidth / 2), yPosition + 8, { align: 'center' });
-          pdf.line(leftColX, yPosition + 10, leftColX + blockWidth, yPosition + 10);
+          pdf.line(leftColX + (blockWidth - lineLength) / 2, yPosition + 10, leftColX + (blockWidth + lineLength) / 2, yPosition + 10); // Underline
           pdf.setFontSize(9);
           pdf.setFont(undefined, 'normal');
-          pdf.text('Assistant Principal', leftColX + (blockWidth / 2), yPosition + 15, { align: 'center' });
+          pdf.text(assistantPrincipalPosition, leftColX + (blockWidth / 2), yPosition + 15, { align: 'center' });
         }
 
         // APPROVED BY: Principal (Right)
@@ -327,10 +335,10 @@ This certification is issued upon the request of the above-mentioned student for
           pdf.setFontSize(11);
           pdf.setFont(undefined, 'bold');
           pdf.text(principalName.toUpperCase(), rightColX + (blockWidth / 2), yPosition + 8, { align: 'center' });
-          pdf.line(rightColX, yPosition + 10, rightColX + blockWidth, yPosition + 10);
+          pdf.line(rightColX + (blockWidth - lineLength) / 2, yPosition + 10, rightColX + (blockWidth + lineLength) / 2, yPosition + 10); // Underline
           pdf.setFontSize(9);
           pdf.setFont(undefined, 'normal');
-          pdf.text('Principal', rightColX + (blockWidth / 2), yPosition + 15, { align: 'center' });
+          pdf.text(principalPosition, rightColX + (blockWidth / 2), yPosition + 15, { align: 'center' });
         }
         yPosition += 35; // Move down for next row
       }
@@ -342,7 +350,7 @@ This certification is issued upon the request of the above-mentioned student for
       console.error('Certificate PDF generation error:', error);
       showAlert('Failed to generate certificate PDF. Please try again.', 'error');
     }
-  }, [previewStudentName, certificateDate, generateCertificateContent, leftHeaderLogoData, rightHeaderLogoData, republicText, departmentText, regionText, divisionText, schoolName, schoolAddress, cpcGuidanceOfficerName, guidanceOfficer, assistantPrincipalName, principalName, customCertificateContent, certificateTemplate, showAlert]);
+  }, [previewStudentName, certificateDate, generateCertificateContent, leftHeaderLogoData, rightHeaderLogoData, republicText, departmentText, regionText, divisionText, schoolName, schoolAddress, cpcGuidanceOfficerName, cpcGuidanceOfficerPosition, guidanceOfficer, guidanceOfficerPosition, assistantPrincipalName, assistantPrincipalPosition, principalName, principalPosition, customCertificateContent, certificateTemplate, showAlert]);
 
   const printCertificate = useCallback(() => {
     if (!certificatePreviewHtml) {

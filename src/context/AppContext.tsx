@@ -27,12 +27,20 @@ interface AppContextType {
   setRightHeaderLogoData: (data: string | null) => void; // Setter for right header logo
   guidanceOfficer: string;
   setGuidanceOfficer: (name: string) => void;
+  guidanceOfficerPosition: string; // New state for Guidance Officer Position
+  setGuidanceOfficerPosition: (position: string) => void; // Setter for Guidance Officer Position
   cpcGuidanceOfficerName: string;
   setCpcGuidanceOfficerName: (name: string) => void;
+  cpcGuidanceOfficerPosition: string; // New state for CPC/Guidance Officer Position
+  setCpcGuidanceOfficerPosition: (position: string) => void; // Setter for CPC/Guidance Officer Position
   principalName: string;
   setPrincipalName: (name: string) => void;
+  principalPosition: string; // New state for Principal Position
+  setPrincipalPosition: (position: string) => void; // Setter for Principal Position
   assistantPrincipalName: string;
   setAssistantPrincipalName: (name: string) => void;
+  assistantPrincipalPosition: string; // New state for Assistant Principal Position
+  setAssistantPrincipalPosition: (position: string) => void; // Setter for Assistant Principal Position
   customViolations: string[];
   setCustomViolations: (violations: string[]) => void;
   currentTheme: string;
@@ -78,9 +86,13 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const [leftHeaderLogoData, setLeftHeaderLogoData] = useState<string | null>(null); // New state
   const [rightHeaderLogoData, setRightHeaderLogoData] = useState<string | null>(null); // New state
   const [guidanceOfficer, setGuidanceOfficer] = useState("");
+  const [guidanceOfficerPosition, setGuidanceOfficerPosition] = useState("Guidance Officer"); // Default position
   const [cpcGuidanceOfficerName, setCpcGuidanceOfficerName] = useState("");
+  const [cpcGuidanceOfficerPosition, setCpcGuidanceOfficerPosition] = useState("CPC/Guidance Officer"); // Default position
   const [principalName, setPrincipalName] = useState("");
+  const [principalPosition, setPrincipalPosition] = useState("Principal"); // Default position
   const [assistantPrincipalName, setAssistantPrincipalName] = useState("");
+  const [assistantPrincipalPosition, setAssistantPrincipalPosition] = useState("Assistant Principal"); // Default position
   const [customViolations, setCustomViolations] = useState<string[]>([]);
   const [currentTheme, setCurrentTheme] = useState("default");
 
@@ -115,9 +127,13 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     const savedLeftHeaderLogoData = await db.getSetting('leftHeaderLogoData'); // Load new setting
     const savedRightHeaderLogoData = await db.getSetting('rightHeaderLogoData'); // Load new setting
     const savedGuidanceOfficer = await db.getSetting('guidanceOfficer') || '';
+    const savedGuidanceOfficerPosition = await db.getSetting('guidanceOfficerPosition') || 'Guidance Officer'; // Load new setting
     const savedCpcOfficer = await db.getSetting('cpcGuidanceOfficerName') || '';
+    const savedCpcOfficerPosition = await db.getSetting('cpcGuidanceOfficerPosition') || 'CPC/Guidance Officer'; // Load new setting
     const savedPrincipal = await db.getSetting('principalName') || '';
+    const savedPrincipalPosition = await db.getSetting('principalPosition') || 'Principal'; // Load new setting
     const savedAssistantPrincipal = await db.getSetting('assistantPrincipalName') || '';
+    const savedAssistantPrincipalPosition = await db.getSetting('assistantPrincipalPosition') || 'Assistant Principal'; // Load new setting
     const savedTheme = await db.getSetting('theme') || 'default';
     // Load new editable header fields
     const savedRepublicText = await db.getSetting('republicText') || 'Republic of the Philippines';
@@ -133,9 +149,13 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     setLeftHeaderLogoData(savedLeftHeaderLogoData); // Set new state
     setRightHeaderLogoData(savedRightHeaderLogoData); // Set new state
     setGuidanceOfficer(savedGuidanceOfficer);
+    setGuidanceOfficerPosition(savedGuidanceOfficerPosition); // Set new state
     setCpcGuidanceOfficerName(savedCpcOfficer);
+    setCpcGuidanceOfficerPosition(savedCpcOfficerPosition); // Set new state
     setPrincipalName(savedPrincipal);
+    setPrincipalPosition(savedPrincipalPosition); // Set new state
     setAssistantPrincipalName(savedAssistantPrincipal);
+    setAssistantPrincipalPosition(savedAssistantPrincipalPosition); // Set new state
     setCurrentTheme(savedTheme);
     // Set new editable header fields
     setRepublicText(savedRepublicText);
@@ -294,9 +314,13 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     leftHeaderLogoData, setLeftHeaderLogoData, // Added to context value
     rightHeaderLogoData, setRightHeaderLogoData, // Added to context value
     guidanceOfficer, setGuidanceOfficer,
+    guidanceOfficerPosition, setGuidanceOfficerPosition, // Added to context value
     cpcGuidanceOfficerName, setCpcGuidanceOfficerName,
+    cpcGuidanceOfficerPosition, setCpcGuidanceOfficerPosition, // Added to context value
     principalName, setPrincipalName,
+    principalPosition, setPrincipalPosition, // Added to context value
     assistantPrincipalName, setAssistantPrincipalName,
+    assistantPrincipalPosition, setAssistantPrincipalPosition, // Added to context value
     customViolations, setCustomViolations,
     currentTheme, setCurrentTheme,
     loadSettings,
