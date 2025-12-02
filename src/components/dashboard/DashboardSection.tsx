@@ -245,13 +245,14 @@ const DashboardSection = () => {
       <Card className="p-6 rounded-2xl shadow-md bg-white dark:bg-gray-800">
         <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">📋 Recent Records</h3>
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[700px] border-collapse">
+          <table className="w-full min-w-[850px] border-collapse"> {/* Increased min-w to accommodate new column */}
             <thead>
               <tr className="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-sm uppercase font-semibold tracking-wider">
                 <th className="py-3 px-4 text-left">Name</th>
                 <th className="py-3 px-4 text-left">Type</th>
                 <th className="py-3 px-4 text-left">Violation</th>
                 <th className="py-3 px-4 text-left">Date</th>
+                <th className="py-3 px-4 text-left">Details</th> {/* New Details column */}
                 <th className="py-3 px-4 text-left">Photo</th>
                 <th className="py-3 px-4 text-left">Actions</th>
               </tr>
@@ -259,7 +260,7 @@ const DashboardSection = () => {
             <tbody>
               {recentRecords.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-4 text-center text-gray-500 dark:text-gray-400">No records found</td>
+                  <td colSpan={7} className="py-4 text-center text-gray-500 dark:text-gray-400">No records found</td> {/* Updated colSpan */}
                 </tr>
               ) : (
                 recentRecords.map((record) => (
@@ -272,6 +273,7 @@ const DashboardSection = () => {
                     </td>
                     <td className="py-3 px-4 text-gray-700 dark:text-gray-200">{record.violationType}</td>
                     <td className="py-3 px-4 text-gray-700 dark:text-gray-200">{new Date(record.dateTime).toLocaleDateString()}</td>
+                    <td className="py-3 px-4 text-gray-700 dark:text-gray-200 max-w-[150px] truncate">{record.details || 'N/A'}</td> {/* Display details, truncated */}
                     <td className="py-3 px-4">
                       {record.photoData ? (
                         <img

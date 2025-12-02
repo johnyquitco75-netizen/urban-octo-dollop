@@ -133,7 +133,8 @@ export const useReportGenerator = ({
 
       // Table Headers
       const headers = ['#', 'NAME', 'TYPE', 'GRADE', 'VIOLATION', 'DATE & TIME', 'DETAILS'];
-      const colWidths = [10, 35, 20, 20, 35, 35, 35];
+      // Adjusted column widths to accommodate DETAILS better
+      const colWidths = [10, 30, 15, 15, 30, 30, 60]; // Total 190
       const colPositions = [10];
       for (let i = 0; i < colWidths.length - 1; i++) {
         colPositions.push(colPositions[i] + colWidths[i]);
@@ -154,7 +155,33 @@ export const useReportGenerator = ({
       pdf.setFont(undefined, 'normal');
       pdf.setFontSize(8);
       records.forEach((record, index) => {
-        if (yPosition > 270) { // Check for page break
+        const recordDate = new Date(record.dateTime);
+        const formattedDate = recordDate.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' });
+        const formattedTime = recordDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+
+        const rowData = [
+          (index + 1).toString(),
+          record.name,
+          record.type,
+          record.gradeLevel || 'N/A',
+          record.violationType,
+          `${formattedDate}\n${formattedTime}`,
+          record.details || 'N/A'
+        ];
+
+        let maxLineHeight = 0;
+        const cellLines: string[][] = [];
+
+        // Calculate max height needed for this row
+        rowData.forEach((data, colIndex) => {
+          const lines = pdf.splitTextToSize(data, colWidths[colIndex] - 4);
+          cellLines.push(lines);
+          maxLineHeight = Math.max(maxLineHeight, lines.length * 4); // 4 units per line
+        });
+
+        const calculatedRowHeight = maxLineHeight + 4; // Add some padding
+
+        if (yPosition + calculatedRowHeight > 270) { // Check for page break
           pdf.addPage();
           yPosition = 20; // Reset yPosition for new page
           // Re-add headers on new page
@@ -171,31 +198,17 @@ export const useReportGenerator = ({
           pdf.setFont(undefined, 'normal');
           pdf.setFontSize(8);
         }
-        const recordDate = new Date(record.dateTime);
-        const formattedDate = recordDate.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' });
-        const formattedTime = recordDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
-
-        const rowData = [
-          (index + 1).toString(),
-          record.name,
-          record.type,
-          record.gradeLevel || 'N/A',
-          record.violationType,
-          `${formattedDate}\n${formattedTime}`,
-          record.details || 'N/A'
-        ];
-        const rowHeight = 12;
+        
         if (index % 2 === 0) {
           pdf.setFillColor(250, 250, 250);
-          pdf.rect(10, yPosition, 190, rowHeight, 'F');
+          pdf.rect(10, yPosition, 190, calculatedRowHeight, 'F');
         }
-        rowData.forEach((data, colIndex) => {
-          const lines = pdf.splitTextToSize(data, colWidths[colIndex] - 4);
+        cellLines.forEach((lines, colIndex) => {
           lines.forEach((line, lineIndex) => {
             pdf.text(line, colPositions[colIndex] + 2, yPosition + 5 + (lineIndex * 4));
           });
         });
-        yPosition += rowHeight;
+        yPosition += calculatedRowHeight;
       });
 
       yPosition += 20; // Space before signatures
@@ -361,7 +374,7 @@ export const useReportGenerator = ({
                             ${new Date(record.dateTime).toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' })}<br>
                             ${new Date(record.dateTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}
                         </td>
-                        <td class="py-3 px-4 text-gray-600">${record.details || 'N/A'}</td>
+                        <td class="py-3 px-4 text-gray-600" style="white-space: normal;">${record.details || 'N/A'}</td>
                     </tr>
                 `).join('')}
             </tbody>
@@ -441,7 +454,7 @@ export const useReportGenerator = ({
               h2 { font-size: 16pt; margin-bottom: 1rem; color: #4b5563; }
               .total-records { font-size: 12pt; color: #6b7280; }
               table { width: 100%; border-collapse: collapse; margin-top: 1rem; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.05); page-break-inside: auto; }
-              th, td { padding: 0.8rem 1rem; text-align: left; border-bottom: 1px solid #f3f4f6; }
+              th, td { padding: 0.8rem 1rem; text-align: left; border-bottom: 1px solid #f3f4f6; vertical-align: top; } /* Added vertical-align */
               th { background: #f9fafb; font-weight: 600; color: #374151; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; }
               tr:nth-child(even) { background-color: #fcfcfc; }
               
