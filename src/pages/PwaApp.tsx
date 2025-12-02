@@ -83,7 +83,8 @@ export const PwaApp = () => {
       {/* Header */}
       <header className="bg-primary text-primary-foreground p-6 shadow-md flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-4 flex-1">
-          <div className="bg-white/20 border border-white/30 rounded-xl p-3 text-sm font-medium backdrop-blur-sm min-w-[200px] text-center md:text-left">
+          {/* Removed crystal box styling for custom phrase */}
+          <div className="text-sm font-medium min-w-[200px] text-center md:text-left">
             {customPhrase}
           </div>
         </div>
@@ -92,7 +93,6 @@ export const PwaApp = () => {
           <div className="text-sm md:text-base opacity-90">Strengthening Schools Through Smart Record Management</div>
         </div>
         <div className="flex flex-col items-center md:items-end gap-2 flex-1">
-          {/* Removed crystal box styling, adjusted text color */}
           <div className="p-3 text-right min-w-[180px]">
             <div className="text-xl md:text-2xl font-bold text-white">{currentTime}</div>
             <div className="text-lg md:text-xl text-white/90 font-bold">{currentDate}</div>
