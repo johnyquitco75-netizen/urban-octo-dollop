@@ -1,13 +1,14 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
-import { Card } from "@/components/ui/card";
 import { useAppContext } from "@/context/AppContext";
 import { jsPDF } from 'jspdf';
+
+// Import new modular components
+import ReportSummaryCards from "./ReportSummaryCards";
+import ReportFilters from "./ReportFilters";
+import ReportActions from "./ReportActions";
+import ReportPreviewDisplay from "./ReportPreviewDisplay";
 
 const ReportsSection = () => {
   const { db, showAlert, customViolations, schoolName, schoolAddress, leftHeaderLogoData, rightHeaderLogoData, guidanceOfficer, cpcGuidanceOfficerName, principalName, assistantPrincipalName } = useAppContext();
@@ -417,138 +418,33 @@ const ReportsSection = () => {
     <section id="reports" className="space-y-6">
       <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6">Generate Reports</h2>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-        <Card className="p-6 rounded-2xl shadow-md bg-white dark:bg-gray-800 border-l-4 border-indigo-500">
-          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-3">📅 Daily Summary</h3>
-          <div className="flex justify-between items-center">
-            <div className="text-4xl font-bold text-indigo-600 dark:text-indigo-400">{dailyCount}</div>
-            <div className="text-gray-600 dark:text-gray-300 text-sm">Today's Records</div>
-          </div>
-        </Card>
-        <Card className="p-6 rounded-2xl shadow-md bg-white dark:bg-gray-800 border-l-4 border-green-500">
-          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-3">📊 Weekly Summary</h3>
-          <div className="flex justify-between items-center">
-            <div className="text-4xl font-bold text-green-600 dark:text-green-400">{weeklyCount}</div>
-            <div className="text-gray-600 dark:text-gray-300 text-sm">This Week</div>
-          </div>
-        </Card>
-        <Card className="p-6 rounded-2xl shadow-md bg-white dark:bg-gray-800 border-l-4 border-yellow-500">
-          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-3">📈 Monthly Summary</h3>
-          <div className="flex justify-between items-center">
-            <div className="text-4xl font-bold text-yellow-600 dark:text-yellow-400">{monthlyCount}</div>
-            <div className="text-gray-600 dark:text-gray-300 text-sm">This Month</div>
-          </div>
-        </Card>
-      </div>
+      <ReportSummaryCards
+        dailyCount={dailyCount}
+        weeklyCount={weeklyCount}
+        monthlyCount={monthlyCount}
+      />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <Label htmlFor="reportType" className="block text-gray-700 dark:text-gray-200 text-sm font-semibold mb-2">
-            Report Type
-          </Label>
-          <Select value={reportType} onValueChange={setReportType}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select Report Type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="custom">Custom Date Range</SelectItem>
-              <SelectItem value="daily">Daily Report</SelectItem>
-              <SelectItem value="weekly">Weekly Report</SelectItem>
-              <SelectItem value="monthly">Monthly Report</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div>
-          <Label htmlFor="reportFormat" className="block text-gray-700 dark:text-gray-200 text-sm font-semibold mb-2">
-            Format
-          </Label>
-          <Select value={reportFormat} onValueChange={setReportFormat}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select Format" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="pdf">PDF</SelectItem>
-              <SelectItem value="csv">CSV</SelectItem>
-              <SelectItem value="print">Print Preview</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
+      <ReportFilters
+        reportType={reportType}
+        setReportType={setReportType}
+        reportFormat={reportFormat}
+        setReportFormat={setReportFormat}
+        reportFromDate={reportFromDate}
+        setReportFromDate={setReportFromDate}
+        reportToDate={reportToDate}
+        setReportToDate={setReportToDate}
+        reportViolationType={reportViolationType}
+        setReportViolationType={setReportViolationType}
+        customViolations={customViolations}
+      />
 
-      {reportType === 'custom' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <Label htmlFor="reportFromDate" className="block text-gray-700 dark:text-gray-200 text-sm font-semibold mb-2">
-              From Date
-            </Label>
-            <Input
-              id="reportFromDate"
-              type="date"
-              value={reportFromDate}
-              onChange={(e) => setReportFromDate(e.target.value)}
-              className="w-full"
-            />
-          </div>
-          <div>
-            <Label htmlFor="reportToDate" className="block text-gray-700 dark:text-gray-200 text-sm font-semibold mb-2">
-              To Date
-            </Label>
-            <Input
-              id="reportToDate"
-              type="date"
-              value={reportToDate}
-              onChange={(e) => setReportToDate(e.target.value)}
-              className="w-full"
-            />
-          </div>
-        </div>
-      )}
+      <ReportActions
+        generateReport={generateReport}
+        printReport={printReport}
+        reportPreviewContent={reportPreviewContent}
+      />
 
-      <div>
-        <Label htmlFor="reportViolationType" className="block text-gray-700 dark:text-gray-200 text-sm font-semibold mb-2">
-          Filter by Violation Type
-        </Label>
-        <Select value={reportViolationType} onValueChange={setReportViolationType}>
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="All Types" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Types</SelectItem>
-            <SelectItem value="Late Arrival">Late Arrival</SelectItem>
-            <SelectItem value="Uniform Violation">Uniform Violation</SelectItem>
-            <SelectItem value="Disruptive Behavior">Disruptive Behavior</SelectItem>
-            <SelectItem value="Academic Dishonesty">Academic Dishonesty</SelectItem>
-            <SelectItem value="Bullying">Bullying</SelectItem>
-            <SelectItem value="Property Damage">Property Damage</SelectItem>
-            <SelectItem value="Inappropriate Language">Inappropriate Language</SelectItem>
-            <SelectItem value="Technology Misuse">Technology Misuse</SelectItem>
-            <SelectItem value="Other">Other</SelectItem>
-            {customViolations.map(violation => (
-              <SelectItem key={violation} value={violation} className="custom-option">
-                {violation}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div className="flex flex-wrap gap-4 mt-8">
-        <Button onClick={generateReport} className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg shadow-md">
-          📄 Generate Report
-        </Button>
-        {reportPreviewContent && (
-          <Button variant="secondary" onClick={printReport} className="px-6 py-3 rounded-lg">
-            🖨️ Print
-          </Button>
-        )}
-      </div>
-
-      {reportPreviewContent && (
-        <Card className="p-6 rounded-2xl shadow-md bg-white dark:bg-gray-800 mt-8">
-          <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">Report Preview</h3>
-          <div dangerouslySetInnerHTML={{ __html: reportPreviewContent }} className="prose dark:prose-invert max-w-none" />
-        </Card>
-      )}
+      <ReportPreviewDisplay reportPreviewContent={reportPreviewContent} />
     </section>
   );
 };
