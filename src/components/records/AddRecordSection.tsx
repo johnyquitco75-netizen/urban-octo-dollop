@@ -17,6 +17,7 @@ const AddRecordSection = () => {
   const [recordType, setRecordType] = useState("student");
   const [fullName, setFullName] = useState("");
   const [gradeLevel, setGradeLevel] = useState("");
+  const [gradeSection, setGradeSection] = useState(""); // New state for Grade Section
   const [recordDate, setRecordDate] = useState("");
   const [recordTime, setRecordTime] = useState("");
   const [violationType, setViolationType] = useState("");
@@ -70,6 +71,7 @@ const AddRecordSection = () => {
     setRecordType("student");
     setFullName("");
     setGradeLevel("");
+    setGradeSection(""); // Clear Grade Section
     setRecordDate("");
     setRecordTime("");
     setViolationType("");
@@ -91,6 +93,7 @@ const AddRecordSection = () => {
       type: recordType,
       name: fullName,
       gradeLevel: gradeLevel,
+      gradeSection: gradeSection, // Include Grade Section
       dateTime: `${recordDate}T${recordTime}`,
       violationType: violationType,
       details: details,
@@ -116,6 +119,7 @@ const AddRecordSection = () => {
       type: recordType,
       name: fullName,
       gradeLevel: gradeLevel,
+      gradeSection: gradeSection, // Include Grade Section
       dateTime: `${recordDate}T${recordTime}`,
       violationType: violationType,
       details: details,
@@ -184,6 +188,7 @@ const AddRecordSection = () => {
             type: row.type || 'student',
             name: row.name.trim(),
             gradeLevel: row.gradeLevel || '',
+            gradeSection: row.gradeSection || '', // Handle Grade Section from CSV
             dateTime: row.date && row.time ?
               `${row.date}T${row.time}` :
               new Date().toISOString(),
@@ -242,6 +247,7 @@ const AddRecordSection = () => {
     setRecordType(record.type);
     setFullName(record.name);
     setGradeLevel(record.gradeLevel || "");
+    setGradeSection(record.gradeSection || ""); // Populate Grade Section
     const dt = new Date(record.dateTime);
     setRecordDate(dt.toISOString().split('T')[0]);
     setRecordTime(dt.toTimeString().slice(0, 5));
@@ -318,6 +324,8 @@ const AddRecordSection = () => {
           setFullName={setFullName}
           gradeLevel={gradeLevel}
           setGradeLevel={setGradeLevel}
+          gradeSection={gradeSection} // Pass new prop
+          setGradeSection={setGradeSection} // Pass new prop
           recordDate={recordDate}
           setRecordDate={setRecordDate}
           recordTime={recordTime}

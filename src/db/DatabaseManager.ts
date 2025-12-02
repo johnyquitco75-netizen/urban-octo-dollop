@@ -20,6 +20,7 @@ class DatabaseManager {
           recordStore.createIndex('type', 'type', { unique: false });
           recordStore.createIndex('violationType', 'violationType', { unique: false });
           recordStore.createIndex('dateTime', 'dateTime', { unique: false });
+          // No need to create an index for gradeSection unless it's frequently searched/filtered
         }
         if (!db.objectStoreNames.contains('settings')) {
           db.createObjectStore('settings', { keyPath: 'key' });

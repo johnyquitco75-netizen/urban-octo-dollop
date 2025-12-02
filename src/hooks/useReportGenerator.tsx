@@ -132,9 +132,9 @@ export const useReportGenerator = ({
       yPosition += 10;
 
       // Table Headers
-      const headers = ['#', 'NAME', 'TYPE', 'GRADE', 'VIOLATION', 'DATE & TIME', 'DETAILS'];
+      const headers = ['#', 'NAME', 'TYPE', 'GRADE', 'SECTION', 'VIOLATION', 'DATE & TIME', 'DETAILS']; // Added 'SECTION'
       // Adjusted column widths to accommodate DETAILS better
-      const colWidths = [10, 30, 15, 15, 30, 30, 60]; // Total 190
+      const colWidths = [10, 25, 15, 15, 20, 25, 30, 50]; // Total 190
       const colPositions = [10];
       for (let i = 0; i < colWidths.length - 1; i++) {
         colPositions.push(colPositions[i] + colWidths[i]);
@@ -142,7 +142,7 @@ export const useReportGenerator = ({
 
       pdf.setFillColor(248, 249, 250);
       pdf.rect(10, yPosition, 190, 8, 'F');
-      pdf.setFontSize(9);
+      pdf.setFontSize(8); // Smaller font for headers to fit
       pdf.setFont(undefined, 'bold');
       headers.forEach((header, index) => {
         pdf.text(header, colPositions[index] + 2, yPosition + 5);
@@ -153,7 +153,7 @@ export const useReportGenerator = ({
 
       // Table Rows
       pdf.setFont(undefined, 'normal');
-      pdf.setFontSize(8);
+      pdf.setFontSize(7); // Smaller font for rows to fit
       records.forEach((record, index) => {
         const recordDate = new Date(record.dateTime);
         const formattedDate = recordDate.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' });
@@ -164,6 +164,7 @@ export const useReportGenerator = ({
           record.name,
           record.type,
           record.gradeLevel || 'N/A',
+          record.gradeSection || 'N/A', // Include Grade Section
           record.violationType,
           `${formattedDate}\n${formattedTime}`,
           record.details || 'N/A'
@@ -176,10 +177,10 @@ export const useReportGenerator = ({
         rowData.forEach((data, colIndex) => {
           const lines = pdf.splitTextToSize(data, colWidths[colIndex] - 4);
           cellLines.push(lines);
-          maxLineHeight = Math.max(maxLineHeight, lines.length * 4); // 4 units per line
+          maxLineHeight = Math.max(maxLineHeight, lines.length * 3.5); // Adjusted line height for smaller font
         });
 
-        const calculatedRowHeight = maxLineHeight + 4; // Add some padding
+        const calculatedRowHeight = maxLineHeight + 3; // Add some padding
 
         if (yPosition + calculatedRowHeight > 270) { // Check for page break
           pdf.addPage();
@@ -187,7 +188,7 @@ export const useReportGenerator = ({
           // Re-add headers on new page
           pdf.setFillColor(248, 249, 250);
           pdf.rect(10, yPosition, 190, 8, 'F');
-          pdf.setFontSize(9);
+          pdf.setFontSize(8);
           pdf.setFont(undefined, 'bold');
           headers.forEach((header, idx) => {
             pdf.text(header, colPositions[idx] + 2, yPosition + 5);
@@ -196,7 +197,7 @@ export const useReportGenerator = ({
           pdf.rect(10, yPosition, 190, 8);
           yPosition += 8;
           pdf.setFont(undefined, 'normal');
-          pdf.setFontSize(8);
+          pdf.setFontSize(7);
         }
         
         if (index % 2 === 0) {
@@ -205,7 +206,7 @@ export const useReportGenerator = ({
         }
         cellLines.forEach((lines, colIndex) => {
           lines.forEach((line, lineIndex) => {
-            pdf.text(line, colPositions[colIndex] + 2, yPosition + 5 + (lineIndex * 4));
+            pdf.text(line, colPositions[colIndex] + 2, yPosition + 4 + (lineIndex * 3.5)); // Adjusted text Y position
           });
         });
         yPosition += calculatedRowHeight;
@@ -303,13 +304,14 @@ export const useReportGenerator = ({
   }, [showAlert, leftHeaderLogoData, rightHeaderLogoData, republicText, departmentText, regionText, divisionText, schoolName, schoolAddress, cpcGuidanceOfficerName, cpcGuidanceOfficerPosition, guidanceOfficer, guidanceOfficerPosition, assistantPrincipalName, assistantPrincipalPosition, principalName, principalPosition]);
 
   const exportCSV = useCallback(async (records: any[]) => {
-    const headers = ['Name', 'Type', 'Grade Level', 'Violation Type', 'Date', 'Time', 'Details'];
+    const headers = ['Name', 'Type', 'Grade Level', 'Grade Section', 'Violation Type', 'Date', 'Time', 'Details']; // Added 'Grade Section'
     const csvContent = [
       headers.join(','),
       ...records.map(record => [
         `"${record.name}"`,
         `"${record.type}"`,
         `"${record.gradeLevel || ''}"`,
+        `"${record.gradeSection || ''}"`, // Include Grade Section
         `"${record.violationType}"`,
         `"${new Date(record.dateTime).toLocaleDateString()}"`,
         `"${new Date(record.dateTime).toLocaleTimeString()}"`,
@@ -357,6 +359,7 @@ export const useReportGenerator = ({
                     <th class="py-3 px-4 text-left">NAME</th>
                     <th class="py-3 px-4 text-left">TYPE</th>
                     <th class="py-3 px-4 text-left">GRADE</th>
+                    <th class="py-3 px-4 text-left">SECTION</th> <!-- Added 'SECTION' -->
                     <th class="py-3 px-4 text-left">VIOLATION</th>
                     <th class="py-3 px-4 text-left">DATE & TIME</th>
                     <th class="py-3 px-4 text-left">DETAILS</th>
@@ -369,6 +372,7 @@ export const useReportGenerator = ({
                         <td class="py-3 px-4 font-medium text-gray-800">${record.name}</td>
                         <td class="py-3 px-4"><span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">${record.type}</span></td>
                         <td class="py-3 px-4">${record.gradeLevel || 'N/A'}</td>
+                        <td class="py-3 px-4">${record.gradeSection || 'N/A'}</td> <!-- Display Grade Section -->
                         <td class="py-3 px-4">${record.violationType}</td>
                         <td class="py-3 px-4">
                             ${new Date(record.dateTime).toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' })}<br>

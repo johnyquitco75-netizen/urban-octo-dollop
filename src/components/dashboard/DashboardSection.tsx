@@ -145,7 +145,7 @@ const DashboardSection = () => {
         <img
           id="dashboardLogo"
           className="w-24 h-24 rounded-xl object-cover border-2 border-gray-200 dark:border-gray-700"
-          src={logoData || "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiByeD0iMTIiIGZpbGw9IiM0ZjQ2ZTUiLz4KPHN2ZyB4PSIyNSI yeT0iMjUiIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+CjxwYXRoIGQ9Im0xNCAyLTMgMyAyLjUgMi41TDEwIDExbDMgMyA0LTQgMi41IDIuNUwyMiA5eiIvPgo8cGF0aCBkPSJmNSAxMS0zIDNMMTAgMjIgMTMgMTkgNS41IDExLjVaIi8+CjxwYXRoIGQ9Im0yIDEzIDMgM0w5IDEyIDYgOXoiLz4KPC9zdmc+Cjwvc3ZnPgo="}
+          src={logoData || "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zz4KPHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIxMiIgZmlsbD0iIzRmNDZlNSIvPgo8c3ZnIHg9IjI1IiB5PSIyNSIgd2lkdGg9IjUwIiBoZWlnaHQ9IjUwIiB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj4KPHBhdGggZD0ibTE0IDItMyAzIDIuNSAyLjVMMTAgMTFsMyAzIDQtNCAyLjUgMi41TDIyIDl6Ii8+CjxwYXRoIGQ9Im01IDExLTMgM0wxMCAyMiAxMyAxOSA1LjUgMTEuNVoiLz4KPHBhdGggZD0ibTIgMTMgMyAzTDkgMTIgNiA5eiIvPgo8L3N2Zz4KPC9zdmc+Cjwvc3ZnPgo="}
           alt="School Logo"
         />
         <div className="flex-1 text-center md:text-left">
@@ -248,6 +248,8 @@ const DashboardSection = () => {
               <tr className="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-sm uppercase font-semibold tracking-wider">
                 <th className="py-3 px-4 text-left">Name</th>
                 <th className="py-3 px-4 text-left">Type</th>
+                <th className="py-3 px-4 text-left">Grade</th>
+                <th className="py-3 px-4 text-left">Section</th> {/* New Grade Section Header */}
                 <th className="py-3 px-4 text-left">Violation</th>
                 <th className="py-3 px-4 text-left">Date</th>
                 <th className="py-3 px-4 text-left">Details</th> {/* New Details column */}
@@ -258,7 +260,7 @@ const DashboardSection = () => {
             <tbody>
               {recentRecords.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="py-4 text-center text-gray-500 dark:text-gray-400">No records found</td> {/* Updated colSpan */}
+                  <td colSpan={9} className="py-4 text-center text-gray-500 dark:text-gray-400">No records found</td> {/* Updated colSpan */}
                 </tr>
               ) : (
                 recentRecords.map((record) => (
@@ -269,6 +271,8 @@ const DashboardSection = () => {
                         {record.type}
                       </span>
                     </td>
+                    <td className="py-3 px-4 text-gray-700 dark:text-gray-200">{record.gradeLevel || 'N/A'}</td>
+                    <td className="py-3 px-4 text-gray-700 dark:text-gray-200">{record.gradeSection || 'N/A'}</td> {/* Display Grade Section */}
                     <td className="py-3 px-4 text-gray-700 dark:text-gray-200">{record.violationType}</td>
                     <td className="py-3 px-4 text-gray-700 dark:text-gray-200">{new Date(record.dateTime).toLocaleDateString()}</td>
                     <td className="py-3 px-4 text-gray-700 dark:text-gray-200 max-w-[150px] truncate">{record.details || 'N/A'}</td> {/* Display details, truncated */}

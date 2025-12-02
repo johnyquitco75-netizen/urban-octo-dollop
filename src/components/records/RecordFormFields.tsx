@@ -13,6 +13,8 @@ interface RecordFormFieldsProps {
   setFullName: (name: string) => void;
   gradeLevel: string;
   setGradeLevel: (grade: string) => void;
+  gradeSection: string; // New prop
+  setGradeSection: (section: string) => void; // New prop
   recordDate: string;
   setRecordDate: (date: string) => void;
   recordTime: string;
@@ -28,6 +30,8 @@ const RecordFormFields: React.FC<RecordFormFieldsProps> = ({
   setFullName,
   gradeLevel,
   setGradeLevel,
+  gradeSection, // Use new prop
+  setGradeSection, // Use new prop
   recordDate,
   setRecordDate,
   recordTime,
@@ -83,6 +87,23 @@ const RecordFormFields: React.FC<RecordFormFieldsProps> = ({
           </Select>
         </div>
       </div>
+
+      {/* New Grade Section field, only for student records */}
+      {recordType === 'student' && (
+        <div>
+          <Label htmlFor="gradeSection" className="block text-gray-700 dark:text-gray-200 text-sm font-semibold mb-2">
+            Grade Section
+          </Label>
+          <Input
+            id="gradeSection"
+            type="text"
+            value={gradeSection}
+            onChange={(e) => setGradeSection(e.target.value)}
+            placeholder="e.g., Section A, Diamond"
+            className="w-full"
+          />
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
