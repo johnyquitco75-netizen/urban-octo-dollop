@@ -200,7 +200,7 @@ export const useReportGenerator = ({
 
       yPosition += 20; // Space before signatures
 
-      // Signature blocks (2x2 layout)
+      // Signature blocks (2x2 layout) - Replicating certificate layout
       const blockWidth = 70; // Width for each signature block
       const nameLineOffset = 10; // Y offset for name from label
       const lineYOffset = 12; // Y offset for underline from label
