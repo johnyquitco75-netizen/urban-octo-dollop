@@ -47,13 +47,6 @@ const CertificateSection = () => {
     const principal = principalName;
     const assistant = assistantPrincipalName;
 
-    const signatureBlocks = [
-      { name: guidance, title: 'Guidance Officer' },
-      { name: cpc, title: 'CPC/Guidance Officer' },
-      { name: principal, title: 'Principal' },
-      { name: assistant, title: 'Assistant Principal' }
-    ];
-
     const headerHtml = `
       <div class="header-section" style="display: flex; justify-content: center; align-items: flex-start; margin-bottom: 20px; position: relative;">
           ${leftLogo ? `<img src="${leftLogo}" class="header-logo left-logo" alt="Left Logo">` : ''}
@@ -93,34 +86,41 @@ const CertificateSection = () => {
             })}.
         </div>
         <div class="print-signatures-grid">
-            ${signatureBlocks[0].name ? `
-                <div class="signature-block">
-                    <div class="signature-name">${signatureBlocks[0].name.toUpperCase()}</div>
-                    <div class="signature-line"></div>
-                    <div class="signature-title">${signatureBlocks[0].title}</div>
-                </div>
-            ` : '<div class="signature-block"></div>'}
-            ${signatureBlocks[1].name ? `
-                <div class="signature-block">
-                    <div class="signature-name">${signatureBlocks[1].name.toUpperCase()}</div>
-                    <div class="signature-line"></div>
-                    <div class="signature-title">${signatureBlocks[1].title}</div>
-                </div>
-            ` : '<div class="signature-block"></div>'}
-            ${signatureBlocks[2].name ? `
-                <div class="signature-block">
-                    <div class="signature-name">${signatureBlocks[2].name.toUpperCase()}</div>
-                    <div class="signature-line"></div>
-                    <div class="signature-title">${signatureBlocks[2].title}</div>
-                </div>
-            ` : '<div class="signature-block"></div>'}
-            ${signatureBlocks[3].name ? `
-                <div class="signature-block">
-                    <div class="signature-name">${signatureBlocks[3].name.toUpperCase()}</div>
-                    <div class="signature-line"></div>
-                    <div class="signature-title">${signatureBlocks[3].title}</div>
-                </div>
-            ` : '<div class="signature-block"></div>'}
+            <div class="signature-block-group">
+                ${cpc ? `
+                    <div class="signature-block">
+                        <div class="signature-label">PREPARED BY:</div>
+                        <div class="signature-name">${cpc.toUpperCase()}</div>
+                        <div class="signature-line"></div>
+                        <div class="signature-title">CPC/Guidance Officer</div>
+                    </div>
+                ` : '<div class="signature-block"></div>'}
+                ${assistant ? `
+                    <div class="signature-block mt-8">
+                        <div class="signature-label">NOTED BY:</div>
+                        <div class="signature-name">${assistant.toUpperCase()}</div>
+                        <div class="signature-line"></div>
+                        <div class="signature-title">Assistant Principal</div>
+                    </div>
+                ` : '<div class="signature-block"></div>'}
+            </div>
+            <div class="signature-block-group">
+                ${guidance ? `
+                    <div class="signature-block">
+                        <div class="signature-name">${guidance.toUpperCase()}</div>
+                        <div class="signature-line"></div>
+                        <div class="signature-title">Guidance Officer</div>
+                    </div>
+                ` : '<div class="signature-block"></div>'}
+                ${principal ? `
+                    <div class="signature-block mt-8">
+                        <div class="signature-label">APPROVED BY:</div>
+                        <div class="signature-name">${principal.toUpperCase()}</div>
+                        <div class="signature-line"></div>
+                        <div class="signature-title">Principal</div>
+                    </div>
+                ` : '<div class="signature-block"></div>'}
+            </div>
         </div>
       `;
     } else {
@@ -144,34 +144,41 @@ const CertificateSection = () => {
             })}.
         </div>
         <div class="print-signatures-grid">
-            ${signatureBlocks[0].name ? `
-                <div class="signature-block">
-                    <div class="signature-name">${signatureBlocks[0].name.toUpperCase()}</div>
-                    <div class="signature-line"></div>
-                    <div class="signature-title">${signatureBlocks[0].title}</div>
-                </div>
-            ` : '<div class="signature-block"></div>'}
-            ${signatureBlocks[1].name ? `
-                <div class="signature-block">
-                    <div class="signature-name">${signatureBlocks[1].name.toUpperCase()}</div>
-                    <div class="signature-line"></div>
-                    <div class="signature-title">${signatureBlocks[1].title}</div>
-                </div>
-            ` : '<div class="signature-block"></div>'}
-            ${signatureBlocks[2].name ? `
-                <div class="signature-block">
-                    <div class="signature-name">${signatureBlocks[2].name.toUpperCase()}</div>
-                    <div class="signature-line"></div>
-                    <div class="signature-title">${signatureBlocks[2].title}</div>
-                </div>
-            ` : '<div class="signature-block"></div>'}
-            ${signatureBlocks[3].name ? `
-                <div class="signature-block">
-                    <div class="signature-name">${signatureBlocks[3].name.toUpperCase()}</div>
-                    <div class="signature-line"></div>
-                    <div class="signature-title">${signatureBlocks[3].title}</div>
-                </div>
-            ` : '<div class="signature-block"></div>'}
+            <div class="signature-block-group">
+                ${cpc ? `
+                    <div class="signature-block">
+                        <div class="signature-label">PREPARED BY:</div>
+                        <div class="signature-name">${cpc.toUpperCase()}</div>
+                        <div class="signature-line"></div>
+                        <div class="signature-title">CPC/Guidance Officer</div>
+                    </div>
+                ` : '<div class="signature-block"></div>'}
+                ${assistant ? `
+                    <div class="signature-block mt-8">
+                        <div class="signature-label">NOTED BY:</div>
+                        <div class="signature-name">${assistant.toUpperCase()}</div>
+                        <div class="signature-line"></div>
+                        <div class="signature-title">Assistant Principal</div>
+                    </div>
+                ` : '<div class="signature-block"></div>'}
+            </div>
+            <div class="signature-block-group">
+                ${guidance ? `
+                    <div class="signature-block">
+                        <div class="signature-name">${guidance.toUpperCase()}</div>
+                        <div class="signature-line"></div>
+                        <div class="signature-title">Guidance Officer</div>
+                    </div>
+                ` : '<div class="signature-block"></div>'}
+                ${principal ? `
+                    <div class="signature-block mt-8">
+                        <div class="signature-label">APPROVED BY:</div>
+                        <div class="signature-name">${principal.toUpperCase()}</div>
+                        <div class="signature-line"></div>
+                        <div class="signature-title">Principal</div>
+                    </div>
+                ` : '<div class="signature-block"></div>'}
+            </div>
         </div>
       `;
     }
@@ -269,69 +276,73 @@ This certification is issued upon the request of the above-mentioned student for
       yPosition += 40;
 
       // Signature blocks (2x2 layout)
-      const signatureBlocks = [
-        { name: guidanceOfficer, title: 'Guidance Officer' },
-        { name: cpcGuidanceOfficerName, title: 'CPC/Guidance Officer' },
-        { name: principalName, title: 'Principal' },
-        { name: assistantPrincipalName, title: 'Assistant Principal' }
-      ];
-
       const blockWidth = 80; // Width for each signature block
-      const horizontalSpacing = 30; // Space between left and right blocks
-      const verticalSpacing = 25; // Space between rows of signatures
+      const leftColX = 20;
+      const rightColX = 190 - blockWidth - 20; // Right column X position
 
-      let currentY = yPosition;
-
-      // Row 1: Guidance Officer and CPC/Guidance Officer
-      if (signatureBlocks[0].name || signatureBlocks[1].name) {
-        if (currentY > 270) { pdf.addPage(); currentY = 20; }
+      // Row 1: PREPARED BY (CPC/Guidance Officer) and Guidance Officer
+      if (cpcGuidanceOfficerName || guidanceOfficer) {
+        if (yPosition > 270) { pdf.addPage(); yPosition = 20; }
         
-        // Guidance Officer (Left)
-        if (signatureBlocks[0].name) {
-          const x = 20;
-          pdf.setFont(undefined, 'bold');
-          pdf.text(signatureBlocks[0].name.toUpperCase(), x + (blockWidth / 2), currentY, { align: 'center' });
-          pdf.line(x, currentY + 2, x + blockWidth, currentY + 2);
+        // PREPARED BY: CPC/Guidance Officer (Left)
+        if (cpcGuidanceOfficerName) {
+          pdf.setFontSize(9);
           pdf.setFont(undefined, 'normal');
-          pdf.text(signatureBlocks[0].title, x + (blockWidth / 2), currentY + 8, { align: 'center' });
+          pdf.text('PREPARED BY:', leftColX, yPosition);
+          pdf.setFontSize(11);
+          pdf.setFont(undefined, 'bold');
+          pdf.text(cpcGuidanceOfficerName.toUpperCase(), leftColX + (blockWidth / 2), yPosition + 8, { align: 'center' });
+          pdf.line(leftColX, yPosition + 10, leftColX + blockWidth, yPosition + 10);
+          pdf.setFontSize(9);
+          pdf.setFont(undefined, 'normal');
+          pdf.text('CPC/Guidance Officer', leftColX + (blockWidth / 2), yPosition + 15, { align: 'center' });
         }
 
-        // CPC/Guidance Officer (Right)
-        if (signatureBlocks[1].name) {
-          const x = 190 - blockWidth - 20;
+        // Guidance Officer (Right)
+        if (guidanceOfficer) {
+          pdf.setFontSize(11);
           pdf.setFont(undefined, 'bold');
-          pdf.text(signatureBlocks[1].name.toUpperCase(), x + (blockWidth / 2), currentY, { align: 'center' });
-          pdf.line(x, currentY + 2, x + blockWidth, currentY + 2);
+          pdf.text(guidanceOfficer.toUpperCase(), rightColX + (blockWidth / 2), yPosition + 8, { align: 'center' });
+          pdf.line(rightColX, yPosition + 10, rightColX + blockWidth, yPosition + 10);
+          pdf.setFontSize(9);
           pdf.setFont(undefined, 'normal');
-          pdf.text(signatureBlocks[1].title, x + (blockWidth / 2), currentY + 8, { align: 'center' });
+          pdf.text('Guidance Officer', rightColX + (blockWidth / 2), yPosition + 15, { align: 'center' });
         }
-        currentY += verticalSpacing;
+        yPosition += 35; // Move down for next row
       }
 
-      // Row 2: Principal and Assistant Principal
-      if (signatureBlocks[2].name || signatureBlocks[3].name) {
-        if (currentY > 270) { pdf.addPage(); currentY = 20; }
+      // Row 2: NOTED BY (Assistant Principal) and APPROVED BY (Principal)
+      if (assistantPrincipalName || principalName) {
+        if (yPosition > 270) { pdf.addPage(); yPosition = 20; }
 
-        // Principal (Left)
-        if (signatureBlocks[2].name) {
-          const x = 20;
-          pdf.setFont(undefined, 'bold');
-          pdf.text(signatureBlocks[2].name.toUpperCase(), x + (blockWidth / 2), currentY, { align: 'center' });
-          pdf.line(x, currentY + 2, x + blockWidth, currentY + 2);
+        // NOTED BY: Assistant Principal (Left)
+        if (assistantPrincipalName) {
+          pdf.setFontSize(9);
           pdf.setFont(undefined, 'normal');
-          pdf.text(signatureBlocks[2].title, x + (blockWidth / 2), currentY + 8, { align: 'center' });
+          pdf.text('NOTED BY:', leftColX, yPosition);
+          pdf.setFontSize(11);
+          pdf.setFont(undefined, 'bold');
+          pdf.text(assistantPrincipalName.toUpperCase(), leftColX + (blockWidth / 2), yPosition + 8, { align: 'center' });
+          pdf.line(leftColX, yPosition + 10, leftColX + blockWidth, yPosition + 10);
+          pdf.setFontSize(9);
+          pdf.setFont(undefined, 'normal');
+          pdf.text('Assistant Principal', leftColX + (blockWidth / 2), yPosition + 15, { align: 'center' });
         }
 
-        // Assistant Principal (Right)
-        if (signatureBlocks[3].name) {
-          const x = 190 - blockWidth - 20;
-          pdf.setFont(undefined, 'bold');
-          pdf.text(signatureBlocks[3].name.toUpperCase(), x + (blockWidth / 2), currentY, { align: 'center' });
-          pdf.line(x, currentY + 2, x + blockWidth, currentY + 2);
+        // APPROVED BY: Principal (Right)
+        if (principalName) {
+          pdf.setFontSize(9);
           pdf.setFont(undefined, 'normal');
-          pdf.text(signatureBlocks[3].title, x + (blockWidth / 2), currentY + 8, { align: 'center' });
+          pdf.text('APPROVED BY:', rightColX, yPosition);
+          pdf.setFontSize(11);
+          pdf.setFont(undefined, 'bold');
+          pdf.text(principalName.toUpperCase(), rightColX + (blockWidth / 2), yPosition + 8, { align: 'center' });
+          pdf.line(rightColX, yPosition + 10, rightColX + blockWidth, yPosition + 10);
+          pdf.setFontSize(9);
+          pdf.setFont(undefined, 'normal');
+          pdf.text('Principal', rightColX + (blockWidth / 2), yPosition + 15, { align: 'center' });
         }
-        currentY += verticalSpacing;
+        yPosition += 35; // Move down for next row
       }
 
       const fileName = `good-moral-certificate-${previewStudentName.replace(/\s+/g, '-').toLowerCase()}-${new Date().toISOString().split('T')[0]}.pdf`;
@@ -392,16 +403,23 @@ This certification is issued upon the request of the above-mentioned student for
               
               .print-signatures-grid { 
                 margin-top: 4rem; 
-                display: grid; 
-                grid-template-columns: 1fr 1fr; 
-                gap: 2rem 4rem; /* row-gap column-gap */
+                display: flex; /* Use flexbox for main columns */
+                justify-content: space-around; /* Distribute space between columns */
+                gap: 4rem; /* Space between left and right groups */
                 padding: 0 20mm; /* Match page margins */
                 page-break-inside: avoid; 
               }
-              .signature-block { text-align: center; }
-              .signature-name { font-weight: bold; color: #000; margin-bottom: 0.5rem; font-size: 12pt; text-transform: uppercase; letter-spacing: 1px; }
-              .signature-line { border-bottom: 2px solid #000; margin: 0 auto; width: 80%; height: 12px; } /* Adjusted width and height */
-              .signature-title { font-weight: 600; color: #000; font-size: 11pt; margin-top: 0.5rem; }
+              .signature-block-group {
+                display: flex;
+                flex-direction: column;
+                gap: 2rem; /* Space between blocks in a column */
+                flex: 1; /* Allow groups to take equal space */
+              }
+              .signature-block { text-align: center; flex-shrink: 0; } /* Prevent shrinking */
+              .signature-label { font-weight: normal; color: #000; font-size: 9pt; text-align: left; margin-bottom: 0.2rem; }
+              .signature-name { font-weight: bold; color: #000; margin-bottom: 0.5rem; font-size: 11pt; text-transform: uppercase; letter-spacing: 1px; }
+              .signature-line { border-bottom: 1px solid #000; margin: 0 auto; width: 80%; height: 12px; }
+              .signature-title { font-weight: normal; color: #000; font-size: 9pt; margin-top: 0.5rem; }
             </style>
           </head>
           <body>
