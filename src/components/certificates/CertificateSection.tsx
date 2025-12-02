@@ -45,12 +45,7 @@ const CertificateSection = () => {
       <div class="header-section" style="display: flex; justify-content: center; align-items: flex-start; margin-bottom: 20px; position: relative;">
           ${leftLogo ? `<img src="${leftLogo}" class="header-logo left-logo" style="position: absolute; left: 20px; top: 0; width: 60px; height: 60px; object-fit: contain;" alt="Left Logo">` : ''}
           <div class="text-center" style="flex-grow: 1;">
-              <p style="margin: 0; font-size: 10pt;">Republic of the Philippines</p>
-              <p style="margin: 0; font-size: 10pt;">Department of Education</p>
-              <p style="margin: 0; font-size: 10pt;">Region VII, Central Visayas</p>
-              <p style="margin: 0; font-size: 10pt;">Division of Cebu City</p>
-              <p style="margin: 0; font-size: 12pt; font-weight: bold; margin-top: 5px;">${school.toUpperCase()}</p>
-              <p style="margin: 0; font-size: 10pt;">${address}</p>
+              <!-- Removed hardcoded institutional text and school details -->
           </div>
           ${rightLogo ? `<img src="${rightLogo}" class="header-logo right-logo" style="position: absolute; right: 20px; top: 0; width: 60px; height: 60px; object-fit: contain;" alt="Right Logo">` : ''}
       </div>
@@ -179,7 +174,7 @@ const CertificateSection = () => {
       const pdf = new jsPDF();
       let yPosition = 10;
 
-      // Header Logos and Text
+      // Header Logos
       if (leftHeaderLogoData) {
         try {
           pdf.addImage(leftHeaderLogoData, 'JPEG', 20, yPosition, 25, 25); // Left logo
@@ -195,25 +190,9 @@ const CertificateSection = () => {
         }
       }
 
-      yPosition += 5; // Adjust for text below logos
-      pdf.setFontSize(9);
-      pdf.setFont(undefined, 'normal');
-      pdf.text('Republic of the Philippines', 105, yPosition, { align: 'center' });
-      yPosition += 4;
-      pdf.text('Department of Education', 105, yPosition, { align: 'center' });
-      yPosition += 4;
-      pdf.text('Region VII, Central Visayas', 105, yPosition, { align: 'center' });
-      yPosition += 4;
-      pdf.text('Division of Cebu City', 105, yPosition, { align: 'center' });
-      yPosition += 6;
-      pdf.setFontSize(12);
-      pdf.setFont(undefined, 'bold');
-      pdf.text(schoolName.toUpperCase(), 105, yPosition, { align: 'center' });
-      yPosition += 5;
-      pdf.setFontSize(9);
-      pdf.setFont(undefined, 'normal');
-      pdf.text(schoolAddress, 105, yPosition, { align: 'center' });
-      yPosition += 10;
+      // Adjust yPosition after logos, before the main title
+      yPosition = Math.max(yPosition + 25, 40); // Ensure enough space for logos, or start at 40 if no logos
+
       pdf.setFontSize(14);
       pdf.setFont(undefined, 'bold');
       pdf.text('CERTIFICATE OF GOOD MORAL CHARACTER', 105, yPosition, { align: 'center' });
