@@ -25,11 +25,12 @@ export const PwaApp = () => {
     schoolName, customPhrase, logoData,
     showAlert,
     isAppInitialized,
+    currentSection, setCurrentSection, // Get from context
   } = useAppContext();
 
   const [currentTime, setCurrentTime] = useState("");
   const [currentDate, setCurrentDate] = useState("");
-  const [currentSection, setCurrentSection] = useState("dashboard");
+  // currentSection state moved to AppContext
 
   // --- Date and Time Update ---
   const updateDateTime = useCallback(() => {
@@ -90,10 +91,11 @@ export const PwaApp = () => {
           <div className="text-2xl md:text-3xl font-bold mb-1">E-Guidance Record System</div>
           <div className="text-sm md:text-base opacity-90">Strengthening Schools Through Smart Record Management</div>
         </div>
-        <div className="flex flex-col items-end gap-2 flex-1">
-          <div className="bg-white/20 border border-white/30 rounded-xl p-3 text-right backdrop-blur-sm min-w-[180px]">
-            <div className="text-xl md:text-2xl font-bold text-white/90">{currentTime}</div>
-            <div className="text-lg md:text-xl text-white/80 font-bold">{currentDate}</div>
+        <div className="flex flex-col items-center md:items-end gap-2 flex-1">
+          {/* Removed crystal box styling, adjusted text color */}
+          <div className="p-3 text-right min-w-[180px]">
+            <div className="text-xl md:text-2xl font-bold text-white">{currentTime}</div>
+            <div className="text-lg md:text-xl text-white/90 font-bold">{currentDate}</div>
           </div>
         </div>
       </header>

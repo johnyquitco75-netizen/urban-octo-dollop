@@ -66,6 +66,11 @@ interface AppContextType {
   setRegionText: (text: string) => void;
   divisionText: string;
   setDivisionText: (text: string) => void;
+  // New states for navigation and editing
+  currentSection: string;
+  setCurrentSection: (section: string) => void;
+  recordToEditId: number | null;
+  setRecordToEditId: (id: number | null) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -101,6 +106,10 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const [departmentText, setDepartmentText] = useState("Department of Education");
   const [regionText, setRegionText] = useState("Region VII, Central Visayas");
   const [divisionText, setDivisionText] = useState("Division of Cebu City");
+
+  // New states for navigation and editing
+  const [currentSection, setCurrentSection] = useState("dashboard");
+  const [recordToEditId, setRecordToEditId] = useState<number | null>(null);
 
 
   // Modals state
@@ -288,7 +297,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
         '--sidebar-accent': '262.1 83.3% 57.8% / 0.1', // Light purple accent
         '--sidebar-accent-foreground': '262.1 83.3% 57.8%', // Dark purple
         '--sidebar-border': '262.1 83.3% 57.8% / 0.2',
-        '--sidebar-ring': '262.1 83.3% 57.8%',
+        '--sidebar-ring': '217.2 91.2% 59.8%',
       },
     };
 
@@ -336,6 +345,9 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     departmentText, setDepartmentText,
     regionText, setRegionText,
     divisionText, setDivisionText,
+    // New states for navigation and editing
+    currentSection, setCurrentSection,
+    recordToEditId, setRecordToEditId,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

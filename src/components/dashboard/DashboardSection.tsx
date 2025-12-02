@@ -7,7 +7,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { useAppContext } from "@/context/AppContext";
 
 const DashboardSection = () => {
-  const { db, schoolName, schoolAddress, logoData, currentUserRole, setIsLoggedIn, setCurrentUserRole, showAlert, setModalPhotoSrc, setIsPhotoModalOpen, setConfirmMessage, confirmActionRef, setIsConfirmModalOpen } = useAppContext();
+  const { db, schoolName, schoolAddress, logoData, currentUserRole, setIsLoggedIn, setCurrentUserRole, showAlert, setModalPhotoSrc, setIsPhotoModalOpen, setConfirmMessage, confirmActionRef, setIsConfirmModalOpen, setCurrentSection, setRecordToEditId } = useAppContext();
 
   // Dashboard state
   const [totalRecords, setTotalRecords] = useState(0);
@@ -134,11 +134,9 @@ const DashboardSection = () => {
     setIsConfirmModalOpen(true);
   };
 
-  // Placeholder for fillFormFromRecord, will be implemented in AddRecordSection
-  const fillFormFromRecord = (recordId: number) => {
-    showAlert(`Edit functionality for record ID ${recordId} will be available in Add Record section.`, 'info');
-    // In a real scenario, you'd likely navigate to the add-record section and pre-fill the form.
-    // For now, this is a placeholder.
+  const handleEditRecord = (recordId: number) => {
+    setRecordToEditId(recordId);
+    setCurrentSection('add-record');
   };
 
   return (
@@ -287,7 +285,7 @@ const DashboardSection = () => {
                       )}
                     </td>
                     <td className="py-3 px-4">
-                      <Button variant="ghost" size="sm" onClick={() => fillFormFromRecord(record.id)} className="text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300">
+                      <Button variant="ghost" size="sm" onClick={() => handleEditRecord(record.id)} className="text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300">
                         Edit
                       </Button>
                       <Button variant="ghost" size="sm" onClick={() => deleteRecord(record.id)} className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 ml-2">

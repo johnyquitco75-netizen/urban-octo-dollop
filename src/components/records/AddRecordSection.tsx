@@ -10,7 +10,7 @@ import CameraAttachment from "./CameraAttachment";
 import RecordFormActions from "./RecordFormActions";
 
 const AddRecordSection = () => {
-  const { db, showAlert, customViolations, setCustomViolations, setConfirmMessage, confirmActionRef, setIsConfirmModalOpen } = useAppContext();
+  const { db, showAlert, customViolations, setCustomViolations, setConfirmMessage, confirmActionRef, setIsConfirmModalOpen, recordToEditId, setRecordToEditId } = useAppContext();
 
   // Record form state
   const [recordType, setRecordType] = useState("student");
@@ -78,6 +78,7 @@ const AddRecordSection = () => {
     setCurrentEditId(null);
     stopCamera();
     setCurrentDateTime();
+    setRecordToEditId(null); // Clear recordToEditId from context
   };
 
   const handleEditSave = async () => {
@@ -251,6 +252,15 @@ const AddRecordSection = () => {
 
     setSearchQuery("");
   };
+
+  // Effect to handle recordToEditId from context
+  useEffect(() => {
+    if (recordToEditId !== null) {
+      fillFormFromRecord(recordToEditId);
+      setRecordToEditId(null); // Clear the ID after processing
+    }
+  }, [recordToEditId, setRecordToEditId]);
+
 
   const deleteRecord = async (recordId: number) => {
     const onConfirm = async () => {
