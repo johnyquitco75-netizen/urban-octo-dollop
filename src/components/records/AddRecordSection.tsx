@@ -326,19 +326,21 @@ const AddRecordSection = () => {
           setDetails={setDetails}
         />
 
-        {/* New Violation Details Section */}
-        <Card className="p-6 rounded-2xl shadow-md bg-white dark:bg-gray-800">
-          <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">🚨 Violation Details</h3>
-          <ViolationTypeManagement
-            violationType={violationType}
-            setViolationType={setViolationType}
-            customViolations={customViolations}
-            newCustomViolation={newCustomViolation}
-            setNewCustomViolation={setNewCustomViolation}
-            addCustomViolation={addCustomViolation}
-            removeCustomViolation={removeCustomViolation}
-          />
-        </Card>
+        {/* New Violation Details Section - Conditionally rendered */}
+        {recordType === 'student' && (
+          <Card className="p-6 rounded-2xl shadow-md bg-white dark:bg-gray-800">
+            <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">🚨 Violation Details</h3>
+            <ViolationTypeManagement
+              violationType={violationType}
+              setViolationType={setViolationType}
+              customViolations={customViolations}
+              newCustomViolation={newCustomViolation}
+              setNewCustomViolation={setNewCustomViolation}
+              addCustomViolation={addCustomViolation}
+              removeCustomViolation={removeCustomViolation}
+            />
+          </Card>
+        )}
 
         <CameraAttachment
           isCameraActive={isCameraActive}
