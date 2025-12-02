@@ -83,40 +83,48 @@ export const useCertificateGenerator = ({
             })}.
         </div>
         <div class="print-signatures-grid">
-            <div class="signature-block-group">
-                ${cpc ? `
-                    <div class="signature-block">
+            <div class="signature-row">
+                <div class="signature-col">
+                    ${cpc ? `
                         <div class="signature-label">PREPARED BY:</div>
-                        <div class="signature-name">${cpc.toUpperCase()}</div>
-                        <div class="signature-line"></div>
-                        <div class="signature-title">${cpcPos}</div>
-                    </div>
-                ` : '<div class="signature-block"></div>'}
-                ${assistant ? `
-                    <div class="signature-block mt-8">
-                        <div class="signature-label">NOTED BY:</div>
-                        <div class="signature-name">${assistant.toUpperCase()}</div>
-                        <div class="signature-line"></div>
-                        <div class="signature-title">${assistantPos}</div>
-                    </div>
-                ` : '<div class="signature-block"></div>'}
+                        <div class="signature-block">
+                            <div class="signature-name">${cpc.toUpperCase()}</div>
+                            <div class="signature-line"></div>
+                            <div class="signature-title">${cpcPos}</div>
+                        </div>
+                    ` : ''}
+                </div>
+                <div class="signature-col">
+                    ${guidance ? `
+                        <div class="signature-block">
+                            <div class="signature-name">${guidance.toUpperCase()}</div>
+                            <div class="signature-line"></div>
+                            <div class="signature-title">${guidancePos}</div>
+                        </div>
+                    ` : ''}
+                </div>
             </div>
-            <div class="signature-block-group">
-                ${guidance ? `
-                    <div class="signature-block">
-                        <div class="signature-name">${guidance.toUpperCase()}</div>
-                        <div class="signature-line"></div>
-                        <div class="signature-title">${guidancePos}</div>
-                    </div>
-                ` : '<div class="signature-block"></div>'}
-                ${principal ? `
-                    <div class="signature-block mt-8">
+            <div class="signature-row mt-8">
+                <div class="signature-col">
+                    ${assistant ? `
+                        <div class="signature-label">NOTED BY:</div>
+                        <div class="signature-block">
+                            <div class="signature-name">${assistant.toUpperCase()}</div>
+                            <div class="signature-line"></div>
+                            <div class="signature-title">${assistantPos}</div>
+                        </div>
+                    ` : ''}
+                </div>
+                <div class="signature-col">
+                    ${principal ? `
                         <div class="signature-label">APPROVED BY:</div>
-                        <div class="signature-name">${principal.toUpperCase()}</div>
-                        <div class="signature-line"></div>
-                        <div class="signature-title">${principalPos}</div>
-                    </div>
-                ` : '<div class="signature-block"></div>'}
+                        <div class="signature-block">
+                            <div class="signature-name">${principal.toUpperCase()}</div>
+                            <div class="signature-line"></div>
+                            <div class="signature-title">${principalPos}</div>
+                        </div>
+                    ` : ''}
+                </div>
             </div>
         </div>
       `;
@@ -141,40 +149,48 @@ export const useCertificateGenerator = ({
             })}.
         </div>
         <div class="print-signatures-grid">
-            <div class="signature-block-group">
-                ${cpc ? `
-                    <div class="signature-block">
+            <div class="signature-row">
+                <div class="signature-col">
+                    ${cpc ? `
                         <div class="signature-label">PREPARED BY:</div>
-                        <div class="signature-name">${cpc.toUpperCase()}</div>
-                        <div class="signature-line"></div>
-                        <div class="signature-title">${cpcPos}</div>
-                    </div>
-                ` : '<div class="signature-block"></div>'}
-                ${assistant ? `
-                    <div class="signature-block mt-8">
-                        <div class="signature-label">NOTED BY:</div>
-                        <div class="signature-name">${assistant.toUpperCase()}</div>
-                        <div class="signature-line"></div>
-                        <div class="signature-title">${assistantPos}</div>
-                    </div>
-                ` : '<div class="signature-block"></div>'}
+                        <div class="signature-block">
+                            <div class="signature-name">${cpc.toUpperCase()}</div>
+                            <div class="signature-line"></div>
+                            <div class="signature-title">${cpcPos}</div>
+                        </div>
+                    ` : ''}
+                </div>
+                <div class="signature-col">
+                    ${guidance ? `
+                        <div class="signature-block">
+                            <div class="signature-name">${guidance.toUpperCase()}</div>
+                            <div class="signature-line"></div>
+                            <div class="signature-title">${guidancePos}</div>
+                        </div>
+                    ` : ''}
+                </div>
             </div>
-            <div class="signature-block-group">
-                ${guidance ? `
-                    <div class="signature-block">
-                        <div class="signature-name">${guidance.toUpperCase()}</div>
-                        <div class="signature-line"></div>
-                        <div class="signature-title">${guidancePos}</div>
-                    </div>
-                ` : '<div class="signature-block"></div>'}
-                ${principal ? `
-                    <div class="signature-block mt-8">
+            <div class="signature-row mt-8">
+                <div class="signature-col">
+                    ${assistant ? `
+                        <div class="signature-label">NOTED BY:</div>
+                        <div class="signature-block">
+                            <div class="signature-name">${assistant.toUpperCase()}</div>
+                            <div class="signature-line"></div>
+                            <div class="signature-title">${assistantPos}</div>
+                        </div>
+                    ` : ''}
+                </div>
+                <div class="signature-col">
+                    ${principal ? `
                         <div class="signature-label">APPROVED BY:</div>
-                        <div class="signature-name">${principal.toUpperCase()}</div>
-                        <div class="signature-line"></div>
-                        <div class="signature-title">${principalPos}</div>
-                    </div>
-                ` : '<div class="signature-block"></div>'}
+                        <div class="signature-block">
+                            <div class="signature-name">${principal.toUpperCase()}</div>
+                            <div class="signature-line"></div>
+                            <div class="signature-title">${principalPos}</div>
+                        </div>
+                    ` : ''}
+                </div>
             </div>
         </div>
       `;
@@ -273,10 +289,11 @@ This certification is issued upon the request of the above-mentioned student for
       yPosition += 40;
 
       // Signature blocks (2x2 layout)
-      const blockWidth = 80; // Width for each signature block
-      const leftColX = 20;
-      const rightColX = 190 - blockWidth - 20; // Right column X position
-      const lineLength = 70; // Length of the underline
+      const blockWidth = 70; // Width for each signature block
+      const nameLineOffset = 10; // Y offset for name from label
+      const lineYOffset = 12; // Y offset for underline from label
+      const positionYOffset = 17; // Y offset for position from label
+      const rowSpacing = 35; // Vertical space between rows of signatures
 
       // Row 1: PREPARED BY (CPC/Guidance Officer) and Guidance Officer
       if (cpcGuidanceOfficerName || guidanceOfficer) {
@@ -284,29 +301,33 @@ This certification is issued upon the request of the above-mentioned student for
         
         // PREPARED BY: CPC/Guidance Officer (Left)
         if (cpcGuidanceOfficerName) {
+          const labelX = 20;
+          const nameX = labelX + 40; // Center name over a block starting at labelX + 10
           pdf.setFontSize(9);
           pdf.setFont(undefined, 'normal');
-          pdf.text('PREPARED BY:', leftColX, yPosition);
+          pdf.text('PREPARED BY:', labelX, yPosition);
           pdf.setFontSize(11);
           pdf.setFont(undefined, 'bold');
-          pdf.text(cpcGuidanceOfficerName.toUpperCase(), leftColX + (blockWidth / 2), yPosition + 8, { align: 'center' });
-          pdf.line(leftColX + (blockWidth - lineLength) / 2, yPosition + 10, leftColX + (blockWidth + lineLength) / 2, yPosition + 10); // Underline
+          pdf.text(cpcGuidanceOfficerName.toUpperCase(), nameX, yPosition + nameLineOffset, { align: 'center' });
+          pdf.line(nameX - blockWidth / 2, yPosition + lineYOffset, nameX + blockWidth / 2, yPosition + lineYOffset); // Underline
           pdf.setFontSize(9);
           pdf.setFont(undefined, 'normal');
-          pdf.text(cpcGuidanceOfficerPosition, leftColX + (blockWidth / 2), yPosition + 15, { align: 'center' });
+          pdf.text(cpcGuidanceOfficerPosition, nameX, yPosition + positionYOffset, { align: 'center' });
         }
 
         // Guidance Officer (Right)
         if (guidanceOfficer) {
+          const labelX = 120; // Adjusted X for right column
+          const nameX = labelX + 35; // Center name over a block starting at labelX
           pdf.setFontSize(11);
           pdf.setFont(undefined, 'bold');
-          pdf.text(guidanceOfficer.toUpperCase(), rightColX + (blockWidth / 2), yPosition + 8, { align: 'center' });
-          pdf.line(rightColX + (blockWidth - lineLength) / 2, yPosition + 10, rightColX + (blockWidth + lineLength) / 2, yPosition + 10); // Underline
+          pdf.text(guidanceOfficer.toUpperCase(), nameX, yPosition + nameLineOffset, { align: 'center' });
+          pdf.line(nameX - blockWidth / 2, yPosition + lineYOffset, nameX + blockWidth / 2, yPosition + lineYOffset); // Underline
           pdf.setFontSize(9);
           pdf.setFont(undefined, 'normal');
-          pdf.text(guidanceOfficerPosition, rightColX + (blockWidth / 2), yPosition + 15, { align: 'center' });
+          pdf.text(guidanceOfficerPosition, nameX, yPosition + positionYOffset, { align: 'center' });
         }
-        yPosition += 35; // Move down for next row
+        yPosition += rowSpacing; // Move down for next row
       }
 
       // Row 2: NOTED BY (Assistant Principal) and APPROVED BY (Principal)
@@ -315,32 +336,36 @@ This certification is issued upon the request of the above-mentioned student for
 
         // NOTED BY: Assistant Principal (Left)
         if (assistantPrincipalName) {
+          const labelX = 20;
+          const nameX = labelX + 40;
           pdf.setFontSize(9);
           pdf.setFont(undefined, 'normal');
-          pdf.text('NOTED BY:', leftColX, yPosition);
+          pdf.text('NOTED BY:', labelX, yPosition);
           pdf.setFontSize(11);
           pdf.setFont(undefined, 'bold');
-          pdf.text(assistantPrincipalName.toUpperCase(), leftColX + (blockWidth / 2), yPosition + 8, { align: 'center' });
-          pdf.line(leftColX + (blockWidth - lineLength) / 2, yPosition + 10, leftColX + (blockWidth + lineLength) / 2, yPosition + 10); // Underline
+          pdf.text(assistantPrincipalName.toUpperCase(), nameX, yPosition + nameLineOffset, { align: 'center' });
+          pdf.line(nameX - blockWidth / 2, yPosition + lineYOffset, nameX + blockWidth / 2, yPosition + lineYOffset); // Underline
           pdf.setFontSize(9);
           pdf.setFont(undefined, 'normal');
-          pdf.text(assistantPrincipalPosition, leftColX + (blockWidth / 2), yPosition + 15, { align: 'center' });
+          pdf.text(assistantPrincipalPosition, nameX, yPosition + positionYOffset, { align: 'center' });
         }
 
         // APPROVED BY: Principal (Right)
         if (principalName) {
+          const labelX = 120;
+          const nameX = labelX + 35;
           pdf.setFontSize(9);
           pdf.setFont(undefined, 'normal');
-          pdf.text('APPROVED BY:', rightColX, yPosition);
+          pdf.text('APPROVED BY:', labelX, yPosition);
           pdf.setFontSize(11);
           pdf.setFont(undefined, 'bold');
-          pdf.text(principalName.toUpperCase(), rightColX + (blockWidth / 2), yPosition + 8, { align: 'center' });
-          pdf.line(rightColX + (blockWidth - lineLength) / 2, yPosition + 10, rightColX + (blockWidth + lineLength) / 2, yPosition + 10); // Underline
+          pdf.text(principalName.toUpperCase(), nameX, yPosition + nameLineOffset, { align: 'center' });
+          pdf.line(nameX - blockWidth / 2, yPosition + lineYOffset, nameX + blockWidth / 2, yPosition + lineYOffset); // Underline
           pdf.setFontSize(9);
           pdf.setFont(undefined, 'normal');
-          pdf.text(principalPosition, rightColX + (blockWidth / 2), yPosition + 15, { align: 'center' });
+          pdf.text(principalPosition, nameX, yPosition + positionYOffset, { align: 'center' });
         }
-        yPosition += 35; // Move down for next row
+        yPosition += rowSpacing; // Move down for next row
       }
 
       const fileName = `good-moral-certificate-${previewStudentName.replace(/\s+/g, '-').toLowerCase()}-${new Date().toISOString().split('T')[0]}.pdf`;
@@ -405,23 +430,61 @@ This certification is issued upon the request of the above-mentioned student for
               
               .print-signatures-grid { 
                 margin-top: 4rem; 
-                display: flex; /* Use flexbox for main columns */
-                justify-content: space-around; /* Distribute space between columns */
-                gap: 4rem; /* Space between left and right groups */
-                padding: 0 20mm; /* Match page margins */
+                display: flex; 
+                flex-direction: column;
+                gap: 2rem; /* Space between rows of signatures */
+                padding: 0 20mm; 
                 page-break-inside: avoid; 
               }
-              .signature-block-group {
+              .signature-row {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                gap: 4rem; /* Space between left and right columns */
+              }
+              .signature-col {
+                flex: 1;
                 display: flex;
                 flex-direction: column;
-                gap: 2rem; /* Space between blocks in a column */
-                flex: 1; /* Allow groups to take equal space */
+                align-items: flex-start; /* Align label to start */
               }
-              .signature-block { text-align: center; flex-shrink: 0; } /* Prevent shrinking */
-              .signature-label { font-weight: normal; color: #000; font-size: 9pt; text-align: left; margin-bottom: 0.2rem; }
-              .signature-name { font-weight: bold; color: #000; margin-bottom: 0.5rem; font-size: 11pt; text-transform: uppercase; letter-spacing: 1px; }
-              .signature-line { border-bottom: 1px solid #000; margin: 0 auto; width: 80%; height: 12px; }
-              .signature-title { font-weight: normal; color: #000; font-size: 9pt; margin-top: 0.5rem; }
+              .signature-label { 
+                font-weight: normal; 
+                color: #000; 
+                font-size: 9pt; 
+                text-align: left; 
+                margin-bottom: 0.2rem; 
+                width: 100%; /* Ensure label takes full width for alignment */
+              }
+              .signature-block { 
+                text-align: center; 
+                flex-shrink: 0; 
+                width: 100%; /* Ensure block takes full width for centering */
+                margin-top: 0.5rem; /* Space between label and name */
+              } 
+              .signature-name { 
+                font-weight: bold; 
+                color: #000; 
+                margin-bottom: 0.5rem; 
+                font-size: 11pt; 
+                text-transform: uppercase; 
+                letter-spacing: 1px; 
+                display: block; /* Ensure it's a block for centering */
+              }
+              .signature-line { 
+                border-bottom: 1px solid #000; 
+                margin: 0 auto; 
+                width: 80%; /* Adjust width of underline */
+                height: 12px; 
+                display: block; /* Ensure it's a block for centering */
+              }
+              .signature-title { 
+                font-weight: normal; 
+                color: #000; 
+                font-size: 9pt; 
+                margin-top: 0.5rem; 
+                display: block; /* Ensure it's a block for centering */
+              }
             </style>
           </head>
           <body>
