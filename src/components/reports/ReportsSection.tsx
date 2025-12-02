@@ -106,39 +106,65 @@ const ReportsSection = () => {
   const generatePDFReport = async (records: any[]) => {
     try {
       const pdf = new jsPDF();
-      let yPosition = 10; // Start higher for header
+      let yPosition = 10; // Initial Y position
 
-      // Header Logos
+      // Header Logos and Institutional Text
+      const logoWidth = 25;
+      const logoHeight = 25;
+      const leftLogoX = 20;
+      const rightLogoX = 190 - logoWidth - 20; // 190 is page width - right margin - logo width
+
       if (leftHeaderLogoData) {
         try {
-          pdf.addImage(leftHeaderLogoData, 'JPEG', 20, yPosition, 25, 25); // Left logo
+          pdf.addImage(leftHeaderLogoData, 'JPEG', leftLogoX, yPosition, logoWidth, logoHeight);
         } catch (e) {
           console.log('Could not add left header logo to PDF');
         }
       }
       if (rightHeaderLogoData) {
         try {
-          pdf.addImage(rightHeaderLogoData, 'JPEG', 165, yPosition, 25, 25); // Right logo
+          pdf.addImage(rightHeaderLogoData, 'JPEG', rightLogoX, yPosition, logoWidth, logoHeight);
         } catch (e) {
           console.log('Could not add right header logo to PDF');
         }
       }
 
-      // Adjust yPosition after logos, before the main title
-      yPosition = Math.max(yPosition + 25, 40); // Ensure enough space for logos, or start at 40 if no logos
+      // Center institutional text
+      yPosition += 5; // Start text slightly below logos
+      pdf.setFontSize(9);
+      pdf.setFont(undefined, 'normal');
+      pdf.text('Republic of the Philippines', 105, yPosition, { align: 'center' });
+      yPosition += 4;
+      pdf.text('Department of Education', 105, yPosition, { align: 'center' });
+      yPosition += 4;
+      pdf.text('Region VII, Central Visayas', 105, yPosition, { align: 'center' });
+      yPosition += 4;
+      pdf.text('Division of Cebu City', 105, yPosition, { align: 'center' });
+      yPosition += 6;
+      pdf.setFontSize(12);
+      pdf.setFont(undefined, 'bold');
+      pdf.text(schoolName.toUpperCase(), 105, yPosition, { align: 'center' });
+      yPosition += 5;
+      pdf.setFontSize(9);
+      pdf.setFont(undefined, 'normal');
+      pdf.text(schoolAddress, 105, yPosition, { align: 'center' });
+      yPosition += 10; // Space after address
 
+      // Main Report Title
       pdf.setFontSize(14);
       pdf.setFont(undefined, 'bold');
       pdf.text('E-Guidance Record System Report', 105, yPosition, { align: 'center' });
       yPosition += 15;
 
+      // Total Records count
       pdf.setFontSize(11);
       pdf.setFont(undefined, 'bold');
       pdf.text(`Total Records: ${records.length}`, 190, yPosition, { align: 'right' });
       yPosition += 10;
 
+      // Table Headers
       const headers = ['#', 'NAME', 'TYPE', 'GRADE', 'VIOLATION', 'DATE & TIME', 'DETAILS'];
-      const colWidths = [10, 35, 20, 20, 35, 35, 35]; // Adjusted column widths
+      const colWidths = [10, 35, 20, 20, 35, 35, 35];
       const colPositions = [10];
       for (let i = 0; i < colWidths.length - 1; i++) {
         colPositions.push(colPositions[i] + colWidths[i]);
@@ -155,6 +181,7 @@ const ReportsSection = () => {
       pdf.rect(10, yPosition, 190, 8);
       yPosition += 8;
 
+      // Table Rows
       pdf.setFont(undefined, 'normal');
       pdf.setFontSize(8);
       records.forEach((record, index) => {
@@ -188,7 +215,7 @@ const ReportsSection = () => {
           `${formattedDate}\n${formattedTime}`,
           record.details || 'N/A'
         ];
-        const rowHeight = 12; // Fixed row height for simplicity, adjust if multi-line details are common
+        const rowHeight = 12;
         if (index % 2 === 0) {
           pdf.setFillColor(250, 250, 250);
           pdf.rect(10, yPosition, 190, rowHeight, 'F');
@@ -204,36 +231,71 @@ const ReportsSection = () => {
 
       yPosition += 20; // Space before signatures
 
-      // Signature blocks
+      // Signature blocks (2x2 layout)
       const signatureBlocks = [
         { name: guidanceOfficer, title: 'Guidance Officer' },
         { name: cpcGuidanceOfficerName, title: 'CPC/Guidance Officer' },
         { name: principalName, title: 'Principal' },
         { name: assistantPrincipalName, title: 'Assistant Principal' }
-      ].filter(officer => officer.name); // Only show if name is provided
+      ];
 
-      const numSignatures = signatureBlocks.length;
-      const blockWidth = 60; // Width for each signature block
-      const spacing = (190 - (numSignatures * blockWidth)) / (numSignatures + 1); // Distribute evenly
+      const blockWidth = 80; // Width for each signature block
+      const horizontalSpacing = 30; // Space between left and right blocks
+      const verticalSpacing = 25; // Space between rows of signatures
 
-      let currentX = 10 + spacing;
+      let currentY = yPosition;
 
-      signatureBlocks.forEach((officer, index) => {
-        if (yPosition > 270) { // Check for page break before signatures
-          pdf.addPage();
-          yPosition = 20;
-          currentX = 10 + spacing; // Reset X position for new page
+      // Row 1: Guidance Officer and CPC/Guidance Officer
+      if (signatureBlocks[0].name || signatureBlocks[1].name) {
+        if (currentY > 270) { pdf.addPage(); currentY = 20; }
+        
+        // Guidance Officer (Left)
+        if (signatureBlocks[0].name) {
+          const x = 20;
+          pdf.setFont(undefined, 'bold');
+          pdf.text(signatureBlocks[0].name.toUpperCase(), x + (blockWidth / 2), currentY, { align: 'center' });
+          pdf.line(x, currentY + 2, x + blockWidth, currentY + 2);
+          pdf.setFont(undefined, 'normal');
+          pdf.text(signatureBlocks[0].title, x + (blockWidth / 2), currentY + 8, { align: 'center' });
         }
 
-        pdf.setFont(undefined, 'bold');
-        pdf.text(officer.name.toUpperCase(), currentX + (blockWidth / 2), yPosition, { align: 'center' });
-        pdf.line(currentX, yPosition + 2, currentX + blockWidth, yPosition + 2);
-        pdf.setFont(undefined, 'normal');
-        pdf.text(officer.title, currentX + (blockWidth / 2), yPosition + 8, { align: 'center' });
+        // CPC/Guidance Officer (Right)
+        if (signatureBlocks[1].name) {
+          const x = 190 - blockWidth - 20;
+          pdf.setFont(undefined, 'bold');
+          pdf.text(signatureBlocks[1].name.toUpperCase(), x + (blockWidth / 2), currentY, { align: 'center' });
+          pdf.line(x, currentY + 2, x + blockWidth, currentY + 2);
+          pdf.setFont(undefined, 'normal');
+          pdf.text(signatureBlocks[1].title, x + (blockWidth / 2), currentY + 8, { align: 'center' });
+        }
+        currentY += verticalSpacing;
+      }
 
-        currentX += blockWidth + spacing;
-      });
+      // Row 2: Principal and Assistant Principal
+      if (signatureBlocks[2].name || signatureBlocks[3].name) {
+        if (currentY > 270) { pdf.addPage(); currentY = 20; }
 
+        // Principal (Left)
+        if (signatureBlocks[2].name) {
+          const x = 20;
+          pdf.setFont(undefined, 'bold');
+          pdf.text(signatureBlocks[2].name.toUpperCase(), x + (blockWidth / 2), currentY, { align: 'center' });
+          pdf.line(x, currentY + 2, x + blockWidth, currentY + 2);
+          pdf.setFont(undefined, 'normal');
+          pdf.text(signatureBlocks[2].title, x + (blockWidth / 2), currentY + 8, { align: 'center' });
+        }
+
+        // Assistant Principal (Right)
+        if (signatureBlocks[3].name) {
+          const x = 190 - blockWidth - 20;
+          pdf.setFont(undefined, 'bold');
+          pdf.text(signatureBlocks[3].name.toUpperCase(), x + (blockWidth / 2), currentY, { align: 'center' });
+          pdf.line(x, currentY + 2, x + blockWidth, currentY + 2);
+          pdf.setFont(undefined, 'normal');
+          pdf.text(signatureBlocks[3].title, x + (blockWidth / 2), currentY + 8, { align: 'center' });
+        }
+        currentY += verticalSpacing;
+      }
 
       const fileName = `guidance-report-${new Date().toISOString().split('T')[0]}.pdf`;
       pdf.save(fileName);
@@ -270,13 +332,25 @@ const ReportsSection = () => {
   };
 
   const generatePrintPreview = async (records: any[]) => {
+    const signatureBlocks = [
+      { name: guidanceOfficer, title: 'Guidance Officer' },
+      { name: cpcGuidanceOfficerName, title: 'CPC/Guidance Officer' },
+      { name: principalName, title: 'Principal' },
+      { name: assistantPrincipalName, title: 'Assistant Principal' }
+    ];
+
     const headerHtml = `
       <div class="header-section" style="display: flex; justify-content: center; align-items: flex-start; margin-bottom: 20px; position: relative;">
-          ${leftHeaderLogoData ? `<img src="${leftHeaderLogoData}" class="header-logo left-logo" style="position: absolute; left: 20px; top: 0; width: 60px; height: 60px; object-fit: contain;" alt="Left Logo">` : ''}
+          ${leftHeaderLogoData ? `<img src="${leftHeaderLogoData}" class="header-logo left-logo" alt="Left Logo">` : ''}
           <div class="text-center" style="flex-grow: 1;">
-              <!-- Removed hardcoded institutional text and school details -->
+              <p style="margin: 0; font-size: 10pt;">Republic of the Philippines</p>
+              <p style="margin: 0; font-size: 10pt;">Department of Education</p>
+              <p style="margin: 0; font-size: 10pt;">Region VII, Central Visayas</p>
+              <p style="margin: 0; font-size: 10pt;">Division of Cebu City</p>
+              <p style="margin: 0; font-size: 12pt; font-weight: bold; margin-top: 5px;">${schoolName.toUpperCase()}</p>
+              <p style="margin: 0; font-size: 10pt;">${schoolAddress}</p>
           </div>
-          ${rightHeaderLogoData ? `<img src="${rightHeaderLogoData}" class="header-logo right-logo" style="position: absolute; right: 20px; top: 0; width: 60px; height: 60px; object-fit: contain;" alt="Right Logo">` : ''}
+          ${rightHeaderLogoData ? `<img src="${rightHeaderLogoData}" class="header-logo right-logo" alt="Right Logo">` : ''}
       </div>
       <div class="text-center mb-8">
           <h2 class="text-xl font-bold text-gray-900 mt-4">E-Guidance Record System Report</h2>
@@ -317,35 +391,35 @@ const ReportsSection = () => {
             </tbody>
         </table>
       </div>
-      <div class="flex justify-around mt-16 gap-8 px-8 print:flex-wrap print:gap-8">
-          ${guidanceOfficer ? `
-              <div class="flex-1 text-center min-w-[200px]">
-                  <div class="font-bold text-black text-lg uppercase tracking-wide mb-2">${guidanceOfficer.toUpperCase()}</div>
-                  <div class="border-b-2 border-black h-12 w-full mb-2"></div>
-                  <div class="font-semibold text-black text-base mt-2">Guidance Officer</div>
+      <div class="print-signatures-grid">
+          ${signatureBlocks[0].name ? `
+              <div class="signature-block">
+                  <div class="signature-name">${signatureBlocks[0].name.toUpperCase()}</div>
+                  <div class="signature-line"></div>
+                  <div class="signature-title">${signatureBlocks[0].title}</div>
               </div>
-          ` : ''}
-          ${cpcGuidanceOfficerName ? `
-              <div class="flex-1 text-center min-w-[200px]">
-                  <div class="font-bold text-black text-lg uppercase tracking-wide mb-2">${cpcGuidanceOfficerName.toUpperCase()}</div>
-                  <div class="border-b-2 border-black h-12 w-full mb-2"></div>
-                  <div class="font-semibold text-black text-base mt-2">CPC/Guidance Officer</div>
+          ` : '<div class="signature-block"></div>'}
+          ${signatureBlocks[1].name ? `
+              <div class="signature-block">
+                  <div class="signature-name">${signatureBlocks[1].name.toUpperCase()}</div>
+                  <div class="signature-line"></div>
+                  <div class="signature-title">${signatureBlocks[1].title}</div>
               </div>
-          ` : ''}
-          ${principalName ? `
-              <div class="flex-1 text-center min-w-[200px]">
-                  <div class="font-bold text-black text-lg uppercase tracking-wide mb-2">${principalName.toUpperCase()}</div>
-                  <div class="border-b-2 border-black h-12 w-full mb-2"></div>
-                  <div class="font-semibold text-black text-base mt-2">Principal</div>
+          ` : '<div class="signature-block"></div>'}
+          ${signatureBlocks[2].name ? `
+              <div class="signature-block">
+                  <div class="signature-name">${signatureBlocks[2].name.toUpperCase()}</div>
+                  <div class="signature-line"></div>
+                  <div class="signature-title">${signatureBlocks[2].title}</div>
               </div>
-          ` : ''}
-          ${assistantPrincipalName ? `
-              <div class="flex-1 text-center min-w-[200px]">
-                  <div class="font-bold text-black text-lg uppercase tracking-wide mb-2">${assistantPrincipalName.toUpperCase()}</div>
-                  <div class="border-b-2 border-black h-12 w-full mb-2"></div>
-                  <div class="font-semibold text-black text-base mt-2">Assistant Principal</div>
+          ` : '<div class="signature-block"></div>'}
+          ${signatureBlocks[3].name ? `
+              <div class="signature-block">
+                  <div class="signature-name">${signatureBlocks[3].name.toUpperCase()}</div>
+                  <div class="signature-line"></div>
+                  <div class="signature-title">${signatureBlocks[3].title}</div>
               </div>
-          ` : ''}
+          ` : '<div class="signature-block"></div>'}
       </div>
     `;
     setReportPreviewContent(content);
@@ -363,9 +437,9 @@ const ReportsSection = () => {
               @page { size: A4; margin: 20mm; }
               body { font-family: sans-serif; margin: 0; padding: 0; }
               .header-section { display: flex; justify-content: center; align-items: flex-start; margin-bottom: 20px; position: relative; }
-              .header-logo { position: absolute; width: 60px; height: 60px; object-fit: contain; }
-              .left-logo { left: 20px; top: 0; }
-              .right-logo { right: 20px; top: 0; }
+              .header-logo { position: absolute; width: 60px; height: 60px; object-fit: contain; top: 0; }
+              .left-logo { left: 20px; }
+              .right-logo { right: 20px; }
               .text-center { text-align: center; }
               .mb-8 { margin-bottom: 2rem; }
               h1 { font-size: 24pt; font-weight: bold; margin-bottom: 0.5rem; color: #1f2937; }
@@ -375,10 +449,18 @@ const ReportsSection = () => {
               th, td { padding: 0.8rem 1rem; text-align: left; border-bottom: 1px solid #f3f4f6; }
               th { background: #f9fafb; font-weight: 600; color: #374151; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; }
               tr:nth-child(even) { background-color: #fcfcfc; }
-              .print-signatures { margin-top: 4rem; display: flex; justify-content: space-between; page-break-inside: avoid; gap: 4rem; padding: 0 2rem; }
-              .signature-block { text-align: center; min-w: 200px; flex: 1; }
+              
+              .print-signatures-grid { 
+                margin-top: 4rem; 
+                display: grid; 
+                grid-template-columns: 1fr 1fr; 
+                gap: 2rem 4rem; /* row-gap column-gap */
+                padding: 0 20mm; /* Match page margins */
+                page-break-inside: avoid; 
+              }
+              .signature-block { text-align: center; }
               .signature-name { font-weight: bold; color: #000; margin-bottom: 0.5rem; font-size: 12pt; text-transform: uppercase; letter-spacing: 1px; }
-              .signature-line { border-bottom: 2px solid #000; margin-bottom: 0.5rem; height: 50px; width: 100%; }
+              .signature-line { border-bottom: 2px solid #000; margin: 0 auto; width: 80%; height: 12px; } /* Adjusted width and height */
               .signature-title { font-weight: 600; color: #000; font-size: 11pt; margin-top: 0.5rem; }
             </style>
           </head>
