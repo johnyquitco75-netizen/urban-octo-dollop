@@ -82,35 +82,42 @@ export const PwaApp = () => {
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       {/* Header */}
       <header className="bg-primary text-primary-foreground p-6 shadow-md flex flex-col md:flex-row items-center justify-between gap-4">
-        <div className="flex flex-col items-center md:items-start gap-2 flex-auto"> {/* Adjusted flex-1 to flex-auto */}
-          <div className="text-sm font-medium text-center md:text-left">
+        {/* Left Section: Custom Phrase */}
+        <div className="flex-1 text-center md:text-left">
+          <div className="text-sm font-medium">
             {customPhrase}
           </div>
-          {isLoggedIn && isAppInitialized && ( // Display date and time only when logged in and app initialized
-            <div className="text-xs opacity-80 text-center md:text-left">
-              {currentDate} | {currentTime}
-            </div>
-          )}
         </div>
-        <div className="text-center flex-1"> {/* This should now truly center the title */}
+
+        {/* Center Section: App Title and Tagline */}
+        <div className="text-center flex-1">
           <div className="text-2xl md:text-3xl font-bold mb-1">E-Guidance Record System</div>
           <div className="text-sm md:text-base opacity-90">Strengthening Schools Through Smart Record Management</div>
         </div>
-        <div className="flex flex-col items-center md:items-end gap-3 flex-auto"> {/* Adjusted flex-1 to flex-auto */}
-          <div className="bg-indigo-600 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-md">
-            {currentUserRole === 'superadmin' ? 'Super Admin' : 'Admin'}
+
+        {/* Right Section: Date/Time and Admin/Logout */}
+        <div className="flex-1 flex flex-col items-center md:items-end gap-2">
+          {isLoggedIn && isAppInitialized && (
+            <div className="text-xs opacity-80 text-center md:text-right">
+              {currentTime} <br /> {currentDate}
+            </div>
+          )}
+          <div className="flex flex-col items-center md:items-end gap-2">
+            <div className="bg-indigo-600 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-md">
+              {currentUserRole === 'superadmin' ? 'Super Admin' : 'Admin'}
+            </div>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                setIsLoggedIn(false);
+                setCurrentUserRole(null);
+                showAlert('Logged out successfully', 'info');
+              }}
+              className="px-4 py-2 text-sm"
+            >
+              🚪 Logout
+            </Button>
           </div>
-          <Button
-            variant="destructive"
-            onClick={() => {
-              setIsLoggedIn(false);
-              setCurrentUserRole(null);
-              showAlert('Logged out successfully', 'info');
-            }}
-            className="px-4 py-2 text-sm"
-          >
-            🚪 Logout
-          </Button>
         </div>
       </header>
 

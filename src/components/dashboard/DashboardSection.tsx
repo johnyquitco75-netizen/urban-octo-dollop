@@ -7,7 +7,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { useAppContext } from "@/context/AppContext";
 
 const DashboardSection = () => {
-  const { db, schoolName, schoolAddress, logoData, currentUserRole, setIsLoggedIn, setCurrentUserRole, showAlert, setModalPhotoSrc, setIsPhotoModalOpen, setConfirmMessage, confirmActionRef, setIsConfirmModalOpen, setCurrentSection, setRecordToEditId } = useAppContext();
+  const { db, schoolName, schoolAddress, logoData, currentUserRole, showAlert, setModalPhotoSrc, setIsPhotoModalOpen, setConfirmMessage, confirmActionRef, setIsConfirmModalOpen, setCurrentSection, setRecordToEditId } = useAppContext();
 
   // Dashboard state
   const [totalRecords, setTotalRecords] = useState(0);
@@ -145,28 +145,12 @@ const DashboardSection = () => {
         <img
           id="dashboardLogo"
           className="w-24 h-24 rounded-xl object-cover border-2 border-gray-200 dark:border-gray-700"
-          src={logoData || "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zz4KPHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIxMiIgZmlsbD0iIzRmNDZlNSIvPgo8c3ZnIHg9IjI1IiB5PSIyNSIgd2lkdGg9IjUwIiBoZWlnaHQ9IjUwIiB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj4KPHBhdGggZD0ibTE0IDItMyAzIDIuNSAyLjVMMTAgMTFsMyAzIDQtNCAyLjUgMi41TDIyIDl6Ii8+CjxwYXRoIGQ9Im01IDExLTMgM0wxMCAyMiAxMyAxOSA1LjUgMTEuNVoiLz4KPHBhdGggZD0ibTIgMTMgMyAzTDkgMTIgNiA5eiIvPgo8L3N2Zz4KPC9zdmc+Cjwvc3ZnPgo="}
+          src={logoData || "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zz4KPHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIxMiIgZmlsbD0iIzRmNDZlNSIvPgo8c3ZnIHg9IjI1IiB5PSIyNSIgd2lkdGg9IjUwIiBoZWlnaHQ9IjUwIiB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj4KPHBhdGggZD0ibTE0IDItMyAzIDIuNSAyLjVMMTAgMTFsMいろんな 3ID 4-4 2.5 2.5LDIyIDl6Ii8+CjxwYXRoIGQ9Im01IDExLTMgM0wxMCAyMiAxMyAxOSA1LjUgMTEuNVoiLz4KPHBhdGggZD0ibTIgMTMgMyAzTDkgMTIgNiA5eiIvPgo8L3N2Zz4KPC9zdmc+Cjwvc3ZnPgo="}
           alt="School Logo"
         />
         <div className="flex-1 text-center md:text-left">
           <h2 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100 mb-1">{schoolName}</h2>
           <p className="text-gray-600 dark:text-gray-300 text-lg">{schoolAddress}</p>
-        </div>
-        <div className="flex flex-col items-center md:items-end gap-3">
-          <div className="bg-indigo-600 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-md">
-            {currentUserRole === 'superadmin' ? 'Super Admin' : 'Admin'}
-          </div>
-          <Button
-            variant="destructive"
-            onClick={() => {
-              setIsLoggedIn(false);
-              setCurrentUserRole(null);
-              showAlert('Logged out successfully', 'info');
-            }}
-            className="px-4 py-2 text-sm"
-          >
-            🚪 Logout
-          </Button>
         </div>
       </div>
 
@@ -273,7 +257,6 @@ const DashboardSection = () => {
                     </td>
                     <td className="py-3 px-4 text-gray-700 dark:text-gray-200">{record.gradeLevel || 'N/A'}</td>
                     <td className="py-3 px-4 text-gray-700 dark:text-gray-200">{record.gradeSection || 'N/A'}</td> {/* Display Grade Section */}
-                    <td className="py-3 px-4 text-gray-700 dark:text-gray-200">{record.violationType}</td>
                     <td className="py-3 px-4 text-gray-700 dark:text-gray-200">{new Date(record.dateTime).toLocaleDateString()}</td>
                     <td className="py-3 px-4 text-gray-700 dark:text-gray-200 max-w-[150px] truncate">{record.details || 'N/A'}</td> {/* Display details, truncated */}
                     <td className="py-3 px-4">
