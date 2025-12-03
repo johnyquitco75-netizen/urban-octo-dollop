@@ -92,53 +92,87 @@ export const PwaApp = () => {
           <div className="text-2xl md:text-3xl font-bold mb-1">E-Guidance Record System</div>
           <div className="text-sm md:text-base opacity-90">Strengthening Schools Through Smart Record Management</div>
         </div>
-        <div className="flex flex-col items-center md:items-end gap-2 flex-1">
-          <div className="p-3 text-right min-w-[180px]">
-            <div className="text-xl md:text-2xl font-bold text-white">{currentTime}</div>
-            <div className="text-lg md:text-xl text-white/90 font-bold">{currentDate}</div>
+        <div className="flex flex-col items-center md:items-end gap-3">
+          <div className="bg-indigo-600 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-md">
+            {currentUserRole === 'superadmin' ? 'Super Admin' : 'Admin'}
           </div>
+          <Button
+            variant="destructive"
+            onClick={() => {
+              setIsLoggedIn(false);
+              setCurrentUserRole(null);
+              showAlert('Logged out successfully', 'info');
+            }}
+            className="px-4 py-2 text-sm"
+          >
+            🚪 Logout
+          </Button>
         </div>
       </header>
 
       {/* Navigation */}
       <nav className="flex flex-wrap justify-center gap-2 p-3 bg-gray-50 dark:bg-gray-800 shadow-sm">
         <Button
-          className={`flex-1 min-w-[120px] md:flex-none ${currentSection === "dashboard" ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md hover:from-indigo-700 hover:to-purple-700" : "bg-secondary text-secondary-foreground hover:bg-secondary/80"}`}
+          className={`flex-1 min-w-[120px] md:flex-none ${
+            currentSection === "dashboard"
+              ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md hover:from-indigo-700 hover:to-purple-700"
+              : "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md hover:from-blue-600 hover:to-blue-700"
+          }`}
           variant="ghost"
           onClick={() => switchSection("dashboard")}
         >
           📊 Dashboard
         </Button>
         <Button
-          className={`flex-1 min-w-[120px] md:flex-none ${currentSection === "add-record" ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md hover:from-indigo-700 hover:to-purple-700" : "bg-secondary text-secondary-foreground hover:bg-secondary/80"}`}
+          className={`flex-1 min-w-[120px] md:flex-none ${
+            currentSection === "add-record"
+              ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md hover:from-indigo-700 hover:to-purple-700"
+              : "bg-gradient-to-r from-green-500 to-green-600 text-white shadow-md hover:from-green-600 hover:to-green-700"
+          }`}
           variant="ghost"
           onClick={() => switchSection("add-record")}
         >
           ➕ Add Record
         </Button>
         <Button
-          className={`flex-1 min-w-[120px] md:flex-none ${currentSection === "reports" ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md hover:from-indigo-700 hover:to-purple-700" : "bg-secondary text-secondary-foreground hover:bg-secondary/80"}`}
+          className={`flex-1 min-w-[120px] md:flex-none ${
+            currentSection === "reports"
+              ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md hover:from-indigo-700 hover:to-purple-700"
+              : "bg-gradient-to-r from-yellow-500 to-yellow-600 text-white shadow-md hover:from-yellow-600 hover:to-yellow-700"
+          }`}
           variant="ghost"
           onClick={() => switchSection("reports")}
         >
           📄 Reports
         </Button>
         <Button
-          className={`flex-1 min-w-[120px] md:flex-none ${currentSection === "settings" ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md hover:from-indigo-700 hover:to-purple-700" : "bg-secondary text-secondary-foreground hover:bg-secondary/80"}`}
+          className={`flex-1 min-w-[120px] md:flex-none ${
+            currentSection === "settings"
+              ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md hover:from-indigo-700 hover:to-purple-700"
+              : "bg-gradient-to-r from-gray-600 to-gray-700 text-white shadow-md hover:from-gray-700 hover:to-gray-800"
+          }`}
           variant="ghost"
           onClick={() => switchSection("settings")}
         >
           ⚙️ Settings
         </Button>
         <Button
-          className={`flex-1 min-w-[120px] md:flex-none ${currentSection === "certificates" ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md hover:from-indigo-700 hover:to-purple-700" : "bg-secondary text-secondary-foreground hover:bg-secondary/80"}`}
+          className={`flex-1 min-w-[120px] md:flex-none ${
+            currentSection === "certificates"
+              ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md hover:from-indigo-700 hover:to-purple-700"
+              : "bg-gradient-to-r from-pink-500 to-pink-600 text-white shadow-md hover:from-pink-600 hover:to-pink-700"
+          }`}
           variant="ghost"
           onClick={() => switchSection("certificates")}
         >
           📜 Certificates
         </Button>
         <Button
-          className={`flex-1 min-w-[120px] md:flex-none ${currentSection === "about-egrs" ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md hover:from-indigo-700 hover:to-purple-700" : "bg-secondary text-secondary-foreground hover:bg-secondary/80"}`}
+          className={`flex-1 min-w-[120px] md:flex-none ${
+            currentSection === "about-egrs"
+              ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md hover:from-indigo-700 hover:to-purple-700"
+              : "bg-gradient-to-r from-teal-500 to-teal-600 text-white shadow-md hover:from-teal-600 hover:to-teal-700"
+          }`}
           variant="ghost"
           onClick={() => switchSection("about-egrs")}
         >
