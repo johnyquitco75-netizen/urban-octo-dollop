@@ -82,17 +82,21 @@ export const PwaApp = () => {
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       {/* Header */}
       <header className="bg-primary text-primary-foreground p-6 shadow-md flex flex-col md:flex-row items-center justify-between gap-4">
-        <div className="flex items-center gap-4 flex-1">
-          {/* Removed crystal box styling for custom phrase */}
-          <div className="text-sm font-medium min-w-[200px] text-center md:text-left">
+        <div className="flex flex-col items-center md:items-start gap-2 flex-auto"> {/* Adjusted flex-1 to flex-auto */}
+          <div className="text-sm font-medium text-center md:text-left">
             {customPhrase}
           </div>
+          {isLoggedIn && isAppInitialized && ( // Display date and time only when logged in and app initialized
+            <div className="text-xs opacity-80 text-center md:text-left">
+              {currentDate} | {currentTime}
+            </div>
+          )}
         </div>
-        <div className="text-center flex-1">
+        <div className="text-center flex-1"> {/* This should now truly center the title */}
           <div className="text-2xl md:text-3xl font-bold mb-1">E-Guidance Record System</div>
           <div className="text-sm md:text-base opacity-90">Strengthening Schools Through Smart Record Management</div>
         </div>
-        <div className="flex flex-col items-center md:items-end gap-3">
+        <div className="flex flex-col items-center md:items-end gap-3 flex-auto"> {/* Adjusted flex-1 to flex-auto */}
           <div className="bg-indigo-600 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-md">
             {currentUserRole === 'superadmin' ? 'Super Admin' : 'Admin'}
           </div>
