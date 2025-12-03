@@ -58,25 +58,25 @@ export const renderCertificateHeader = (pdf: jsPDF, data: CertificatePdfData, yP
     }
   }
 
-  // Institutional text (left-aligned)
+  // Institutional text (centered)
   yPosition = logoY + 5; // Start text slightly below logos
   pdf.setFontSize(9);
   pdf.setFont(undefined, 'normal');
-  pdf.text(republicText, leftMargin, yPosition); // Changed to leftMargin
+  pdf.text(republicText, pageCenterX, yPosition, { align: 'center' });
   yPosition += 4;
-  pdf.text(departmentText, leftMargin, yPosition); // Changed to leftMargin
+  pdf.text(departmentText, pageCenterX, yPosition, { align: 'center' });
   yPosition += 4;
-  pdf.text(regionText, leftMargin, yPosition); // Changed to leftMargin
+  pdf.text(regionText, pageCenterX, yPosition, { align: 'center' });
   yPosition += 4;
-  pdf.text(divisionText, leftMargin, yPosition); // Changed to leftMargin
+  pdf.text(divisionText, pageCenterX, yPosition, { align: 'center' });
   yPosition += 6;
   pdf.setFontSize(12);
   pdf.setFont(undefined, 'bold');
-  pdf.text(schoolName.toUpperCase(), leftMargin, yPosition); // Changed to leftMargin
+  pdf.text(schoolName.toUpperCase(), pageCenterX, yPosition, { align: 'center' });
   yPosition += 5;
   pdf.setFontSize(9);
   pdf.setFont(undefined, 'normal');
-  pdf.text(schoolAddress, leftMargin, yPosition); // Changed to leftMargin
+  pdf.text(schoolAddress, pageCenterX, yPosition, { align: 'center' });
   yPosition += 15; // Space after address
 
   // Main Certificate Title (centered)
@@ -101,17 +101,18 @@ export const renderCertificateBody = (pdf: jsPDF, data: CertificatePdfData, yPos
     // Paragraph 1
     const p1_prefix = "This is to certify that ";
     const p1_studentNameAndComma = studentName.toUpperCase() + ',';
-    const p1_suffix = " a student of this institution, has maintained good moral character and conduct during his/her stay in this school.";
+    const p1_suffix_text = "a student of this institution, has maintained good moral character and conduct during his/her stay in this school."; // No leading space here
 
     // Calculate widths
     const prefixWidth = pdf.getStringUnitWidth(p1_prefix) * pdf.internal.getFontSize() / pdf.internal.scaleFactor;
     pdf.setFont(undefined, 'bold');
     const studentNameWidth = pdf.getStringUnitWidth(p1_studentNameAndComma) * pdf.internal.getFontSize() / pdf.internal.scaleFactor;
     pdf.setFont(undefined, 'normal');
-    const suffixWidth = pdf.getStringUnitWidth(p1_suffix) * pdf.internal.getFontSize() / pdf.internal.scaleFactor;
+    const suffixTextWidth = pdf.getStringUnitWidth(p1_suffix_text) * pdf.internal.getFontSize() / pdf.internal.scaleFactor;
+    const spaceWidth = pdf.getStringUnitWidth(' ') * pdf.internal.getFontSize() / pdf.internal.scaleFactor; // Width of a single space
 
-    // Check if prefix + name + suffix fits on one line
-    const fullFirstLineWidth = prefixWidth + studentNameWidth + suffixWidth;
+    // Check if prefix + name + space + suffix fits on one line
+    const fullFirstLineWidth = prefixWidth + studentNameWidth + spaceWidth + suffixTextWidth;
 
     if (fullFirstLineWidth <= contentWidth) {
       // All fits on one line
@@ -125,7 +126,7 @@ export const renderCertificateBody = (pdf: jsPDF, data: CertificatePdfData, yPos
       currentX += studentNameWidth;
 
       pdf.setFont(undefined, 'normal');
-      pdf.text(p1_suffix, currentX, yPosition);
+      pdf.text(' ' + p1_suffix_text, currentX, yPosition); // Add space manually
       yPosition += lineHeight;
     } else {
       // It needs to wrap. Print prefix and name on the first line, then wrap suffix.
@@ -139,7 +140,7 @@ export const renderCertificateBody = (pdf: jsPDF, data: CertificatePdfData, yPos
       yPosition += lineHeight; // Move to next line after name for the suffix
 
       pdf.setFont(undefined, 'normal');
-      const suffixLines = pdf.splitTextToSize(p1_suffix, contentWidth);
+      const suffixLines = pdf.splitTextToSize(p1_suffix_text, contentWidth); // Use suffix_text without leading space
       suffixLines.forEach(line => {
         pdf.text(line, leftMargin, yPosition);
         yPosition += lineHeight;
