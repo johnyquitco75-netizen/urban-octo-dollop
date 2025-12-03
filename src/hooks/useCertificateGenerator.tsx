@@ -210,57 +210,66 @@ export const useCertificateGenerator = ({
 
     try {
       const pdf = new jsPDF();
-      let yPosition = 10;
+      let yPosition = 10; // Initial Y position
+
+      const pageCenterX = pdf.internal.pageSize.getWidth() / 2;
+      const leftMargin = 20;
+      const rightMargin = 20;
+      const contentWidth = pdf.internal.pageSize.getWidth() - leftMargin - rightMargin;
 
       // Header Logos and Institutional Text
       const logoWidth = 25;
       const logoHeight = 25;
-      const leftLogoX = 20;
-      const rightLogoX = 190 - logoWidth - 20; // 190 is page width - right margin - logo width
+      const logoY = yPosition;
 
+      // Left Logo
       if (leftHeaderLogoData) {
         try {
-          pdf.addImage(leftHeaderLogoData, 'JPEG', leftLogoX, yPosition, logoWidth, logoHeight);
+          pdf.addImage(leftHeaderLogoData, 'JPEG', leftMargin, logoY, logoWidth, logoHeight);
         } catch (e) {
           console.log('Could not add left header logo to PDF');
         }
       }
+      // Right Logo
       if (rightHeaderLogoData) {
         try {
-          pdf.addImage(rightHeaderLogoData, 'JPEG', rightLogoX, yPosition, logoWidth, logoHeight);
+          pdf.addImage(rightHeaderLogoData, 'JPEG', pdf.internal.pageSize.getWidth() - rightMargin - logoWidth, logoY, logoWidth, logoHeight);
         } catch (e) {
           console.log('Could not add right header logo to PDF');
         }
       }
 
-      yPosition += 5; // Adjust for text below logos
+      // Institutional text (left-aligned)
+      yPosition = logoY + 5; // Start text slightly below logos
       pdf.setFontSize(9);
       pdf.setFont(undefined, 'normal');
-      pdf.text(republicText, 105, yPosition, { align: 'center' });
+      pdf.text(republicText, pageCenterX, yPosition, { align: 'center' });
       yPosition += 4;
-      pdf.text(departmentText, 105, yPosition, { align: 'center' });
+      pdf.text(departmentText, pageCenterX, yPosition, { align: 'center' });
       yPosition += 4;
-      pdf.text(regionText, 105, yPosition, { align: 'center' });
+      pdf.text(regionText, pageCenterX, yPosition, { align: 'center' });
       yPosition += 4;
-      pdf.text(divisionText, 105, yPosition, { align: 'center' });
+      pdf.text(divisionText, pageCenterX, yPosition, { align: 'center' });
       yPosition += 6;
       pdf.setFontSize(12);
       pdf.setFont(undefined, 'bold');
-      pdf.text(schoolName.toUpperCase(), 105, yPosition, { align: 'center' });
+      pdf.text(schoolName.toUpperCase(), pageCenterX, yPosition, { align: 'center' });
       yPosition += 5;
       pdf.setFontSize(9);
       pdf.setFont(undefined, 'normal');
-      pdf.text(schoolAddress, 105, yPosition, { align: 'center' });
-      yPosition += 10; // Space after address
+      pdf.text(schoolAddress, pageCenterX, yPosition, { align: 'center' });
+      yPosition += 15; // Space after address
 
-      // Main Certificate Title
+      // Main Certificate Title (centered)
       pdf.setFontSize(14);
       pdf.setFont(undefined, 'bold');
-      pdf.text('CERTIFICATE OF GOOD MORAL CHARACTER', 105, yPosition, { align: 'center' });
+      pdf.text('CERTIFICATE OF GOOD MORAL CHARACTER', pageCenterX, yPosition, { align: 'center' });
       yPosition += 25;
+
+      // Body Content
       pdf.setFontSize(12);
       pdf.setFont(undefined, 'normal');
-      pdf.text('TO WHOM IT MAY CONCERN:', 20, yPosition);
+      pdf.text('TO WHOM IT MAY CONCERN:', leftMargin, yPosition);
       yPosition += 15;
 
       const lineHeight = 6; // Standard line height for 12pt font
@@ -271,7 +280,7 @@ export const useCertificateGenerator = ({
         const p1_studentNameAndCommaText = previewStudentName.toUpperCase() + ','; // Include comma with name
         const p1_suffix_rest = " a student of this institution, has maintained good moral character and conduct during his/her stay in this school."; // Starts with space
 
-        let currentX = 20;
+        let currentX = leftMargin;
 
         // Print prefix
         pdf.text(p1_prefix, currentX, yPosition);
@@ -287,7 +296,7 @@ export const useCertificateGenerator = ({
 
         // Print the rest of the suffix
         pdf.setFont(undefined, 'normal');
-        const remainingWidthForSuffix = pdf.internal.pageSize.getWidth() - currentX - 20; // 20 for right margin
+        const remainingWidthForSuffix = pdf.internal.pageSize.getWidth() - currentX - rightMargin;
 
         if (pdf.getStringUnitWidth(p1_suffix_rest) * pdf.internal.getFontSize() / pdf.internal.scaleFactor <= remainingWidthForSuffix) {
           // Suffix fits on the current line
@@ -296,9 +305,9 @@ export const useCertificateGenerator = ({
         } else {
           // Suffix needs to wrap, move to next line for the entire suffix
           yPosition += lineHeight; // Move to next line
-          const suffixLines = pdf.splitTextToSize(p1_suffix_rest, 170); // Max width for full lines
+          const suffixLines = pdf.splitTextToSize(p1_suffix_rest, contentWidth); // Max width for full lines
           suffixLines.forEach(line => {
-            pdf.text(line, 20, yPosition);
+            pdf.text(line, leftMargin, yPosition);
             yPosition += lineHeight;
           });
         }
@@ -306,18 +315,18 @@ export const useCertificateGenerator = ({
 
         // Paragraph 2: "He/She has not been involved..."
         const p2 = "He/She has not been involved in any disciplinary case that would affect his/her moral character and reputation. This student has shown respect to school authorities, faculty members, and fellow students.";
-        const p2_lines = pdf.splitTextToSize(p2, 170);
+        const p2_lines = pdf.splitTextToSize(p2, contentWidth);
         p2_lines.forEach(line => {
-          pdf.text(line, 20, yPosition);
+          pdf.text(line, leftMargin, yPosition);
           yPosition += lineHeight;
         });
         yPosition += 6; // Extra space after second paragraph
 
         // Paragraph 3: "This certification is issued..."
         const p3 = "This certification is issued upon the request of the above-mentioned student for whatever legal purpose it may serve.";
-        const p3_lines = pdf.splitTextToSize(p3, 170);
+        const p3_lines = pdf.splitTextToSize(p3, contentWidth);
         p3_lines.forEach(line => {
-          pdf.text(line, 20, yPosition);
+          pdf.text(line, leftMargin, yPosition);
           yPosition += lineHeight;
         });
         yPosition += 15; // Space before date
@@ -329,9 +338,9 @@ export const useCertificateGenerator = ({
           .replace(/\[SCHOOL_NAME\]/g, schoolName)
           .replace(/\[DATE\]/g, new Date(certificateDate).toLocaleDateString());
 
-        const lines = pdf.splitTextToSize(bodyText, 170);
+        const lines = pdf.splitTextToSize(bodyText, contentWidth);
         lines.forEach(line => {
-          pdf.text(line, 20, yPosition);
+          pdf.text(line, leftMargin, yPosition);
           yPosition += 6;
         });
         yPosition += 15;
@@ -341,12 +350,14 @@ export const useCertificateGenerator = ({
         year: 'numeric',
         month: 'long',
         day: 'numeric'
-      })}.`, 150, yPosition, { align: 'right' });
+      })}.`, pdf.internal.pageSize.getWidth() - rightMargin, yPosition, { align: 'right' });
       yPosition += 40;
 
       // Signature blocks (2x2 layout)
-      const blockWidth = 70; // Width for each signature block
-      const nameLineOffset = 10; // Y offset for name from label
+      const blockStartXLeft = leftMargin;
+      const blockStartXRight = pageCenterX + 15; // Adjusted for spacing
+      const blockWidth = 75; // Width for each signature block
+      const nameYOffset = 10; // Y offset for name from label
       const lineYOffset = 12; // Y offset for underline from label
       const positionYOffset = 17; // Y offset for position from label
       const rowSpacing = 35; // Vertical space between rows of signatures
@@ -357,31 +368,27 @@ export const useCertificateGenerator = ({
         
         // PREPARED BY: CPC/Guidance Officer (Left)
         if (cpcGuidanceOfficerName) {
-          const labelX = 20;
-          const nameX = labelX + 40; // Center name over a block starting at labelX + 10
           pdf.setFontSize(9);
           pdf.setFont(undefined, 'normal');
-          pdf.text('PREPARED BY:', labelX, yPosition);
+          pdf.text('PREPARED BY:', blockStartXLeft, yPosition);
           pdf.setFontSize(11);
           pdf.setFont(undefined, 'bold');
-          pdf.text(cpcGuidanceOfficerName.toUpperCase(), nameX, yPosition + nameLineOffset, { align: 'center' });
-          pdf.line(nameX - blockWidth / 2, yPosition + lineYOffset, nameX + blockWidth / 2, yPosition + lineYOffset); // Underline
+          pdf.text(cpcGuidanceOfficerName.toUpperCase(), blockStartXLeft + blockWidth / 2, yPosition + nameYOffset, { align: 'center' });
+          pdf.line(blockStartXLeft, yPosition + lineYOffset, blockStartXLeft + blockWidth, yPosition + lineYOffset); // Underline
           pdf.setFontSize(9);
           pdf.setFont(undefined, 'normal');
-          pdf.text(cpcGuidanceOfficerPosition, nameX, yPosition + positionYOffset, { align: 'center' });
+          pdf.text(cpcGuidanceOfficerPosition, blockStartXLeft + blockWidth / 2, yPosition + positionYOffset, { align: 'center' });
         }
 
         // Guidance Officer (Right)
         if (guidanceOfficer) {
-          const labelX = 120; // Adjusted X for right column
-          const nameX = labelX + 35; // Center name over a block starting at labelX
           pdf.setFontSize(11);
           pdf.setFont(undefined, 'bold');
-          pdf.text(guidanceOfficer.toUpperCase(), nameX, yPosition + nameLineOffset, { align: 'center' });
-          pdf.line(nameX - blockWidth / 2, yPosition + lineYOffset, nameX + blockWidth / 2, yPosition + lineYOffset); // Underline
+          pdf.text(guidanceOfficer.toUpperCase(), blockStartXRight + blockWidth / 2, yPosition + nameYOffset, { align: 'center' });
+          pdf.line(blockStartXRight, yPosition + lineYOffset, blockStartXRight + blockWidth, yPosition + lineYOffset); // Underline
           pdf.setFontSize(9);
           pdf.setFont(undefined, 'normal');
-          pdf.text(guidanceOfficerPosition, nameX, yPosition + positionYOffset, { align: 'center' });
+          pdf.text(guidanceOfficerPosition, blockStartXRight + blockWidth / 2, yPosition + positionYOffset, { align: 'center' });
         }
         yPosition += rowSpacing; // Move down for next row
       }
@@ -392,34 +399,30 @@ export const useCertificateGenerator = ({
 
         // NOTED BY: Assistant Principal (Left)
         if (assistantPrincipalName) {
-          const labelX = 20;
-          const nameX = labelX + 40;
           pdf.setFontSize(9);
           pdf.setFont(undefined, 'normal');
-          pdf.text('NOTED BY:', labelX, yPosition);
+          pdf.text('NOTED BY:', blockStartXLeft, yPosition);
           pdf.setFontSize(11);
           pdf.setFont(undefined, 'bold');
-          pdf.text(assistantPrincipalName.toUpperCase(), nameX, yPosition + nameLineOffset, { align: 'center' });
-          pdf.line(nameX - blockWidth / 2, yPosition + lineYOffset, nameX + blockWidth / 2, yPosition + lineYOffset); // Underline
+          pdf.text(assistantPrincipalName.toUpperCase(), blockStartXLeft + blockWidth / 2, yPosition + nameYOffset, { align: 'center' });
+          pdf.line(blockStartXLeft, yPosition + lineYOffset, blockStartXLeft + blockWidth, yPosition + lineYOffset); // Underline
           pdf.setFontSize(9);
           pdf.setFont(undefined, 'normal');
-          pdf.text(assistantPrincipalPosition, nameX, yPosition + positionYOffset, { align: 'center' });
+          pdf.text(assistantPrincipalPosition, blockStartXLeft + blockWidth / 2, yPosition + positionYOffset, { align: 'center' });
         }
 
         // APPROVED BY: Principal (Right)
         if (principalName) {
-          const labelX = 120;
-          const nameX = labelX + 35;
           pdf.setFontSize(9);
           pdf.setFont(undefined, 'normal');
-          pdf.text('APPROVED BY:', labelX, yPosition);
+          pdf.text('APPROVED BY:', blockStartXRight, yPosition);
           pdf.setFontSize(11);
           pdf.setFont(undefined, 'bold');
-          pdf.text(principalName.toUpperCase(), nameX, yPosition + nameLineOffset, { align: 'center' });
-          pdf.line(nameX - blockWidth / 2, yPosition + lineYOffset, nameX + blockWidth / 2, yPosition + lineYOffset); // Underline
+          pdf.text(principalName.toUpperCase(), blockStartXRight + blockWidth / 2, yPosition + nameYOffset, { align: 'center' });
+          pdf.line(blockStartXRight, yPosition + lineYOffset, blockStartXRight + blockWidth, yPosition + lineYOffset); // Underline
           pdf.setFontSize(9);
           pdf.setFont(undefined, 'normal');
-          pdf.text(principalPosition, nameX, yPosition + positionYOffset, { align: 'center' });
+          pdf.text(principalPosition, blockStartXRight + blockWidth / 2, yPosition + positionYOffset, { align: 'center' });
         }
         yPosition += rowSpacing; // Move down for next row
       }
