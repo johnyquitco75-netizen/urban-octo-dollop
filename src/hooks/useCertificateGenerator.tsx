@@ -263,24 +263,80 @@ export const useCertificateGenerator = ({
       pdf.text('TO WHOM IT MAY CONCERN:', 20, yPosition);
       yPosition += 15;
 
-      let bodyText = '';
+      const lineHeight = 6; // Standard line height for 12pt font
+
       if (certificateTemplate === 'standard') {
-        bodyText = `This is to certify that ${previewStudentName.toUpperCase()}, a student of this institution, has maintained good moral character and conduct during his/her stay in this school.
-He/She has not been involved in any disciplinary case that would affect his/her moral character and reputation. This student has shown respect to school authorities, faculty members, and fellow students.
-This certification is issued upon the request of the above-mentioned student for whatever legal purpose it may serve.`;
+        // Paragraph 1: "This is to certify that [STUDENT_NAME], a student..."
+        const p1_prefix = "This is to certify that ";
+        const p1_studentNameText = previewStudentName.toUpperCase();
+        const p1_suffix = ", a student of this institution, has maintained good moral character and conduct during his/her stay in this school.";
+
+        let currentX = 20;
+
+        // Print prefix
+        pdf.text(p1_prefix, currentX, yPosition);
+        currentX += pdf.getStringUnitWidth(p1_prefix) * pdf.internal.getFontSize() / pdf.internal.scaleFactor;
+
+        // Print student name (bold and underlined)
+        pdf.setFont(undefined, 'bold');
+        pdf.text(p1_studentNameText, currentX, yPosition);
+        const studentNameWidth = pdf.getStringUnitWidth(p1_studentNameText) * pdf.internal.getFontSize() / pdf.internal.scaleFactor;
+        // Draw underline slightly below the text baseline
+        pdf.line(currentX, yPosition + 1.5, currentX + studentNameWidth, yPosition + 1.5);
+        currentX += studentNameWidth;
+
+        // Print suffix
+        pdf.setFont(undefined, 'normal');
+        const remainingWidthForSuffix = pdf.internal.pageSize.getWidth() - currentX - 20; // 20 for right margin
+
+        if (pdf.getStringUnitWidth(p1_suffix) * pdf.internal.getFontSize() / pdf.internal.scaleFactor <= remainingWidthForSuffix) {
+          // Suffix fits on the current line
+          pdf.text(p1_suffix, currentX, yPosition);
+          yPosition += lineHeight; // Move to next line after this sentence
+        } else {
+          // Suffix needs to wrap, move to next line for the entire suffix
+          yPosition += lineHeight; // Move to next line
+          const suffixLines = pdf.splitTextToSize(p1_suffix, 170); // Max width for full lines
+          suffixLines.forEach(line => {
+            pdf.text(line, 20, yPosition);
+            yPosition += lineHeight;
+          });
+        }
+        yPosition += 6; // Extra space after first paragraph
+
+        // Paragraph 2: "He/She has not been involved..."
+        const p2 = "He/She has not been involved in any disciplinary case that would affect his/her moral character and reputation. This student has shown respect to school authorities, faculty members, and fellow students.";
+        const p2_lines = pdf.splitTextToSize(p2, 170);
+        p2_lines.forEach(line => {
+          pdf.text(line, 20, yPosition);
+          yPosition += lineHeight;
+        });
+        yPosition += 6; // Extra space after second paragraph
+
+        // Paragraph 3: "This certification is issued..."
+        const p3 = "This certification is issued upon the request of the above-mentioned student for whatever legal purpose it may serve.";
+        const p3_lines = pdf.splitTextToSize(p3, 170);
+        p3_lines.forEach(line => {
+          pdf.text(line, 20, yPosition);
+          yPosition += lineHeight;
+        });
+        yPosition += 15; // Space before date
+
       } else {
-        bodyText = customCertificateContent
+        // Custom template: [STUDENT_NAME] will be replaced but not underlined in PDF due to jsPDF limitations.
+        const bodyText = customCertificateContent
           .replace(/\[STUDENT_NAME\]/g, previewStudentName.toUpperCase())
           .replace(/\[SCHOOL_NAME\]/g, schoolName)
           .replace(/\[DATE\]/g, new Date(certificateDate).toLocaleDateString());
+
+        const lines = pdf.splitTextToSize(bodyText, 170);
+        lines.forEach(line => {
+          pdf.text(line, 20, yPosition);
+          yPosition += 6;
+        });
+        yPosition += 15;
       }
 
-      const lines = pdf.splitTextToSize(bodyText, 170);
-      lines.forEach(line => {
-        pdf.text(line, 20, yPosition);
-        yPosition += 6;
-      });
-      yPosition += 15;
       pdf.text(`Issued this ${new Date(certificateDate).toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
