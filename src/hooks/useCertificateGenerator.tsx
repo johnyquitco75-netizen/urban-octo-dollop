@@ -68,7 +68,7 @@ export const useCertificateGenerator = ({
         ${headerHtml}
         <div class="text-lg text-gray-800 text-justify my-8 leading-relaxed">
             <p>TO WHOM IT MAY CONCERN:</p>
-            <p class="mt-8">This is to certify that <span class="font-bold underline text-black">${studentName.toUpperCase()}</span>,
+            <p class="mt-8">This is to certify that <span class="font-bold underline text-black">${studentName.toUpperCase()},</span>
             a student of this institution, has maintained good moral character and conduct during his/her stay in this school.</p>
             <p class="mt-6">He/She has not been involved in any disciplinary case that would affect his/her moral character
             and reputation. This student has shown respect to school authorities, faculty members, and fellow students.</p>
@@ -135,7 +135,7 @@ export const useCertificateGenerator = ({
         ${headerHtml}
         <div class="text-lg text-gray-800 text-justify my-8 leading-relaxed">
             <p>${customText
-                .replace(/\[STUDENT_NAME\]/g, `<span class="font-bold underline text-black">${studentName.toUpperCase()}</span>`)
+                .replace(/\[STUDENT_NAME\]/g, `<span class="font-bold underline text-black">${studentName.toUpperCase()},</span>`)
                 .replace(/\[SCHOOL_NAME\]/g, school)
                 .replace(/\[DATE\]/g, new Date(certDate).toLocaleDateString())
                 .replace(/\n/g, '</p><p>')
@@ -268,8 +268,8 @@ export const useCertificateGenerator = ({
       if (certificateTemplate === 'standard') {
         // Paragraph 1: "This is to certify that [STUDENT_NAME], a student..."
         const p1_prefix = "This is to certify that ";
-        const p1_studentNameText = previewStudentName.toUpperCase();
-        const p1_suffix = ", a student of this institution, has maintained good moral character and conduct during his/her stay in this school.";
+        const p1_studentNameAndCommaText = previewStudentName.toUpperCase() + ','; // Include comma with name
+        const p1_suffix_rest = " a student of this institution, has maintained good moral character and conduct during his/her stay in this school."; // Starts with space
 
         let currentX = 20;
 
@@ -277,26 +277,26 @@ export const useCertificateGenerator = ({
         pdf.text(p1_prefix, currentX, yPosition);
         currentX += pdf.getStringUnitWidth(p1_prefix) * pdf.internal.getFontSize() / pdf.internal.scaleFactor;
 
-        // Print student name (bold and underlined)
+        // Print student name and comma (bold and underlined)
         pdf.setFont(undefined, 'bold');
-        pdf.text(p1_studentNameText, currentX, yPosition);
-        const studentNameWidth = pdf.getStringUnitWidth(p1_studentNameText) * pdf.internal.getFontSize() / pdf.internal.scaleFactor;
+        pdf.text(p1_studentNameAndCommaText, currentX, yPosition);
+        const studentNameAndCommaWidth = pdf.getStringUnitWidth(p1_studentNameAndCommaText) * pdf.internal.getFontSize() / pdf.internal.scaleFactor;
         // Draw underline slightly below the text baseline
-        pdf.line(currentX, yPosition + 1.5, currentX + studentNameWidth, yPosition + 1.5);
-        currentX += studentNameWidth;
+        pdf.line(currentX, yPosition + 1.5, currentX + studentNameAndCommaWidth, yPosition + 1.5);
+        currentX += studentNameAndCommaWidth;
 
-        // Print suffix
+        // Print the rest of the suffix
         pdf.setFont(undefined, 'normal');
         const remainingWidthForSuffix = pdf.internal.pageSize.getWidth() - currentX - 20; // 20 for right margin
 
-        if (pdf.getStringUnitWidth(p1_suffix) * pdf.internal.getFontSize() / pdf.internal.scaleFactor <= remainingWidthForSuffix) {
+        if (pdf.getStringUnitWidth(p1_suffix_rest) * pdf.internal.getFontSize() / pdf.internal.scaleFactor <= remainingWidthForSuffix) {
           // Suffix fits on the current line
-          pdf.text(p1_suffix, currentX, yPosition);
+          pdf.text(p1_suffix_rest, currentX, yPosition);
           yPosition += lineHeight; // Move to next line after this sentence
         } else {
           // Suffix needs to wrap, move to next line for the entire suffix
           yPosition += lineHeight; // Move to next line
-          const suffixLines = pdf.splitTextToSize(p1_suffix, 170); // Max width for full lines
+          const suffixLines = pdf.splitTextToSize(p1_suffix_rest, 170); // Max width for full lines
           suffixLines.forEach(line => {
             pdf.text(line, 20, yPosition);
             yPosition += lineHeight;
@@ -325,7 +325,7 @@ export const useCertificateGenerator = ({
       } else {
         // Custom template: [STUDENT_NAME] will be replaced but not underlined in PDF due to jsPDF limitations.
         const bodyText = customCertificateContent
-          .replace(/\[STUDENT_NAME\]/g, previewStudentName.toUpperCase())
+          .replace(/\[STUDENT_NAME\]/g, previewStudentName.toUpperCase() + ',') // Also add comma here for consistency
           .replace(/\[SCHOOL_NAME\]/g, schoolName)
           .replace(/\[DATE\]/g, new Date(certificateDate).toLocaleDateString());
 
