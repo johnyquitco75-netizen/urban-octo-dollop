@@ -58,25 +58,25 @@ export const renderCertificateHeader = (pdf: jsPDF, data: CertificatePdfData, yP
     }
   }
 
-  // Institutional text (centered)
+  // Institutional text (left-aligned)
   yPosition = logoY + 5; // Start text slightly below logos
   pdf.setFontSize(9);
   pdf.setFont(undefined, 'normal');
-  pdf.text(republicText, pageCenterX, yPosition, { align: 'center' });
+  pdf.text(republicText, leftMargin, yPosition); // Changed to leftMargin
   yPosition += 4;
-  pdf.text(departmentText, pageCenterX, yPosition, { align: 'center' });
+  pdf.text(departmentText, leftMargin, yPosition); // Changed to leftMargin
   yPosition += 4;
-  pdf.text(regionText, pageCenterX, yPosition, { align: 'center' });
+  pdf.text(regionText, leftMargin, yPosition); // Changed to leftMargin
   yPosition += 4;
-  pdf.text(divisionText, pageCenterX, yPosition, { align: 'center' });
+  pdf.text(divisionText, leftMargin, yPosition); // Changed to leftMargin
   yPosition += 6;
   pdf.setFontSize(12);
   pdf.setFont(undefined, 'bold');
-  pdf.text(schoolName.toUpperCase(), pageCenterX, yPosition, { align: 'center' });
+  pdf.text(schoolName.toUpperCase(), leftMargin, yPosition); // Changed to leftMargin
   yPosition += 5;
   pdf.setFontSize(9);
   pdf.setFont(undefined, 'normal');
-  pdf.text(schoolAddress, pageCenterX, yPosition, { align: 'center' });
+  pdf.text(schoolAddress, leftMargin, yPosition); // Changed to leftMargin
   yPosition += 15; // Space after address
 
   // Main Certificate Title (centered)
@@ -98,40 +98,54 @@ export const renderCertificateBody = (pdf: jsPDF, data: CertificatePdfData, yPos
   yPosition += 15;
 
   if (certificateTemplate === 'standard') {
-    // Paragraph 1: "This is to certify that [STUDENT_NAME], a student..."
+    // Paragraph 1
     const p1_prefix = "This is to certify that ";
-    const p1_studentNameAndCommaText = studentName.toUpperCase() + ',';
-    const p1_suffix_rest = " a student of this institution, has maintained good moral character and conduct during his/her stay in this school.";
+    const p1_studentNameAndComma = studentName.toUpperCase() + ',';
+    const p1_suffix = " a student of this institution, has maintained good moral character and conduct during his/her stay in this school.";
 
-    let currentX = leftMargin;
-
-    // Print prefix
-    pdf.text(p1_prefix, currentX, yPosition);
-    currentX += pdf.getStringUnitWidth(p1_prefix) * pdf.internal.getFontSize() / pdf.internal.scaleFactor;
-
-    // Print student name and comma (bold and underlined)
+    // Calculate widths
+    const prefixWidth = pdf.getStringUnitWidth(p1_prefix) * pdf.internal.getFontSize() / pdf.internal.scaleFactor;
     pdf.setFont(undefined, 'bold');
-    pdf.text(p1_studentNameAndCommaText, currentX, yPosition);
-    const studentNameAndCommaWidth = pdf.getStringUnitWidth(p1_studentNameAndCommaText) * pdf.internal.getFontSize() / pdf.internal.scaleFactor;
-    pdf.line(currentX, yPosition + 1.5, currentX + studentNameAndCommaWidth, yPosition + 1.5);
-    currentX += studentNameAndCommaWidth;
-
-    // Print the rest of the suffix
+    const studentNameWidth = pdf.getStringUnitWidth(p1_studentNameAndComma) * pdf.internal.getFontSize() / pdf.internal.scaleFactor;
     pdf.setFont(undefined, 'normal');
-    const remainingWidthForSuffix = pdf.internal.pageSize.getWidth() - currentX - rightMargin;
+    const suffixWidth = pdf.getStringUnitWidth(p1_suffix) * pdf.internal.getFontSize() / pdf.internal.scaleFactor;
 
-    if (pdf.getStringUnitWidth(p1_suffix_rest) * pdf.internal.getFontSize() / pdf.internal.scaleFactor <= remainingWidthForSuffix) {
-      pdf.text(p1_suffix_rest, currentX, yPosition);
+    // Check if prefix + name + suffix fits on one line
+    const fullFirstLineWidth = prefixWidth + studentNameWidth + suffixWidth;
+
+    if (fullFirstLineWidth <= contentWidth) {
+      // All fits on one line
+      let currentX = leftMargin;
+      pdf.text(p1_prefix, currentX, yPosition);
+      currentX += prefixWidth;
+
+      pdf.setFont(undefined, 'bold');
+      pdf.text(p1_studentNameAndComma, currentX, yPosition);
+      pdf.line(currentX, yPosition + 1.5, currentX + studentNameWidth, yPosition + 1.5);
+      currentX += studentNameWidth;
+
+      pdf.setFont(undefined, 'normal');
+      pdf.text(p1_suffix, currentX, yPosition);
       yPosition += lineHeight;
     } else {
-      yPosition += lineHeight;
-      const suffixLines = pdf.splitTextToSize(p1_suffix_rest, contentWidth);
+      // It needs to wrap. Print prefix and name on the first line, then wrap suffix.
+      let currentX = leftMargin;
+      pdf.text(p1_prefix, currentX, yPosition);
+      currentX += prefixWidth;
+
+      pdf.setFont(undefined, 'bold');
+      pdf.text(p1_studentNameAndComma, currentX, yPosition);
+      pdf.line(currentX, yPosition + 1.5, currentX + studentNameWidth, yPosition + 1.5);
+      yPosition += lineHeight; // Move to next line after name for the suffix
+
+      pdf.setFont(undefined, 'normal');
+      const suffixLines = pdf.splitTextToSize(p1_suffix, contentWidth);
       suffixLines.forEach(line => {
         pdf.text(line, leftMargin, yPosition);
         yPosition += lineHeight;
       });
     }
-    yPosition += 6;
+    yPosition += 6; // Extra space after first paragraph
 
     // Paragraph 2: "He/She has not been involved..."
     const p2 = "He/She has not been involved in any disciplinary case that would affect his/her moral character and reputation. This student has shown respect to school authorities, faculty members, and fellow students.";
@@ -140,7 +154,7 @@ export const renderCertificateBody = (pdf: jsPDF, data: CertificatePdfData, yPos
       pdf.text(line, leftMargin, yPosition);
       yPosition += lineHeight;
     });
-    yPosition += 6;
+    yPosition += 6; // Extra space after second paragraph
 
     // Paragraph 3: "This certification is issued..."
     const p3 = "This certification is issued upon the request of the above-mentioned student for whatever legal purpose it may serve.";
@@ -149,7 +163,7 @@ export const renderCertificateBody = (pdf: jsPDF, data: CertificatePdfData, yPos
       pdf.text(line, leftMargin, yPosition);
       yPosition += lineHeight;
     });
-    yPosition += 15;
+    yPosition += 15; // Space before date
 
   } else {
     // Custom template
