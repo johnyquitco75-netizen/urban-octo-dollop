@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"; // Import Select components
 import { useAppContext } from "@/context/AppContext";
 
 const SettingsSection = () => {
@@ -33,6 +34,11 @@ const SettingsSection = () => {
     departmentText, setDepartmentText,
     regionText, setRegionText,
     divisionText, setDivisionText,
+    // New font settings
+    customPhraseFontSize, setCustomPhraseFontSize,
+    customPhraseFontColor, setCustomPhraseFontColor,
+    dateTimeFontSize, setDateTimeFontSize,
+    dateTimeFontColor, setDateTimeFontColor,
   } = useAppContext();
 
   const [adminPasswordInput, setAdminPasswordInput] = useState("");
@@ -58,6 +64,11 @@ const SettingsSection = () => {
     await db.setSetting('departmentText', departmentText);
     await db.setSetting('regionText', regionText);
     await db.setSetting('divisionText', divisionText);
+    // Save new font settings
+    await db.setSetting('customPhraseFontSize', customPhraseFontSize);
+    await db.setSetting('customPhraseFontColor', customPhraseFontColor);
+    await db.setSetting('dateTimeFontSize', dateTimeFontSize);
+    await db.setSetting('dateTimeFontColor', dateTimeFontColor);
 
     showAlert('Settings saved successfully!', 'success');
     loadSettings(); // Reload settings to ensure UI reflects changes
@@ -229,6 +240,70 @@ const SettingsSection = () => {
           onChange={(e) => setCustomPhrase(e.target.value)}
           className="w-full"
         />
+      </div>
+
+      {/* New Font Size and Color Settings for Custom Phrase */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <Label htmlFor="customPhraseFontSize" className="block text-gray-700 dark:text-gray-200 text-sm font-semibold mb-2">
+            Custom Phrase Font Size
+          </Label>
+          <Select value={customPhraseFontSize} onValueChange={setCustomPhraseFontSize}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select font size" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="0.875rem">Small (14px)</SelectItem>
+              <SelectItem value="1rem">Medium (16px)</SelectItem>
+              <SelectItem value="1.125rem">Large (18px)</SelectItem>
+              <SelectItem value="1.25rem">X-Large (20px)</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label htmlFor="customPhraseFontColor" className="block text-gray-700 dark:text-gray-200 text-sm font-semibold mb-2">
+            Custom Phrase Font Color
+          </Label>
+          <Input
+            id="customPhraseFontColor"
+            type="color"
+            value={customPhraseFontColor}
+            onChange={(e) => setCustomPhraseFontColor(e.target.value)}
+            className="w-full h-10 p-1"
+          />
+        </div>
+      </div>
+
+      {/* New Font Size and Color Settings for Date/Time */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <Label htmlFor="dateTimeFontSize" className="block text-gray-700 dark:text-gray-200 text-sm font-semibold mb-2">
+            Date/Time Font Size
+          </Label>
+          <Select value={dateTimeFontSize} onValueChange={setDateTimeFontSize}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select font size" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="0.875rem">Small (14px)</SelectItem>
+              <SelectItem value="1rem">Medium (16px)</SelectItem>
+              <SelectItem value="1.125rem">Large (18px)</SelectItem>
+              <SelectItem value="1.25rem">X-Large (20px)</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label htmlFor="dateTimeFontColor" className="block text-gray-700 dark:text-gray-200 text-sm font-semibold mb-2">
+            Date/Time Font Color
+          </Label>
+          <Input
+            id="dateTimeFontColor"
+            type="color"
+            value={dateTimeFontColor}
+            onChange={(e) => setDateTimeFontColor(e.target.value)}
+            className="w-full h-10 p-1"
+          />
+        </div>
       </div>
 
       <div>

@@ -71,6 +71,15 @@ interface AppContextType {
   setCurrentSection: (section: string) => void;
   recordToEditId: number | null;
   setRecordToEditId: (id: number | null) => void;
+  // New font settings
+  customPhraseFontSize: string;
+  setCustomPhraseFontSize: (size: string) => void;
+  customPhraseFontColor: string;
+  setCustomPhraseFontColor: (color: string) => void;
+  dateTimeFontSize: string;
+  setDateTimeFontSize: (size: string) => void;
+  dateTimeFontColor: string;
+  setDateTimeFontColor: (color: string) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -86,7 +95,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   // Settings state
   const [schoolName, setSchoolName] = useState("SAMPLE ELEMENTARY SCHOOL");
   const [schoolAddress, setSchoolAddress] = useState("Rizal Street, Brgy. III, Poblacion, Pontevedra, Negros Occidental 6105");
-  const [customPhrase, setCustomPhrase] = useState("add custom phrase here:");
+  const [customPhrase, setCustomPhrase] = useState("Commit thy works unto the lord, and your plan will succeed-Proverbs 16:3");
   const [logoData, setLogoData] = useState<string | null>(null);
   const [leftHeaderLogoData, setLeftHeaderLogoData] = useState<string | null>(null); // New state
   const [rightHeaderLogoData, setRightHeaderLogoData] = useState<string | null>(null); // New state
@@ -111,6 +120,12 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const [currentSection, setCurrentSection] = useState("dashboard");
   const [recordToEditId, setRecordToEditId] = useState<number | null>(null);
 
+  // New font settings
+  const [customPhraseFontSize, setCustomPhraseFontSize] = useState("1rem"); // Default to 16px
+  const [customPhraseFontColor, setCustomPhraseFontColor] = useState("#ffffff"); // Default to white
+  const [dateTimeFontSize, setDateTimeFontSize] = useState("1rem"); // Default to 16px
+  const [dateTimeFontColor, setDateTimeFontColor] = useState("#ffffff"); // Default to white
+
 
   // Modals state
   const [isPhotoModalOpen, setIsPhotoModalOpen] = useState(false);
@@ -131,7 +146,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const loadSettings = useCallback(async () => {
     const savedSchoolName = await db.getSetting('schoolName') || 'SAMPLE ELEMENTARY SCHOOL';
     const savedSchoolAddress = await db.getSetting('schoolAddress') || 'Rizal Street, Brgy. III, Poblacion, Pontevedra, Negros Occidental 6105';
-    const savedCustomPhrase = await db.getSetting('customPhrase') || 'add custom phrase here:';
+    const savedCustomPhrase = await db.getSetting('customPhrase') || 'Commit thy works unto the lord, and your plan will succeed-Proverbs 16:3';
     const savedLogoData = await db.getSetting('logoData');
     const savedLeftHeaderLogoData = await db.getSetting('leftHeaderLogoData'); // Load new setting
     const savedRightHeaderLogoData = await db.getSetting('rightHeaderLogoData'); // Load new setting
@@ -149,6 +164,11 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     const savedDepartmentText = await db.getSetting('departmentText') || 'Department of Education';
     const savedRegionText = await db.getSetting('regionText') || 'Region VII, Central Visayas';
     const savedDivisionText = await db.getSetting('divisionText') || 'Division of Cebu City';
+    // Load new font settings
+    const savedCustomPhraseFontSize = await db.getSetting('customPhraseFontSize') || '1rem';
+    const savedCustomPhraseFontColor = await db.getSetting('customPhraseFontColor') || '#ffffff';
+    const savedDateTimeFontSize = await db.getSetting('dateTimeFontSize') || '1rem';
+    const savedDateTimeFontColor = await db.getSetting('dateTimeFontColor') || '#ffffff';
 
 
     setSchoolName(savedSchoolName);
@@ -171,6 +191,11 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     setDepartmentText(savedDepartmentText);
     setRegionText(savedRegionText);
     setDivisionText(savedDivisionText);
+    // Set new font settings
+    setCustomPhraseFontSize(savedCustomPhraseFontSize);
+    setCustomPhraseFontColor(savedCustomPhraseFontColor);
+    setDateTimeFontSize(savedDateTimeFontSize);
+    setDateTimeFontColor(savedDateTimeFontColor);
   }, []);
 
   const loadCustomViolations = useCallback(async () => {
@@ -348,6 +373,11 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     // New states for navigation and editing
     currentSection, setCurrentSection,
     recordToEditId, setRecordToEditId,
+    // New font settings
+    customPhraseFontSize, setCustomPhraseFontSize,
+    customPhraseFontColor, setCustomPhraseFontColor,
+    dateTimeFontSize, setDateTimeFontSize,
+    dateTimeFontColor, setDateTimeFontColor,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

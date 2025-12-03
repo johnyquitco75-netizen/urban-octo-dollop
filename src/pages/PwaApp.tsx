@@ -26,6 +26,9 @@ export const PwaApp = () => {
     showAlert,
     isAppInitialized,
     currentSection, setCurrentSection, // Get from context
+    // New font settings from context
+    customPhraseFontSize, customPhraseFontColor,
+    dateTimeFontSize, dateTimeFontColor,
   } = useAppContext();
 
   const [currentTime, setCurrentTime] = useState("");
@@ -83,8 +86,8 @@ export const PwaApp = () => {
       {/* Header */}
       <header className="bg-green-600 text-white p-6 shadow-md flex flex-col md:flex-row items-start justify-between gap-4">
         {/* Left Section: Custom Phrase */}
-        <div className="flex-1 text-left">
-          <div className="text-sm font-medium">
+        <div className="flex-1 text-left" style={{ fontSize: customPhraseFontSize, color: customPhraseFontColor }}>
+          <div className="font-medium">
             {customPhrase}
           </div>
         </div>
@@ -98,8 +101,8 @@ export const PwaApp = () => {
         {/* Right Section: Date/Time and Admin/Logout */}
         <div className="flex-1 flex flex-col items-end gap-2">
           {isLoggedIn && isAppInitialized && (
-            <div className="text-xs opacity-80 text-right">
-              {currentTime} <br /> {currentDate}
+            <div className="text-right" style={{ fontSize: dateTimeFontSize, color: dateTimeFontColor }}>
+              <span className="font-bold">{currentTime}</span> <br /> {currentDate}
             </div>
           )}
           <div className="flex flex-col items-end gap-2">
