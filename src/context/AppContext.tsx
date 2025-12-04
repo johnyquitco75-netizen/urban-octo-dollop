@@ -178,9 +178,9 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     const savedCustomPhraseFontColor = await db.getSetting('customPhraseFontColor') || '#ffffff';
     const savedDateTimeFontSize = await db.getSetting('dateTimeFontSize') || '1rem';
     const savedDateTimeFontColor = await db.getSetting('dateTimeFontColor') || '#ffffff';
-    // Load new logo margin settings
-    const savedLeftHeaderLogoMargin = await db.getSetting('leftHeaderLogoMargin');
-    const savedRightHeaderLogoMargin = await db.getSetting('rightHeaderLogoMargin');
+    // Load new logo margin settings, ensuring they are numbers
+    const savedLeftHeaderLogoMargin = parseInt(await db.getSetting('leftHeaderLogoMargin')) || 5;
+    const savedRightHeaderLogoMargin = parseInt(await db.getSetting('rightHeaderLogoMargin')) || 5;
 
 
     setSchoolName(savedSchoolName);
@@ -209,8 +209,8 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     setDateTimeFontSize(savedDateTimeFontSize);
     setDateTimeFontColor(savedDateTimeFontColor);
     // Set new logo margin settings, with default if not found
-    setLeftHeaderLogoMargin(savedLeftHeaderLogoMargin !== undefined ? savedLeftHeaderLogoMargin : 5);
-    setRightHeaderLogoMargin(savedRightHeaderLogoMargin !== undefined ? savedRightHeaderLogoMargin : 5);
+    setLeftHeaderLogoMargin(savedLeftHeaderLogoMargin);
+    setRightHeaderLogoMargin(savedRightHeaderLogoMargin);
   }, []);
 
   const loadCustomViolations = useCallback(async () => {
