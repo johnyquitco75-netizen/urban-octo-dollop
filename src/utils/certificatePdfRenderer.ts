@@ -140,16 +140,14 @@ export const renderCertificateBody = (pdf: jsPDF, data: CertificatePdfData, yPos
     }
     yPosition += 6; // Extra space after first paragraph
 
-    // Paragraph 2: "He/She has not been involved..." (Bold and Underlined)
+    // Paragraph 2: "He/She has not been involved..." (Bold only, no underline)
     const p2 = "He/She has not been involved in any disciplinary case that would affect his/her moral character and reputation. This student has shown respect to school authorities, faculty members, and fellow students.";
     const p2_lines = pdf.splitTextToSize(p2, contentWidth);
 
     pdf.setFont(undefined, 'bold'); // Set font to bold for this paragraph
     p2_lines.forEach(line => {
       pdf.text(line, leftMargin, yPosition);
-      // Draw underline for each line
-      const textWidth = pdf.getStringUnitWidth(line) * pdf.internal.getFontSize() / pdf.internal.scaleFactor;
-      pdf.line(leftMargin, yPosition + 1.5, leftMargin + textWidth, yPosition + 1.5); // Underline each line
+      // Removed the underline for this paragraph
       yPosition += lineHeight;
     });
     pdf.setFont(undefined, 'normal'); // Reset font to normal after this paragraph
