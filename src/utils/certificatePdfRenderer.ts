@@ -105,7 +105,7 @@ export const renderCertificateBody = (pdf: jsPDF, data: CertificatePdfData, yPos
 
     let currentX = leftMargin;
 
-    // Print prefix
+    // Print prefix (normal font)
     pdf.setFont(undefined, 'normal');
     pdf.text(p1_prefix, currentX, yPosition);
     currentX += pdf.getStringUnitWidth(p1_prefix) * pdf.internal.getFontSize() / pdf.internal.scaleFactor;
@@ -117,8 +117,8 @@ export const renderCertificateBody = (pdf: jsPDF, data: CertificatePdfData, yPos
     pdf.line(currentX, yPosition + 1.5, currentX + studentNameWidth, yPosition + 1.5);
     currentX += studentNameWidth;
 
-    // Now handle the rest of the sentence
-    pdf.setFont(undefined, 'normal'); // Reset to normal font for suffix
+    // Now handle the rest of the sentence (normal font)
+    pdf.setFont(undefined, 'normal');
     const fullSentenceAfterName = ' ' + p1_suffix_text; // Add the space here
 
     const remainingWidthForFirstLine = pdf.internal.pageSize.getWidth() - currentX - rightMargin;
@@ -140,20 +140,18 @@ export const renderCertificateBody = (pdf: jsPDF, data: CertificatePdfData, yPos
     }
     yPosition += 6; // Extra space after first paragraph
 
-    // Paragraph 2: "He/She has not been involved..." (Bold only, no underline)
+    // Paragraph 2: "He/She has not been involved..." (Normal font, no bold, no underline)
     const p2 = "He/She has not been involved in any disciplinary case that would affect his/her moral character and reputation. This student has shown respect to school authorities, faculty members, and fellow students.";
     const p2_lines = pdf.splitTextToSize(p2, contentWidth);
 
-    pdf.setFont(undefined, 'bold'); // Set font to bold for this paragraph
+    pdf.setFont(undefined, 'normal'); // Ensure normal font
     p2_lines.forEach(line => {
       pdf.text(line, leftMargin, yPosition);
-      // Removed the underline for this paragraph
       yPosition += lineHeight;
     });
-    pdf.setFont(undefined, 'normal'); // Reset font to normal after this paragraph
     yPosition += 6; // Extra space after second paragraph
 
-    // Paragraph 3: "This certification is issued..."
+    // Paragraph 3: "This certification is issued..." (Normal font)
     const p3 = "This certification is issued upon the request of the above-mentioned student for whatever legal purpose it may serve.";
     const p3_lines = pdf.splitTextToSize(p3, contentWidth);
     p3_lines.forEach(line => {
