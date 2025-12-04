@@ -40,17 +40,19 @@ export const generatePrintPreviewHtml = ({
   divisionText,
 }: PrintPreviewData): string => {
   const headerHtml = `
-    <div class="header-section" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; gap: 10px;">
-        ${leftHeaderLogoData ? `<img src="${leftHeaderLogoData}" class="header-logo" alt="Left Logo" style="width: 60px; height: 60px; object-fit: contain; flex-shrink: 0;">` : '<div style="width: 60px; flex-shrink: 0;"></div>'}
-        <div class="text-center" style="flex-grow: 1;">
-            <p style="margin: 0; font-size: 10pt;">${republicText}</p>
-            <p style="margin: 0; font-size: 10pt;">${departmentText}</p>
-            <p style="margin: 0; font-size: 10pt;">${regionText}</p>
-            <p style="margin: 0; font-size: 10pt;">${divisionText}</p>
-            <p style="margin: 0; font-size: 12pt; font-weight: bold; margin-top: 5px;">${schoolName.toUpperCase()}</p>
-            <p style="margin: 0; font-size: 10pt;">${schoolAddress}</p>
+    <div class="header-container" style="display: flex; justify-content: center; margin-bottom: 20px;">
+        <div class="header-content" style="display: flex; align-items: center; max-width: 800px; width: 100%;">
+            ${leftHeaderLogoData ? `<img src="${leftHeaderLogoData}" class="header-logo" alt="Left Logo" style="width: 60px; height: 60px; object-fit: contain; margin-right: 15px; flex-shrink: 0;">` : '<div style="width: 60px; margin-right: 15px; flex-shrink: 0;"></div>'}
+            <div class="text-center" style="flex-grow: 1; text-align: center;">
+                <p style="margin: 0; font-size: 10pt;">${republicText}</p>
+                <p style="margin: 0; font-size: 10pt;">${departmentText}</p>
+                <p style="margin: 0; font-size: 10pt;">${regionText}</p>
+                <p style="margin: 0; font-size: 10pt;">${divisionText}</p>
+                <p style="margin: 0; font-size: 12pt; font-weight: bold; margin-top: 5px;">${schoolName.toUpperCase()}</p>
+                <p style="margin: 0; font-size: 10pt;">${schoolAddress}</p>
+            </div>
+            ${rightHeaderLogoData ? `<img src="${rightHeaderLogoData}" class="header-logo" alt="Right Logo" style="width: 60px; height: 60px; object-fit: contain; margin-left: 15px; flex-shrink: 0;">` : '<div style="width: 60px; margin-left: 15px; flex-shrink: 0;"></div>'}
         </div>
-        ${rightHeaderLogoData ? `<img src="${rightHeaderLogoData}" class="header-logo" alt="Right Logo" style="width: 60px; height: 60px; object-fit: contain; flex-shrink: 0;">` : '<div style="width: 60px; flex-shrink: 0;"></div>'}
     </div>
     <div class="text-center mb-8">
         <h2 class="text-xl font-bold text-gray-900 mt-4">E-Guidance Record System Report</h2>

@@ -50,12 +50,12 @@ export const generatePdfReport = ({
       // Header Logos and Institutional Text
       const logoWidth = 25;
       const logoHeight = 25;
-      const logoPadding = 10; // Padding between logo and text block
+      const logoPadding = 5; // Padding between logo and text block (e.g., 5mm)
 
       // Calculate max width of the central text block
       pdf.setFontSize(9);
       pdf.setFont(undefined, 'normal');
-      const textLines = [
+      const textLinesForWidthCalc = [ // Use a temporary array for width calculation
         republicText,
         departmentText,
         regionText,
@@ -64,16 +64,19 @@ export const generatePdfReport = ({
       ];
       pdf.setFontSize(12);
       pdf.setFont(undefined, 'bold');
-      textLines.push(schoolName.toUpperCase());
+      textLinesForWidthCalc.push(schoolName.toUpperCase());
 
-      let maxTextWidth = 0;
+      let actualTextWidth = 0;
       const scaleFactor = pdf.internal.scaleFactor;
-      textLines.forEach(line => {
-        maxTextWidth = Math.max(maxTextWidth, pdf.getStringUnitWidth(line) * pdf.internal.getFontSize() / scaleFactor);
+      textLinesForWidthCalc.forEach(line => {
+        actualTextWidth = Math.max(actualTextWidth, pdf.getStringUnitWidth(line) * pdf.internal.getFontSize() / scaleFactor);
       });
 
-      const centralTextBlockStartX = pageCenterX - (maxTextWidth / 2);
-      const centralTextBlockEndX = pageCenterX + (maxTextWidth / 2);
+      const minCentralTextWidth = 100; // Minimum width for the central text block (e.g., 100mm)
+      const effectiveCentralTextWidth = Math.max(actualTextWidth, minCentralTextWidth);
+
+      const centralTextBlockStartX = pageCenterX - (effectiveCentralTextWidth / 2);
+      const centralTextBlockEndX = pageCenterX + (effectiveCentralTextWidth / 2);
 
       const leftLogoX = centralTextBlockStartX - logoWidth - logoPadding;
       const rightLogoX = centralTextBlockEndX + logoPadding;
