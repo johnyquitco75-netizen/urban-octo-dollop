@@ -39,7 +39,7 @@ export const renderCertificateHeader = (pdf: jsPDF, data: CertificatePdfData, yP
   const pageCenterX = pdf.internal.pageSize.getWidth() / 2;
   const logoWidth = 25;
   const logoHeight = 25;
-  const logoPadding = 5; // Padding between logo and text block
+  const logoPadding = 3; // Padding between logo and text block
   const initialY = yPosition;
 
   // Calculate max width of the central text block
@@ -62,7 +62,7 @@ export const renderCertificateHeader = (pdf: jsPDF, data: CertificatePdfData, yP
     actualTextWidth = Math.max(actualTextWidth, pdf.getStringUnitWidth(line) * pdf.internal.getFontSize() / scaleFactor);
   });
 
-  const minCentralTextWidth = 100; // Minimum width for the central text block
+  const minCentralTextWidth = 80; // Minimum width for the central text block
   const effectiveCentralTextWidth = Math.max(actualTextWidth, minCentralTextWidth);
 
   const centralTextBlockStartX = pageCenterX - (effectiveCentralTextWidth / 2);

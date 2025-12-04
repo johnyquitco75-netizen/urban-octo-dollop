@@ -50,7 +50,7 @@ export const generatePdfReport = ({
       // Header Logos and Institutional Text
       const logoWidth = 25;
       const logoHeight = 25;
-      const logoPadding = 5; // Padding between logo and text block (e.g., 5mm)
+      const logoPadding = 3; // Padding between logo and text block (e.g., 3mm)
 
       // Calculate max width of the central text block
       pdf.setFontSize(9);
@@ -72,7 +72,7 @@ export const generatePdfReport = ({
         actualTextWidth = Math.max(actualTextWidth, pdf.getStringUnitWidth(line) * pdf.internal.getFontSize() / scaleFactor);
       });
 
-      const minCentralTextWidth = 100; // Minimum width for the central text block (e.g., 100mm)
+      const minCentralTextWidth = 80; // Minimum width for the central text block (e.g., 80mm)
       const effectiveCentralTextWidth = Math.max(actualTextWidth, minCentralTextWidth);
 
       const centralTextBlockStartX = pageCenterX - (effectiveCentralTextWidth / 2);
