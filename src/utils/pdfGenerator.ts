@@ -86,9 +86,17 @@ export const generatePdfReport = ({
       if (leftHeaderLogoData) {
         currentTextX += logoWidth + leftLogoMarginMm;
         maxTextWidth -= (logoWidth + leftLogoMarginMm);
+      } else {
+        // If no left logo, still apply the margin as empty space
+        currentTextX += leftLogoMarginMm;
+        maxTextWidth -= leftLogoMarginMm;
       }
+
       if (rightHeaderLogoData) {
         maxTextWidth -= (logoWidth + rightLogoMarginMm);
+      } else {
+        // If no right logo, still apply the margin as empty space
+        maxTextWidth -= rightLogoMarginMm;
       }
       
       // Ensure text block doesn't go negative or too small

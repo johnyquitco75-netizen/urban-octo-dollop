@@ -76,9 +76,17 @@ export const renderCertificateHeader = (pdf: jsPDF, data: CertificatePdfData, yP
   if (leftHeaderLogoData) {
     currentTextX += logoWidth + leftLogoMarginMm;
     maxTextWidth -= (logoWidth + leftLogoMarginMm);
+  } else {
+    // If no left logo, still apply the margin as empty space
+    currentTextX += leftLogoMarginMm;
+    maxTextWidth -= leftLogoMarginMm;
   }
+
   if (rightHeaderLogoData) {
     maxTextWidth -= (logoWidth + rightLogoMarginMm);
+  } else {
+    // If no right logo, still apply the margin as empty space
+    maxTextWidth -= rightLogoMarginMm;
   }
   
   // Ensure text block doesn't go negative or too small
@@ -288,10 +296,10 @@ export const renderCertificateSignatures = (pdf: jsPDF, data: CertificatePdfData
       pdf.setFontSize(11);
       pdf.setFont(undefined, 'bold');
       pdf.text(principalName.toUpperCase(), blockStartXRight + blockWidth / 2, yPosition + nameYOffset, { align: 'center' });
-      pdf.line(blockStartXRight, yPosition + lineYOffset, blockStartXRight + blockWidth, yPosition + lineYOffset); // Underline
+      pdf.line(nameX - blockWidth / 2, yPosition + lineYOffset, nameX + blockWidth / 2, yPosition + lineYOffset); // Underline
       pdf.setFontSize(9);
       pdf.setFont(undefined, 'normal');
-      pdf.text(principalPosition, blockStartXRight + blockWidth / 2, yPosition + positionYOffset, { align: 'center' });
+      pdf.text(principalPosition, nameX, yPosition + positionYOffset, { align: 'center' });
     }
     yPosition += rowSpacing; // Move down for next row
   }

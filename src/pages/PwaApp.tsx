@@ -32,7 +32,7 @@ export const PwaApp = () => {
   } = useAppContext();
 
   const [currentTime, setCurrentTime] = useState("");
-  const [currentDate, setCurrentDate] = useState("");
+  const [currentDate, useStateDate] = useState("");
   // currentSection state moved to AppContext
 
   // --- Date and Time Update ---
@@ -50,7 +50,7 @@ export const PwaApp = () => {
       year: 'numeric'
     };
     setCurrentTime(now.toLocaleTimeString('en-US', timeOptions));
-    setCurrentDate(now.toLocaleDateString('en-US', dateOptions));
+    useStateDate(now.toLocaleDateString('en-US', dateOptions));
   }, []);
 
   useEffect(() => {
