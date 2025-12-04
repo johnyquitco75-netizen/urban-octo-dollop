@@ -78,10 +78,25 @@ export const generatePdfReport = ({
       }
 
       // Calculate the available space for the central text block
-      const textBlockStartX = leftLogoX + logoWidth + leftLogoMarginMm;
-      const textBlockEndX = rightLogoX - rightLogoMarginMm;
-      const textBlockWidth = textBlockEndX - textBlockStartX;
-      const textBlockCenterX = textBlockStartX + (textBlockWidth / 2);
+      // The text block starts after the left logo (if present) + its margin
+      // And ends before the right logo (if present) - its margin
+      let currentTextX = pageLeftMargin;
+      let maxTextWidth = pdf.internal.pageSize.getWidth() - pageLeftMargin - pageRightMargin;
+
+      if (leftHeaderLogoData) {
+        currentTextX += logoWidth + leftLogoMarginMm;
+        maxTextWidth -= (logoWidth + leftLogoMarginMm);
+      }
+      if (rightHeaderLogoData) {
+        maxTextWidth -= (logoWidth + rightLogoMarginMm);
+      }
+      
+      // Ensure text block doesn't go negative or too small
+      if (maxTextWidth < 0) maxTextWidth = 10; // Minimum width
+      if (currentTextX >= pdf.internal.pageSize.getWidth() - pageRightMargin) currentTextX = pageLeftMargin; // Fallback if logos push it too far
+
+      const textBlockCenterX = currentTextX + (maxTextWidth / 2);
+
 
       // Center institutional text
       yPosition += 5; // Start text slightly below logos
