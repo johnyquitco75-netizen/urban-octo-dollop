@@ -98,63 +98,61 @@ export const renderCertificateBody = (pdf: jsPDF, data: CertificatePdfData, yPos
   yPosition += 15;
 
   if (certificateTemplate === 'standard') {
-    // Paragraph 1
+    // Paragraph 1: "This is to certify that [STUDENT_NAME], a student..."
     const p1_prefix = "This is to certify that ";
     const p1_studentNameAndComma = studentName.toUpperCase() + ',';
-    const p1_suffix_text = "a student of this institution, has maintained good moral character and conduct during his/her stay in this school."; // No leading space here
+    const p1_suffix_text = "a student of this institution, has maintained good moral character and conduct during his/her stay in this school.";
 
-    // Calculate widths
-    const prefixWidth = pdf.getStringUnitWidth(p1_prefix) * pdf.internal.getFontSize() / pdf.internal.scaleFactor;
-    pdf.setFont(undefined, 'bold');
-    const studentNameWidth = pdf.getStringUnitWidth(p1_studentNameAndComma) * pdf.internal.getFontSize() / pdf.internal.scaleFactor;
+    let currentX = leftMargin;
+
+    // Print prefix
     pdf.setFont(undefined, 'normal');
-    const suffixTextWidth = pdf.getStringUnitWidth(p1_suffix_text) * pdf.internal.getFontSize() / pdf.internal.scaleFactor;
-    const spaceWidth = pdf.getStringUnitWidth(' ') * pdf.internal.getFontSize() / pdf.internal.scaleFactor; // Width of a single space
+    pdf.text(p1_prefix, currentX, yPosition);
+    currentX += pdf.getStringUnitWidth(p1_prefix) * pdf.internal.getFontSize() / pdf.internal.scaleFactor;
 
-    // Check if prefix + name + space + suffix fits on one line
-    const fullFirstLineWidth = prefixWidth + studentNameWidth + spaceWidth + suffixTextWidth;
+    // Print student name and comma (bold and underlined)
+    pdf.setFont(undefined, 'bold');
+    pdf.text(p1_studentNameAndComma, currentX, yPosition);
+    const studentNameWidth = pdf.getStringUnitWidth(p1_studentNameAndComma) * pdf.internal.getFontSize() / pdf.internal.scaleFactor;
+    pdf.line(currentX, yPosition + 1.5, currentX + studentNameWidth, yPosition + 1.5);
+    currentX += studentNameWidth;
 
-    if (fullFirstLineWidth <= contentWidth) {
-      // All fits on one line
-      let currentX = leftMargin;
-      pdf.text(p1_prefix, currentX, yPosition);
-      currentX += prefixWidth;
+    // Now handle the rest of the sentence
+    pdf.setFont(undefined, 'normal'); // Reset to normal font for suffix
+    const fullSentenceAfterName = ' ' + p1_suffix_text; // Add the space here
 
-      pdf.setFont(undefined, 'bold');
-      pdf.text(p1_studentNameAndComma, currentX, yPosition);
-      pdf.line(currentX, yPosition + 1.5, currentX + studentNameWidth, yPosition + 1.5);
-      currentX += studentNameWidth;
+    const remainingWidthForFirstLine = pdf.internal.pageSize.getWidth() - currentX - rightMargin;
 
-      pdf.setFont(undefined, 'normal');
-      pdf.text(' ' + p1_suffix_text, currentX, yPosition); // Add space manually
-      yPosition += lineHeight;
-    } else {
-      // It needs to wrap. Print prefix and name on the first line, then wrap suffix.
-      let currentX = leftMargin;
-      pdf.text(p1_prefix, currentX, yPosition);
-      currentX += prefixWidth;
+    // Split the remaining text. The first part uses remaining width, subsequent parts use full content width.
+    const lines = pdf.splitTextToSize(fullSentenceAfterName, remainingWidthForFirstLine);
 
-      pdf.setFont(undefined, 'bold');
-      pdf.text(p1_studentNameAndComma, currentX, yPosition);
-      pdf.line(currentX, yPosition + 1.5, currentX + studentNameWidth, yPosition + 1.5);
-      yPosition += lineHeight; // Move to next line after name for the suffix
-
-      pdf.setFont(undefined, 'normal');
-      const suffixLines = pdf.splitTextToSize(p1_suffix_text, contentWidth); // Use suffix_text without leading space
-      suffixLines.forEach(line => {
-        pdf.text(line, leftMargin, yPosition);
+    if (lines.length > 0) {
+        pdf.text(lines[0], currentX, yPosition); // Print the first part on the current line
         yPosition += lineHeight;
-      });
+
+        // Print any subsequent lines of the suffix on new lines, full width
+        for (let i = 1; i < lines.length; i++) {
+            pdf.text(lines[i], leftMargin, yPosition);
+            yPosition += lineHeight;
+        }
+    } else {
+        yPosition += lineHeight; // Just move yPosition if there's no suffix text
     }
     yPosition += 6; // Extra space after first paragraph
 
-    // Paragraph 2: "He/She has not been involved..."
+    // Paragraph 2: "He/She has not been involved..." (Bold and Underlined)
     const p2 = "He/She has not been involved in any disciplinary case that would affect his/her moral character and reputation. This student has shown respect to school authorities, faculty members, and fellow students.";
     const p2_lines = pdf.splitTextToSize(p2, contentWidth);
+
+    pdf.setFont(undefined, 'bold'); // Set font to bold for this paragraph
     p2_lines.forEach(line => {
       pdf.text(line, leftMargin, yPosition);
+      // Draw underline for each line
+      const textWidth = pdf.getStringUnitWidth(line) * pdf.internal.getFontSize() / pdf.internal.scaleFactor;
+      pdf.line(leftMargin, yPosition + 1.5, leftMargin + textWidth, yPosition + 1.5); // Underline each line
       yPosition += lineHeight;
     });
+    pdf.setFont(undefined, 'normal'); // Reset font to normal after this paragraph
     yPosition += 6; // Extra space after second paragraph
 
     // Paragraph 3: "This certification is issued..."

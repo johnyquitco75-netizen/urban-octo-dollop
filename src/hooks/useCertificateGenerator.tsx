@@ -70,8 +70,8 @@ export const useCertificateGenerator = ({
         <div class="text-lg text-gray-800 text-justify my-8 leading-relaxed">
             <p>TO WHOM IT MAY CONCERN:</p>
             <p class="mt-8">This is to certify that <span class="font-bold underline text-black">${studentName.toUpperCase()},</span> a student of this institution, has maintained good moral character and conduct during his/her stay in this school.</p>
-            <p class="mt-6">He/She has not been involved in any disciplinary case that would affect his/her moral character
-            and reputation. This student has shown respect to school authorities, faculty members, and fellow students.</p>
+            <p class="mt-6"><span class="font-bold underline text-black">He/She has not been involved in any disciplinary case that would affect his/her moral character
+            and reputation. This student has shown respect to school authorities, faculty members, and fellow students.</span></p>
             <p class="mt-6">This certification is issued upon the request of the above-mentioned student
             for whatever legal purpose it may serve.</p>
         </div>
