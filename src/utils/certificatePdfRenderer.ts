@@ -39,12 +39,42 @@ export const renderCertificateHeader = (pdf: jsPDF, data: CertificatePdfData, yP
   const pageCenterX = pdf.internal.pageSize.getWidth() / 2;
   const logoWidth = 25;
   const logoHeight = 25;
-  const logoY = yPosition;
+  const logoPadding = 5; // Padding between logo and text block
+  const initialY = yPosition;
+
+  // Calculate max width of the central text block
+  pdf.setFontSize(9);
+  pdf.setFont(undefined, 'normal');
+  const textLinesForWidthCalc = [
+    republicText,
+    departmentText,
+    regionText,
+    divisionText,
+    schoolAddress
+  ];
+  pdf.setFontSize(12);
+  pdf.setFont(undefined, 'bold');
+  textLinesForWidthCalc.push(schoolName.toUpperCase());
+
+  let actualTextWidth = 0;
+  const scaleFactor = pdf.internal.scaleFactor;
+  textLinesForWidthCalc.forEach(line => {
+    actualTextWidth = Math.max(actualTextWidth, pdf.getStringUnitWidth(line) * pdf.internal.getFontSize() / scaleFactor);
+  });
+
+  const minCentralTextWidth = 100; // Minimum width for the central text block
+  const effectiveCentralTextWidth = Math.max(actualTextWidth, minCentralTextWidth);
+
+  const centralTextBlockStartX = pageCenterX - (effectiveCentralTextWidth / 2);
+  const centralTextBlockEndX = pageCenterX + (effectiveCentralTextWidth / 2);
+
+  const leftLogoX = centralTextBlockStartX - logoWidth - logoPadding;
+  const rightLogoX = centralTextBlockEndX + logoPadding;
 
   // Left Logo
   if (leftHeaderLogoData) {
     try {
-      pdf.addImage(leftHeaderLogoData, 'JPEG', leftMargin, logoY, logoWidth, logoHeight);
+      pdf.addImage(leftHeaderLogoData, 'JPEG', leftLogoX, initialY, logoWidth, logoHeight);
     } catch (e) {
       console.log('Could not add left header logo to PDF');
     }
@@ -52,14 +82,14 @@ export const renderCertificateHeader = (pdf: jsPDF, data: CertificatePdfData, yP
   // Right Logo
   if (rightHeaderLogoData) {
     try {
-      pdf.addImage(rightHeaderLogoData, 'JPEG', pdf.internal.pageSize.getWidth() - rightMargin - logoWidth, logoY, logoWidth, logoHeight);
+      pdf.addImage(rightHeaderLogoData, 'JPEG', rightLogoX, initialY, logoWidth, logoHeight);
     } catch (e) {
       console.log('Could not add right header logo to PDF');
     }
   }
 
   // Institutional text (centered)
-  yPosition = logoY + 5; // Start text slightly below logos
+  yPosition = initialY + 5; // Start text slightly below logos
   pdf.setFontSize(9);
   pdf.setFont(undefined, 'normal');
   pdf.text(republicText, pageCenterX, yPosition, { align: 'center' });
