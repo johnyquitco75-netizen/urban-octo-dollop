@@ -26,7 +26,8 @@ export const useCertificateGenerator = ({
     cpcGuidanceOfficerName, cpcGuidanceOfficerPosition,
     principalName, principalPosition,
     assistantPrincipalName, assistantPrincipalPosition,
-    republicText, departmentText, regionText, divisionText
+    republicText, departmentText, regionText, divisionText,
+    leftHeaderLogoMargin, rightHeaderLogoMargin, // Get new margin settings
   } = useAppContext();
 
   const [certificatePreviewHtml, setCertificatePreviewHtml] = useState<string | null>(null);
@@ -47,7 +48,7 @@ export const useCertificateGenerator = ({
 
     const headerHtml = `
       <div class="header-section" style="display: flex; justify-content: center; align-items: flex-start; margin-bottom: 20px; position: relative;">
-          ${leftLogo ? `<img src="${leftLogo}" class="header-logo left-logo" alt="Left Logo">` : ''}
+          ${leftLogo ? `<img src="${leftLogo}" class="header-logo left-logo" alt="Left Logo" style="width: 60px; height: 60px; object-fit: contain; margin-right: ${leftHeaderLogoMargin}px; flex-shrink: 0;">` : `<div style="width: 60px; margin-right: ${leftHeaderLogoMargin}px; flex-shrink: 0;"></div>`}
           <div class="text-center" style="flex-grow: 1;">
               <p style="margin: 0; font-size: 10pt;">${republicText}</p>
               <p style="margin: 0; font-size: 10pt;">${departmentText}</p>
@@ -56,7 +57,7 @@ export const useCertificateGenerator = ({
               <p style="margin: 0; font-size: 12pt; font-weight: bold; margin-top: 5px;">${school.toUpperCase()}</p>
               <p style="margin: 0; font-size: 10pt;">${address}</p>
           </div>
-          ${rightLogo ? `<img src="${rightLogo}" class="header-logo right-logo" alt="Right Logo">` : ''}
+          ${rightLogo ? `<img src="${rightLogo}" class="header-logo right-logo" alt="Right Logo" style="width: 60px; height: 60px; object-fit: contain; margin-left: ${rightHeaderLogoMargin}px; flex-shrink: 0;">` : `<div style="width: 60px; margin-left: ${rightHeaderLogoMargin}px; flex-shrink: 0;"></div>`}
       </div>
       <div class="text-center mb-8">
           <h2 class="text-xl font-bold text-gray-900 mt-4">CERTIFICATE OF GOOD MORAL CHARACTER</h2>
@@ -199,7 +200,7 @@ export const useCertificateGenerator = ({
     if (isPreview) {
       showAlert('Certificate preview generated!', 'success');
     }
-  }, [certificateTemplate, customCertificateContent, schoolName, schoolAddress, leftHeaderLogoData, rightHeaderLogoData, guidanceOfficer, guidanceOfficerPosition, cpcGuidanceOfficerName, cpcGuidanceOfficerPosition, principalName, principalPosition, assistantPrincipalName, assistantPrincipalPosition, republicText, departmentText, regionText, divisionText, showAlert]);
+  }, [certificateTemplate, customCertificateContent, schoolName, schoolAddress, leftHeaderLogoData, rightHeaderLogoData, guidanceOfficer, guidanceOfficerPosition, cpcGuidanceOfficerName, cpcGuidanceOfficerPosition, principalName, principalPosition, assistantPrincipalName, assistantPrincipalPosition, republicText, departmentText, regionText, divisionText, showAlert, leftHeaderLogoMargin, rightHeaderLogoMargin]);
 
   const generateCertificatePDF = useCallback(async () => {
     if (!previewStudentName) {
@@ -233,6 +234,8 @@ export const useCertificateGenerator = ({
         departmentText: departmentText,
         regionText: regionText,
         divisionText: divisionText,
+        leftHeaderLogoMargin: leftHeaderLogoMargin, // Pass new prop
+        rightHeaderLogoMargin: rightHeaderLogoMargin, // Pass new prop
       };
 
       yPosition = renderCertificateHeader(pdf, pdfData, yPosition);
@@ -246,7 +249,7 @@ export const useCertificateGenerator = ({
       console.error('Certificate PDF generation error:', error);
       showAlert('Failed to generate certificate PDF. Please try again.', 'error');
     }
-  }, [previewStudentName, certificateDate, generateCertificateContent, certificateTemplate, customCertificateContent, schoolName, schoolAddress, leftHeaderLogoData, rightHeaderLogoData, guidanceOfficer, guidanceOfficerPosition, cpcGuidanceOfficerName, cpcGuidanceOfficerPosition, principalName, principalPosition, assistantPrincipalName, assistantPrincipalPosition, republicText, departmentText, regionText, divisionText, showAlert]);
+  }, [previewStudentName, certificateDate, generateCertificateContent, certificateTemplate, customCertificateContent, schoolName, schoolAddress, leftHeaderLogoData, rightHeaderLogoData, guidanceOfficer, guidanceOfficerPosition, cpcGuidanceOfficerName, cpcGuidanceOfficerPosition, principalName, principalPosition, assistantPrincipalName, assistantPrincipalPosition, republicText, departmentText, regionText, divisionText, showAlert, leftHeaderLogoMargin, rightHeaderLogoMargin]);
 
   const printCertificate = useCallback(() => {
     if (!certificatePreviewHtml) {
