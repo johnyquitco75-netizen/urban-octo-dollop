@@ -45,12 +45,38 @@ export const generatePdfReport = ({
     try {
       const pdf = new jsPDF();
       let yPosition = 10; // Initial Y position
+      const pageCenterX = pdf.internal.pageSize.getWidth() / 2;
 
       // Header Logos and Institutional Text
       const logoWidth = 25;
       const logoHeight = 25;
-      const leftLogoX = 20;
-      const rightLogoX = 190 - logoWidth - 20; // 190 is page width - right margin - logo width
+      const logoPadding = 10; // Padding between logo and text block
+
+      // Calculate max width of the central text block
+      pdf.setFontSize(9);
+      pdf.setFont(undefined, 'normal');
+      const textLines = [
+        republicText,
+        departmentText,
+        regionText,
+        divisionText,
+        schoolAddress
+      ];
+      pdf.setFontSize(12);
+      pdf.setFont(undefined, 'bold');
+      textLines.push(schoolName.toUpperCase());
+
+      let maxTextWidth = 0;
+      const scaleFactor = pdf.internal.scaleFactor;
+      textLines.forEach(line => {
+        maxTextWidth = Math.max(maxTextWidth, pdf.getStringUnitWidth(line) * pdf.internal.getFontSize() / scaleFactor);
+      });
+
+      const centralTextBlockStartX = pageCenterX - (maxTextWidth / 2);
+      const centralTextBlockEndX = pageCenterX + (maxTextWidth / 2);
+
+      const leftLogoX = centralTextBlockStartX - logoWidth - logoPadding;
+      const rightLogoX = centralTextBlockEndX + logoPadding;
 
       if (leftHeaderLogoData) {
         try {
@@ -71,27 +97,27 @@ export const generatePdfReport = ({
       yPosition += 5; // Start text slightly below logos
       pdf.setFontSize(9);
       pdf.setFont(undefined, 'normal');
-      pdf.text(republicText, 105, yPosition, { align: 'center' });
+      pdf.text(republicText, pageCenterX, yPosition, { align: 'center' });
       yPosition += 4;
-      pdf.text(departmentText, 105, yPosition, { align: 'center' });
+      pdf.text(departmentText, pageCenterX, yPosition, { align: 'center' });
       yPosition += 4;
-      pdf.text(regionText, 105, yPosition, { align: 'center' });
+      pdf.text(regionText, pageCenterX, yPosition, { align: 'center' });
       yPosition += 4;
-      pdf.text(divisionText, 105, yPosition, { align: 'center' });
+      pdf.text(divisionText, pageCenterX, yPosition, { align: 'center' });
       yPosition += 6;
       pdf.setFontSize(12);
       pdf.setFont(undefined, 'bold');
-      pdf.text(schoolName.toUpperCase(), 105, yPosition, { align: 'center' });
+      pdf.text(schoolName.toUpperCase(), pageCenterX, yPosition, { align: 'center' });
       yPosition += 5;
       pdf.setFontSize(9);
       pdf.setFont(undefined, 'normal');
-      pdf.text(schoolAddress, 105, yPosition, { align: 'center' });
+      pdf.text(schoolAddress, pageCenterX, yPosition, { align: 'center' });
       yPosition += 10; // Space after address
 
       // Main Report Title
       pdf.setFontSize(14);
       pdf.setFont(undefined, 'bold');
-      pdf.text('E-Guidance Record System Report', 105, yPosition, { align: 'center' });
+      pdf.text('E-Guidance Record System Report', pageCenterX, yPosition, { align: 'center' });
       yPosition += 15;
 
       // Total Records count
