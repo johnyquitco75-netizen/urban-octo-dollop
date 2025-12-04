@@ -20,6 +20,8 @@ interface PdfReportData {
   departmentText: string;
   regionText: string;
   divisionText: string;
+  leftHeaderLogoMargin: number; // New prop
+  rightHeaderLogoMargin: number; // New prop
 }
 
 export const generatePdfReport = ({
@@ -40,6 +42,8 @@ export const generatePdfReport = ({
   departmentText,
   regionText,
   divisionText,
+  leftHeaderLogoMargin, // Use new prop
+  rightHeaderLogoMargin, // Use new prop
 }: PdfReportData): Promise<void> => {
   return new Promise((resolve, reject) => {
     try {
@@ -50,7 +54,9 @@ export const generatePdfReport = ({
       // Header Logos and Institutional Text
       const logoWidth = 25;
       const logoHeight = 25;
-      const logoPadding = 3; // Padding between logo and text block (e.g., 3mm)
+      // Use dynamic logo margins (convert px to mm for jsPDF, 1px = 0.264583mm approx)
+      const leftLogoPaddingMm = leftHeaderLogoMargin * 0.264583;
+      const rightLogoPaddingMm = rightHeaderLogoMargin * 0.264583;
 
       // Calculate max width of the central text block
       pdf.setFontSize(9);
@@ -78,8 +84,8 @@ export const generatePdfReport = ({
       const centralTextBlockStartX = pageCenterX - (effectiveCentralTextWidth / 2);
       const centralTextBlockEndX = pageCenterX + (effectiveCentralTextWidth / 2);
 
-      const leftLogoX = centralTextBlockStartX - logoWidth - logoPadding;
-      const rightLogoX = centralTextBlockEndX + logoPadding;
+      const leftLogoX = centralTextBlockStartX - logoWidth - leftLogoPaddingMm;
+      const rightLogoX = centralTextBlockEndX + rightLogoPaddingMm;
 
       if (leftHeaderLogoData) {
         try {

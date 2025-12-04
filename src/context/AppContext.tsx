@@ -80,6 +80,11 @@ interface AppContextType {
   setDateTimeFontSize: (size: string) => void;
   dateTimeFontColor: string;
   setDateTimeFontColor: (color: string) => void;
+  // New logo margin settings
+  leftHeaderLogoMargin: number;
+  setLeftHeaderLogoMargin: (margin: number) => void;
+  rightHeaderLogoMargin: number;
+  setRightHeaderLogoMargin: (margin: number) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -126,6 +131,10 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const [dateTimeFontSize, setDateTimeFontSize] = useState("1rem"); // Default to 16px
   const [dateTimeFontColor, setDateTimeFontColor] = useState("#ffffff"); // Default to white
 
+  // New logo margin settings
+  const [leftHeaderLogoMargin, setLeftHeaderLogoMargin] = useState(5); // Default to 5mm/px
+  const [rightHeaderLogoMargin, setRightHeaderLogoMargin] = useState(5); // Default to 5mm/px
+
 
   // Modals state
   const [isPhotoModalOpen, setIsPhotoModalOpen] = useState(false);
@@ -169,6 +178,9 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     const savedCustomPhraseFontColor = await db.getSetting('customPhraseFontColor') || '#ffffff';
     const savedDateTimeFontSize = await db.getSetting('dateTimeFontSize') || '1rem';
     const savedDateTimeFontColor = await db.getSetting('dateTimeFontColor') || '#ffffff';
+    // Load new logo margin settings
+    const savedLeftHeaderLogoMargin = await db.getSetting('leftHeaderLogoMargin');
+    const savedRightHeaderLogoMargin = await db.getSetting('rightHeaderLogoMargin');
 
 
     setSchoolName(savedSchoolName);
@@ -196,6 +208,9 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     setCustomPhraseFontColor(savedCustomPhraseFontColor);
     setDateTimeFontSize(savedDateTimeFontSize);
     setDateTimeFontColor(savedDateTimeFontColor);
+    // Set new logo margin settings, with default if not found
+    setLeftHeaderLogoMargin(savedLeftHeaderLogoMargin !== undefined ? savedLeftHeaderLogoMargin : 5);
+    setRightHeaderLogoMargin(savedRightHeaderLogoMargin !== undefined ? savedRightHeaderLogoMargin : 5);
   }, []);
 
   const loadCustomViolations = useCallback(async () => {
@@ -378,6 +393,9 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     customPhraseFontColor, setCustomPhraseFontColor,
     dateTimeFontSize, setDateTimeFontSize,
     dateTimeFontColor, setDateTimeFontColor,
+    // New logo margin settings
+    leftHeaderLogoMargin, setLeftHeaderLogoMargin,
+    rightHeaderLogoMargin, setRightHeaderLogoMargin,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

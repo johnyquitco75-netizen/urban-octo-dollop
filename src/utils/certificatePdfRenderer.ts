@@ -23,6 +23,8 @@ interface CertificatePdfData {
   departmentText: string;
   regionText: string;
   divisionText: string;
+  leftHeaderLogoMargin: number; // New prop
+  rightHeaderLogoMargin: number; // New prop
 }
 
 const leftMargin = 20;
@@ -33,13 +35,17 @@ export const renderCertificateHeader = (pdf: jsPDF, data: CertificatePdfData, yP
   const {
     schoolName, schoolAddress,
     leftHeaderLogoData, rightHeaderLogoData,
-    republicText, departmentText, regionText, divisionText
+    republicText, departmentText, regionText, divisionText,
+    leftHeaderLogoMargin, // Use new prop
+    rightHeaderLogoMargin, // Use new prop
   } = data;
 
   const pageCenterX = pdf.internal.pageSize.getWidth() / 2;
   const logoWidth = 25;
   const logoHeight = 25;
-  const logoPadding = 3; // Padding between logo and text block
+  // Use dynamic logo margins (convert px to mm for jsPDF, 1px = 0.264583mm approx)
+  const leftLogoPaddingMm = leftHeaderLogoMargin * 0.264583;
+  const rightLogoPaddingMm = rightHeaderLogoMargin * 0.264583;
   const initialY = yPosition;
 
   // Calculate max width of the central text block
@@ -68,8 +74,8 @@ export const renderCertificateHeader = (pdf: jsPDF, data: CertificatePdfData, yP
   const centralTextBlockStartX = pageCenterX - (effectiveCentralTextWidth / 2);
   const centralTextBlockEndX = pageCenterX + (effectiveCentralTextWidth / 2);
 
-  const leftLogoX = centralTextBlockStartX - logoWidth - logoPadding;
-  const rightLogoX = centralTextBlockEndX + logoPadding;
+  const leftLogoX = centralTextBlockStartX - logoWidth - leftLogoPaddingMm;
+  const rightLogoX = centralTextBlockEndX + rightLogoPaddingMm;
 
   // Left Logo
   if (leftHeaderLogoData) {

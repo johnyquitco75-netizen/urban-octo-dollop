@@ -39,6 +39,9 @@ const SettingsSection = () => {
     customPhraseFontColor, setCustomPhraseFontColor,
     dateTimeFontSize, setDateTimeFontSize,
     dateTimeFontColor, setDateTimeFontColor,
+    // New logo margin settings
+    leftHeaderLogoMargin, setLeftHeaderLogoMargin,
+    rightHeaderLogoMargin, setRightHeaderLogoMargin,
   } = useAppContext();
 
   const [adminPasswordInput, setAdminPasswordInput] = useState("");
@@ -69,6 +72,9 @@ const SettingsSection = () => {
     await db.setSetting('customPhraseFontColor', customPhraseFontColor);
     await db.setSetting('dateTimeFontSize', dateTimeFontSize);
     await db.setSetting('dateTimeFontColor', dateTimeFontColor);
+    // Save new logo margin settings
+    await db.setSetting('leftHeaderLogoMargin', leftHeaderLogoMargin);
+    await db.setSetting('rightHeaderLogoMargin', rightHeaderLogoMargin);
 
     showAlert('Settings saved successfully!', 'success');
     loadSettings(); // Reload settings to ensure UI reflects changes
@@ -356,6 +362,40 @@ const SettingsSection = () => {
           {rightHeaderLogoData && (
             <img src={rightHeaderLogoData} className="max-w-[100px] mt-4 rounded-xl shadow-md border border-gray-200 dark:border-gray-700" alt="Right Header Logo Preview" />
           )}
+        </div>
+      </div>
+
+      {/* New Logo Margin Adjustments */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <Label htmlFor="leftHeaderLogoMargin" className="block text-gray-700 dark:text-gray-200 text-sm font-semibold mb-2">
+            Left Header Logo Margin (px)
+          </Label>
+          <Input
+            id="leftHeaderLogoMargin"
+            type="number"
+            placeholder="e.g., 5"
+            value={leftHeaderLogoMargin}
+            onChange={(e) => setLeftHeaderLogoMargin(parseInt(e.target.value) || 0)}
+            className="w-full"
+            min="0"
+            max="50"
+          />
+        </div>
+        <div>
+          <Label htmlFor="rightHeaderLogoMargin" className="block text-gray-700 dark:text-gray-200 text-sm font-semibold mb-2">
+            Right Header Logo Margin (px)
+          </Label>
+          <Input
+            id="rightHeaderLogoMargin"
+            type="number"
+            placeholder="e.g., 5"
+            value={rightHeaderLogoMargin}
+            onChange={(e) => setRightHeaderLogoMargin(parseInt(e.target.value) || 0)}
+            className="w-full"
+            min="0"
+            max="50"
+          />
         </div>
       </div>
 
