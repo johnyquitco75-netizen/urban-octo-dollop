@@ -47,9 +47,9 @@ export const useCertificateGenerator = ({
     const assistantPos = assistantPrincipalPosition;
 
     const headerHtml = `
-      <div class="header-section" style="display: flex; justify-content: center; align-items: flex-start; margin-bottom: 20px; position: relative;">
-          ${leftLogo ? `<img src="${leftLogo}" class="header-logo left-logo" alt="Left Logo" style="width: 60px; height: 60px; object-fit: contain; margin-right: ${leftHeaderLogoMargin}px; flex-shrink: 0;">` : `<div style="width: 60px; margin-right: ${leftHeaderLogoMargin}px; flex-shrink: 0;"></div>`}
-          <div class="text-center" style="flex-grow: 1;">
+      <div class="header-section" style="display: flex; justify-content: center; align-items: flex-start; margin-bottom: 20px;">
+          ${leftLogo ? `<img src="${leftLogo}" class="header-logo" alt="Left Logo" style="width: 60px; height: 60px; object-fit: contain; margin-right: ${leftHeaderLogoMargin}px; flex-shrink: 0;">` : `<div style="width: 60px; margin-right: ${leftHeaderLogoMargin}px; flex-shrink: 0;"></div>`}
+          <div class="text-center" style="flex-grow: 1; text-align: center;">
               <p style="margin: 0; font-size: 10pt;">${republicText}</p>
               <p style="margin: 0; font-size: 10pt;">${departmentText}</p>
               <p style="margin: 0; font-size: 10pt;">${regionText}</p>
@@ -57,7 +57,7 @@ export const useCertificateGenerator = ({
               <p style="margin: 0; font-size: 12pt; font-weight: bold; margin-top: 5px;">${school.toUpperCase()}</p>
               <p style="margin: 0; font-size: 10pt;">${address}</p>
           </div>
-          ${rightLogo ? `<img src="${rightLogo}" class="header-logo right-logo" alt="Right Logo" style="width: 60px; height: 60px; object-fit: contain; margin-left: ${rightHeaderLogoMargin}px; flex-shrink: 0;">` : `<div style="width: 60px; margin-left: ${rightHeaderLogoMargin}px; flex-shrink: 0;"></div>`}
+          ${rightLogo ? `<img src="${rightLogo}" class="header-logo" alt="Right Logo" style="width: 60px; height: 60px; object-fit: contain; margin-left: ${rightHeaderLogoMargin}px; flex-shrink: 0;">` : `<div style="width: 60px; margin-left: ${rightHeaderLogoMargin}px; flex-shrink: 0;"></div>`}
       </div>
       <div class="text-center mb-8">
           <h2 class="text-xl font-bold text-gray-900 mt-4">CERTIFICATE OF GOOD MORAL CHARACTER</h2>
@@ -265,11 +265,9 @@ export const useCertificateGenerator = ({
             <style>
               @page { size: A4; margin: 20mm; }
               body { font-family: 'Times New Roman', serif; margin: 0; padding: 0; line-height: 1.6; color: #000; }
-              .header-section { display: flex; justify-content: center; align-items: flex-start; margin-bottom: 20px; position: relative; }
-              .header-logo { position: absolute; width: 60px; height: 60px; object-fit: contain; top: 0; }
-              .left-logo { left: 20px; }
-              .right-logo { right: 20px; }
-              .text-center { text-align: center; }
+              .header-section { display: flex; justify-content: center; align-items: flex-start; margin-bottom: 20px; }
+              .header-logo { width: 60px; height: 60px; object-fit: contain; flex-shrink: 0; }
+              .text-center { text-align: center; flex-grow: 1; }
               .mb-12 { margin-bottom: 3rem; }
               .border-b-2 { border-bottom-width: 2px; }
               .border-gray-300 { border-color: #d1d5db; }

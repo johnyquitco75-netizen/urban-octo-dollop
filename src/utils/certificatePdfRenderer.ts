@@ -40,44 +40,20 @@ export const renderCertificateHeader = (pdf: jsPDF, data: CertificatePdfData, yP
     rightHeaderLogoMargin, // Use new prop
   } = data;
 
-  const pageCenterX = pdf.internal.pageSize.getWidth() / 2;
+  const pageLeftMargin = 20; // Fixed left margin for the page
+  const pageRightMargin = 20; // Fixed right margin for the page
   const logoWidth = 25;
   const logoHeight = 25;
-  // Use dynamic logo margins (convert px to mm for jsPDF, 1px = 0.264583mm approx)
-  const leftLogoPaddingMm = leftHeaderLogoMargin * 0.264583;
-  const rightLogoPaddingMm = rightHeaderLogoMargin * 0.264583;
+  // Convert px to mm for jsPDF (1px = 0.264583mm approx)
+  const leftLogoMarginMm = leftHeaderLogoMargin * 0.264583;
+  const rightLogoMarginMm = rightHeaderLogoMargin * 0.264583;
   const initialY = yPosition;
 
-  // Calculate max width of the central text block
-  pdf.setFontSize(9);
-  pdf.setFont(undefined, 'normal');
-  const textLinesForWidthCalc = [
-    republicText,
-    departmentText,
-    regionText,
-    divisionText,
-    schoolAddress
-  ];
-  pdf.setFontSize(12);
-  pdf.setFont(undefined, 'bold');
-  textLinesForWidthCalc.push(schoolName.toUpperCase());
+  // Calculate logo positions
+  const leftLogoX = pageLeftMargin;
+  const rightLogoX = pdf.internal.pageSize.getWidth() - pageRightMargin - logoWidth;
 
-  let actualTextWidth = 0;
-  const scaleFactor = pdf.internal.scaleFactor;
-  textLinesForWidthCalc.forEach(line => {
-    actualTextWidth = Math.max(actualTextWidth, pdf.getStringUnitWidth(line) * pdf.internal.getFontSize() / scaleFactor);
-  });
-
-  const minCentralTextWidth = 60; // Minimum width for the central text block
-  const effectiveCentralTextWidth = Math.max(actualTextWidth, minCentralTextWidth);
-
-  const centralTextBlockStartX = pageCenterX - (effectiveCentralTextWidth / 2);
-  const centralTextBlockEndX = pageCenterX + (effectiveCentralTextWidth / 2);
-
-  const leftLogoX = centralTextBlockStartX - logoWidth - leftLogoPaddingMm;
-  const rightLogoX = centralTextBlockEndX + rightLogoPaddingMm;
-
-  // Left Logo
+  // Add logos
   if (leftHeaderLogoData) {
     try {
       pdf.addImage(leftHeaderLogoData, 'JPEG', leftLogoX, initialY, logoWidth, logoHeight);
@@ -85,7 +61,6 @@ export const renderCertificateHeader = (pdf: jsPDF, data: CertificatePdfData, yP
       console.log('Could not add left header logo to PDF');
     }
   }
-  // Right Logo
   if (rightHeaderLogoData) {
     try {
       pdf.addImage(rightHeaderLogoData, 'JPEG', rightLogoX, initialY, logoWidth, logoHeight);
@@ -94,31 +69,37 @@ export const renderCertificateHeader = (pdf: jsPDF, data: CertificatePdfData, yP
     }
   }
 
+  // Calculate the available space for the central text block
+  const textBlockStartX = leftLogoX + logoWidth + leftLogoMarginMm;
+  const textBlockEndX = rightLogoX - rightLogoMarginMm;
+  const textBlockWidth = textBlockEndX - textBlockStartX;
+  const textBlockCenterX = textBlockStartX + (textBlockWidth / 2);
+
   // Institutional text (centered)
   yPosition = initialY + 5; // Start text slightly below logos
   pdf.setFontSize(9);
   pdf.setFont(undefined, 'normal');
-  pdf.text(republicText, pageCenterX, yPosition, { align: 'center' });
+  pdf.text(republicText, textBlockCenterX, yPosition, { align: 'center' });
   yPosition += 4;
-  pdf.text(departmentText, pageCenterX, yPosition, { align: 'center' });
+  pdf.text(departmentText, textBlockCenterX, yPosition, { align: 'center' });
   yPosition += 4;
-  pdf.text(regionText, pageCenterX, yPosition, { align: 'center' });
+  pdf.text(regionText, textBlockCenterX, yPosition, { align: 'center' });
   yPosition += 4;
-  pdf.text(divisionText, pageCenterX, yPosition, { align: 'center' });
+  pdf.text(divisionText, textBlockCenterX, yPosition, { align: 'center' });
   yPosition += 6;
   pdf.setFontSize(12);
   pdf.setFont(undefined, 'bold');
-  pdf.text(schoolName.toUpperCase(), pageCenterX, yPosition, { align: 'center' });
+  pdf.text(schoolName.toUpperCase(), textBlockCenterX, yPosition, { align: 'center' });
   yPosition += 5;
   pdf.setFontSize(9);
   pdf.setFont(undefined, 'normal');
-  pdf.text(schoolAddress, pageCenterX, yPosition, { align: 'center' });
+  pdf.text(schoolAddress, textBlockCenterX, yPosition, { align: 'center' });
   yPosition += 15; // Space after address
 
   // Main Certificate Title (centered)
   pdf.setFontSize(14);
   pdf.setFont(undefined, 'bold');
-  pdf.text('CERTIFICATE OF GOOD MORAL CHARACTER', pageCenterX, yPosition, { align: 'center' });
+  pdf.text('CERTIFICATE OF GOOD MORAL CHARACTER', textBlockCenterX, yPosition, { align: 'center' });
   yPosition += 25;
 
   return yPosition;

@@ -45,9 +45,9 @@ export const generatePrintPreviewHtml = ({
 }: PrintPreviewData): string => {
   const headerHtml = `
     <div class="header-container" style="display: flex; justify-content: center; margin-bottom: 20px;">
-        <div class="header-content" style="display: flex; justify-content: center; align-items: center; max-width: 800px; width: 100%;">
+        <div class="header-content" style="display: flex; align-items: center; width: 100%; max-width: 800px;">
             ${leftHeaderLogoData ? `<img src="${leftHeaderLogoData}" class="header-logo" alt="Left Logo" style="width: 60px; height: 60px; object-fit: contain; margin-right: ${leftHeaderLogoMargin}px; flex-shrink: 0;">` : `<div style="width: 60px; margin-right: ${leftHeaderLogoMargin}px; flex-shrink: 0;"></div>`}
-            <div class="text-center" style="flex-grow: 0; text-align: center;">
+            <div class="text-center" style="flex-grow: 1; text-align: center;">
                 <p style="margin: 0; font-size: 10pt;">${republicText}</p>
                 <p style="margin: 0; font-size: 10pt;">${departmentText}</p>
                 <p style="margin: 0; font-size: 10pt;">${regionText}</p>
