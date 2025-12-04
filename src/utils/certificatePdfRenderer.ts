@@ -62,7 +62,7 @@ export const renderCertificateHeader = (pdf: jsPDF, data: CertificatePdfData, yP
     actualTextWidth = Math.max(actualTextWidth, pdf.getStringUnitWidth(line) * pdf.internal.getFontSize() / scaleFactor);
   });
 
-  const minCentralTextWidth = 80; // Minimum width for the central text block
+  const minCentralTextWidth = 60; // Minimum width for the central text block
   const effectiveCentralTextWidth = Math.max(actualTextWidth, minCentralTextWidth);
 
   const centralTextBlockStartX = pageCenterX - (effectiveCentralTextWidth / 2);

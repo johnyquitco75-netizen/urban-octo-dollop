@@ -72,7 +72,7 @@ export const generatePdfReport = ({
         actualTextWidth = Math.max(actualTextWidth, pdf.getStringUnitWidth(line) * pdf.internal.getFontSize() / scaleFactor);
       });
 
-      const minCentralTextWidth = 80; // Minimum width for the central text block (e.g., 80mm)
+      const minCentralTextWidth = 60; // Minimum width for the central text block (e.g., 60mm)
       const effectiveCentralTextWidth = Math.max(actualTextWidth, minCentralTextWidth);
 
       const centralTextBlockStartX = pageCenterX - (effectiveCentralTextWidth / 2);

@@ -42,7 +42,7 @@ export const generatePrintPreviewHtml = ({
   const headerHtml = `
     <div class="header-container" style="display: flex; justify-content: center; margin-bottom: 20px;">
         <div class="header-content" style="display: flex; justify-content: center; align-items: center; max-width: 800px; width: 100%;">
-            ${leftHeaderLogoData ? `<img src="${leftHeaderLogoData}" class="header-logo" alt="Left Logo" style="width: 60px; height: 60px; object-fit: contain; margin-right: 8px; flex-shrink: 0;">` : '<div style="width: 60px; margin-right: 8px; flex-shrink: 0;"></div>'}
+            ${leftHeaderLogoData ? `<img src="${leftHeaderLogoData}" class="header-logo" alt="Left Logo" style="width: 60px; height: 60px; object-fit: contain; margin-right: 5px; flex-shrink: 0;">` : '<div style="width: 60px; margin-right: 5px; flex-shrink: 0;"></div>'}
             <div class="text-center" style="flex-grow: 0; text-align: center;">
                 <p style="margin: 0; font-size: 10pt;">${republicText}</p>
                 <p style="margin: 0; font-size: 10pt;">${departmentText}</p>
@@ -51,7 +51,7 @@ export const generatePrintPreviewHtml = ({
                 <p style="margin: 0; font-size: 12pt; font-weight: bold; margin-top: 5px;">${schoolName.toUpperCase()}</p>
                 <p style="margin: 0; font-size: 10pt;">${schoolAddress}</p>
             </div>
-            ${rightHeaderLogoData ? `<img src="${rightHeaderLogoData}" class="header-logo" alt="Right Logo" style="width: 60px; height: 60px; object-fit: contain; margin-left: 8px; flex-shrink: 0;">` : '<div style="width: 60px; margin-left: 8px; flex-shrink: 0;"></div>'}
+            ${rightHeaderLogoData ? `<img src="${rightHeaderLogoData}" class="header-logo" alt="Right Logo" style="width: 60px; height: 60px; object-fit: contain; margin-left: 5px; flex-shrink: 0;">` : '<div style="width: 60px; margin-left: 5px; flex-shrink: 0;"></div>'}
         </div>
     </div>
     <div class="text-center mb-8">
