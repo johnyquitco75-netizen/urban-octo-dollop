@@ -245,7 +245,6 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     const root = document.documentElement;
     const themes: { [key: string]: { [key: string]: string } } = {
       default: {
-        // '--background': '0 0% 100%', // Removed
         '--foreground': '222.2 84% 4.9%',
         '--card': '0 0% 100%',
         '--card-foreground': '222.2 84% 4.9%',
@@ -276,7 +275,6 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
         '--sidebar-ring': '217.2 91.2% 59.8%',
       },
       green: {
-        // '--background': '0 0% 100%', // Removed
         '--foreground': '222.2 84% 4.9%',
         '--card': '0 0% 100%',
         '--card-foreground': '222.2 84% 4.9%',
@@ -307,7 +305,6 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
         '--sidebar-ring': '142.1 76.2% 36.3%',
       },
       purple: {
-        // '--background': '0 0% 100%', // Removed
         '--foreground': '222.2 84% 4.9%',
         '--card': '0 0% 100%',
         '--card-foreground': '222.2 84% 4.9%',
@@ -342,12 +339,11 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     const selectedTheme = themes[currentTheme];
     if (selectedTheme) {
       for (const [key, value] of Object.entries(selectedTheme)) {
-        // Apply all theme variables except --background to the root (html)
         root.style.setProperty(key, value);
       }
     }
-    // Always apply the custom background color to the body
-    document.body.style.setProperty('--background', themeBackgroundColor);
+    // Always apply the custom background color to the root (html)
+    root.style.setProperty('--background', themeBackgroundColor);
 
   }, [currentTheme, themeBackgroundColor]);
 
