@@ -43,35 +43,54 @@ export const generatePrintPreviewHtml = ({
 }: PrintPreviewData): string => {
   let headerHtml = '';
 
+  // Start with the container for the header
+  headerHtml += `
+    <div class="header-container" style="display: flex; justify-content: center; margin-bottom: 20px;">
+        <div class="header-content" style="display: flex; align-items: center; width: 100%; max-width: 800px;">
+  `;
+
+  // Add left logo if not hidden
+  if (!hideAllHeaders && leftHeaderLogoData) {
+    headerHtml += `<img src="${leftHeaderLogoData}" class="header-logo" alt="Left Logo" style="width: 60px; height: 60px; object-fit: contain; flex-shrink: 0; margin-right: 5px;">`;
+  }
+
+  // Add central text block
+  headerHtml += `<div class="text-center" style="flex-grow: 1; text-align: center;">`;
+
+  // Add top institutional headers only if not hidden
   if (!hideAllHeaders) {
-    headerHtml = `
-      <div class="header-container" style="display: flex; justify-content: center; margin-bottom: 20px;">
-          <div class="header-content" style="display: flex; align-items: center; width: 100%; max-width: 800px;">
-              ${leftHeaderLogoData ? `<img src="${leftHeaderLogoData}" class="header-logo" alt="Left Logo" style="width: 60px; height: 60px; object-fit: contain; flex-shrink: 0; margin-right: 5px;">` : ''}
-              <div class="text-center" style="flex-grow: 1; text-align: center;">
-                  <p style="margin: 0; font-size: 10pt;">${republicText}</p>
-                  <p style="margin: 0; font-size: 10pt;">${departmentText}</p>
-                  <p style="margin: 0; font-size: 10pt;">${regionText}</p>
-                  <p style="margin: 0; font-size: 10pt;">${divisionText}</p>
-                  <p style="margin: 0; font-size: 12pt; font-weight: bold; margin-top: 5px;">${schoolName.toUpperCase()}</p>
-                  <p style="margin: 0; font-size: 10pt;">${schoolAddress}</p>
-              </div>
-              ${rightHeaderLogoData ? `<img src="${rightHeaderLogoData}" class="header-logo" alt="Right Logo" style="width: 60px; height: 60px; object-fit: contain; flex-shrink: 0; margin-left: 5px;">` : ''}
-          </div>
-      </div>
-      <div class="text-center mb-8">
-          <h2 class="text-xl font-bold text-gray-900 mt-4">E-Guidance Record System Report</h2>
-          <div class="text-lg text-gray-600 mt-4 text-right" style="padding-right: 20px;">Total Records: ${records.length}</div>
-      </div>
+    headerHtml += `
+      <p style="margin: 0; font-size: 10pt;">${republicText}</p>
+      <p style="margin: 0; font-size: 10pt;">${departmentText}</p>
+      <p style="margin: 0; font-size: 10pt;">${regionText}</p>
+      <p style="margin: 0; font-size: 10pt;">${divisionText}</p>
     `;
   } else {
-    headerHtml = `
-      <div class="text-center mb-8">
-          <h2 class="text-xl font-bold text-gray-900 mt-4">E-Guidance Record System Report</h2>
-          <div class="text-lg text-gray-600 mt-4 text-right" style="padding-right: 20px;">Total Records: ${records.length}</div>
-      </div>
-    `;
+    // Add some spacing if top headers are hidden but school info is shown
+    headerHtml += `<div style="height: 20px;"></div>`;
   }
+
+  // Always add school name and address
+  headerHtml += `
+    <p style="margin: 0; font-size: 12pt; font-weight: bold; margin-top: 5px;">${schoolName.toUpperCase()}</p>
+    <p style="margin: 0; font-size: 10pt;">${schoolAddress}</p>
+  `;
+
+  headerHtml += `</div>`; // Close text-center div
+
+  // Add right logo if not hidden
+  if (!hideAllHeaders && rightHeaderLogoData) {
+    headerHtml += `<img src="${rightHeaderLogoData}" class="header-logo" alt="Right Logo" style="width: 60px; height: 60px; object-fit: contain; flex-shrink: 0; margin-left: 5px;">`;
+  }
+
+  headerHtml += `
+        </div>
+    </div>
+    <div class="text-center mb-8">
+        <h2 class="text-xl font-bold text-gray-900 mt-4">E-Guidance Record System Report</h2>
+        <div class="text-lg text-gray-600 mt-4 text-right" style="padding-right: 20px;">Total Records: ${records.length}</div>
+    </div>
+  `;
 
   const content = `
     ${headerHtml}

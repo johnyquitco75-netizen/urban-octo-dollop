@@ -35,87 +35,80 @@ export const renderCertificateHeader = (pdf: jsPDF, data: CertificatePdfData, yP
     schoolName, schoolAddress,
     leftHeaderLogoData, rightHeaderLogoData,
     republicText, departmentText, regionText, divisionText,
-    hideAllHeaders, // Use new prop
+    hideAllHeaders,
   } = data;
 
-  if (hideAllHeaders) {
-    // If headers are hidden, just return the current yPosition or a slightly advanced one
-    return yPosition + 10; // Add a small buffer for spacing
-  }
-
-  const pageLeftMargin = 20; // Fixed left margin for the page
-  const pageRightMargin = 20; // Fixed right margin for the page
+  const pageLeftMargin = 20;
+  const pageRightMargin = 20;
   const logoWidth = 25;
   const logoHeight = 25;
-  const initialY = yPosition;
-
-  // Calculate logo positions
-  const leftLogoX = pageLeftMargin;
-  const rightLogoX = pdf.internal.pageSize.getWidth() - pageRightMargin - logoWidth;
-
-  // Add logos
-  if (leftHeaderLogoData) {
-    try {
-      pdf.addImage(leftHeaderLogoData, 'JPEG', leftLogoX, initialY, logoWidth, logoHeight);
-    } catch (e) {
-      console.log('Could not add left header logo to PDF');
-    }
-  }
-  if (rightHeaderLogoData) {
-    try {
-      pdf.addImage(rightHeaderLogoData, 'JPEG', rightLogoX, initialY, logoWidth, logoHeight);
-    } catch (e) {
-      console.log('Could not add right header logo to PDF');
-    }
-  }
+  let currentY = yPosition; // Use currentY to track position
 
   // Calculate the available space for the central text block
   let currentTextX = pageLeftMargin;
   let maxTextWidth = pdf.internal.pageSize.getWidth() - pageLeftMargin - pageRightMargin;
 
-  // Adjust text block position and width based on logo presence
-  if (leftHeaderLogoData) {
-    currentTextX += logoWidth + 5; // Fixed 5mm margin if logo is present
-    maxTextWidth -= (logoWidth + 5);
-  }
-  if (rightHeaderLogoData) {
-    maxTextWidth -= (logoWidth + 5); // Fixed 5mm margin if logo is present
-  }
-  
-  // Ensure text block doesn't go negative or too small
-  if (maxTextWidth < 0) maxTextWidth = 10; // Minimum width
-  if (currentTextX >= pdf.internal.pageSize.getWidth() - pageRightMargin) currentTextX = pageLeftMargin; // Fallback if logos push it too far
+  // Only add logos and top header text if not hidden
+  if (!hideAllHeaders) {
+    const leftLogoX = pageLeftMargin;
+    const rightLogoX = pdf.internal.pageSize.getWidth() - pageRightMargin - logoWidth;
 
-  const textBlockCenterX = currentTextX + (maxTextWidth / 2);
+    if (leftHeaderLogoData) {
+      try { pdf.addImage(leftHeaderLogoData, 'JPEG', leftLogoX, currentY, logoWidth, logoHeight); } catch (e) { console.log('Could not add left header logo to PDF'); }
+    }
+    if (rightHeaderLogoData) {
+      try { pdf.addImage(rightHeaderLogoData, 'JPEG', rightLogoX, currentY, logoWidth, logoHeight); } catch (e) { console.log('Could not add right header logo to PDF'); }
+    }
 
-  // Institutional text (centered)
-  yPosition = initialY + 5; // Start text slightly below logos
-  pdf.setFontSize(9);
-  pdf.setFont(undefined, 'normal');
-  pdf.text(republicText, textBlockCenterX, yPosition, { align: 'center' });
-  yPosition += 4;
-  pdf.text(departmentText, textBlockCenterX, yPosition, { align: 'center' });
-  yPosition += 4;
-  pdf.text(regionText, textBlockCenterX, yPosition, { align: 'center' });
-  yPosition += 4;
-  pdf.text(divisionText, textBlockCenterX, yPosition, { align: 'center' });
-  yPosition += 6;
+    // Adjust text block position and width based on logo presence
+    if (leftHeaderLogoData) {
+      currentTextX += logoWidth + 5;
+      maxTextWidth -= (logoWidth + 5);
+    }
+    if (rightHeaderLogoData) {
+      maxTextWidth -= (logoWidth + 5);
+    }
+    
+    if (maxTextWidth < 0) maxTextWidth = 10;
+    if (currentTextX >= pdf.internal.pageSize.getWidth() - pageRightMargin) currentTextX = pageLeftMargin;
+
+    const textBlockCenterX = currentTextX + (maxTextWidth / 2);
+
+    currentY += 5; // Start text slightly below logos
+    pdf.setFontSize(9);
+    pdf.setFont(undefined, 'normal');
+    pdf.text(republicText, textBlockCenterX, currentY, { align: 'center' });
+    currentY += 4;
+    pdf.text(departmentText, textBlockCenterX, currentY, { align: 'center' });
+    currentY += 4;
+    pdf.text(regionText, textBlockCenterX, currentY, { align: 'center' });
+    currentY += 4;
+    pdf.text(divisionText, textBlockCenterX, currentY, { align: 'center' });
+    currentY += 6; // Space after division text
+  } else {
+    // If headers are hidden, reset text block calculation for school name/address to full width
+    currentTextX = pdf.internal.pageSize.getWidth() / 2; // Center for full width
+    maxTextWidth = pdf.internal.pageSize.getWidth() - pageLeftMargin - pageRightMargin;
+    currentY += 10; // Add some initial spacing if no logos/top text
+  }
+
+  // Always render school name and address
   pdf.setFontSize(12);
   pdf.setFont(undefined, 'bold');
-  pdf.text(schoolName.toUpperCase(), textBlockCenterX, yPosition, { align: 'center' });
-  yPosition += 5;
+  pdf.text(schoolName.toUpperCase(), currentTextX, currentY, { align: 'center' });
+  currentY += 5;
   pdf.setFontSize(9);
   pdf.setFont(undefined, 'normal');
-  pdf.text(schoolAddress, textBlockCenterX, yPosition, { align: 'center' });
-  yPosition += 15; // Space after address
+  pdf.text(schoolAddress, currentTextX, currentY, { align: 'center' });
+  currentY += 15; // Space after address
 
   // Main Certificate Title (centered)
   pdf.setFontSize(14);
   pdf.setFont(undefined, 'bold');
-  pdf.text('CERTIFICATE OF GOOD MORAL CHARACTER', textBlockCenterX, yPosition, { align: 'center' });
-  yPosition += 25;
+  pdf.text('CERTIFICATE OF GOOD MORAL CHARACTER', currentTextX, currentY, { align: 'center' });
+  currentY += 25;
 
-  return yPosition;
+  return currentY;
 };
 
 export const renderCertificateBody = (pdf: jsPDF, data: CertificatePdfData, yPosition: number): number => {

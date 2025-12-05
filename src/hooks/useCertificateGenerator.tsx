@@ -48,31 +48,33 @@ export const useCertificateGenerator = ({
 
     let headerHtml = '';
 
+    headerHtml += `
+      <div class="header-section" style="display: flex; justify-content: center; align-items: flex-start; margin-bottom: 20px;">
+          ${!hideAllHeaders && leftLogo ? `<img src="${leftLogo}" class="header-logo" alt="Left Logo" style="width: 60px; height: 60px; object-fit: contain; flex-shrink: 0; margin-right: 5px;">` : ''}
+          <div class="text-center" style="flex-grow: 1; text-align: center;">
+    `;
+
     if (!hideAllHeaders) {
-      headerHtml = `
-        <div class="header-section" style="display: flex; justify-content: center; align-items: flex-start; margin-bottom: 20px;">
-            ${leftLogo ? `<img src="${leftLogo}" class="header-logo" alt="Left Logo" style="width: 60px; height: 60px; object-fit: contain; flex-shrink: 0; margin-right: 5px;">` : ''}
-            <div class="text-center" style="flex-grow: 1; text-align: center;">
-                <p style="margin: 0; font-size: 10pt;">${republicText}</p>
-                <p style="margin: 0; font-size: 10pt;">${departmentText}</p>
-                <p style="margin: 0; font-size: 10pt;">${regionText}</p>
-                <p style="margin: 0; font-size: 10pt;">${divisionText}</p>
-                <p style="margin: 0; font-size: 12pt; font-weight: bold; margin-top: 5px;">${school.toUpperCase()}</p>
-                <p style="margin: 0; font-size: 10pt;">${address}</p>
-            </div>
-            ${rightLogo ? `<img src="${rightLogo}" class="header-logo" alt="Right Logo" style="width: 60px; height: 60px; object-fit: contain; flex-shrink: 0; margin-left: 5px;">` : ''}
-        </div>
-        <div class="text-center mb-8">
-            <h2 class="text-xl font-bold text-gray-900 mt-4">CERTIFICATE OF GOOD MORAL CHARACTER</h2>
-        </div>
+      headerHtml += `
+          <p style="margin: 0; font-size: 10pt;">${republicText}</p>
+          <p style="margin: 0; font-size: 10pt;">${departmentText}</p>
+          <p style="margin: 0; font-size: 10pt;">${regionText}</p>
+          <p style="margin: 0; font-size: 10pt;">${divisionText}</p>
       `;
     } else {
-      headerHtml = `
-        <div class="text-center mb-8">
-            <h2 class="text-xl font-bold text-gray-900 mt-4">CERTIFICATE OF GOOD MORAL CHARACTER</h2>
-        </div>
-      `;
+      headerHtml += `<div style="height: 20px;"></div>`; // Add some spacing if top headers are hidden
     }
+
+    headerHtml += `
+            <p style="margin: 0; font-size: 12pt; font-weight: bold; margin-top: 5px;">${school.toUpperCase()}</p>
+            <p style="margin: 0; font-size: 10pt;">${address}</p>
+          </div>
+          ${!hideAllHeaders && rightLogo ? `<img src="${rightLogo}" class="header-logo" alt="Right Logo" style="width: 60px; height: 60px; object-fit: contain; flex-shrink: 0; margin-left: 5px;">` : ''}
+      </div>
+      <div class="text-center mb-8">
+          <h2 class="text-xl font-bold text-gray-900 mt-4">CERTIFICATE OF GOOD MORAL CHARACTER</h2>
+      </div>
+    `;
 
     let content = '';
     if (certificateTemplate === 'standard') {
