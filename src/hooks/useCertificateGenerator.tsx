@@ -27,7 +27,7 @@ export const useCertificateGenerator = ({
     principalName, principalPosition,
     assistantPrincipalName, assistantPrincipalPosition,
     republicText, departmentText, regionText, divisionText,
-    leftHeaderLogoMargin, rightHeaderLogoMargin, // Get new margin settings
+    hideAllHeaders, // Get new state
   } = useAppContext();
 
   const [certificatePreviewHtml, setCertificatePreviewHtml] = useState<string | null>(null);
@@ -46,29 +46,33 @@ export const useCertificateGenerator = ({
     const assistant = assistantPrincipalName;
     const assistantPos = assistantPrincipalPosition;
 
-    // Debugging logs
-    console.log('Certificate Preview - Left Header Logo Margin (px):', leftHeaderLogoMargin);
-    console.log('Certificate Preview - Right Header Logo Margin (px):', rightHeaderLogoMargin);
-    console.log('Certificate Preview - Left Header Logo Data:', leftHeaderLogoData ? 'present' : 'absent');
-    console.log('Certificate Preview - Right Header Logo Data:', rightHeaderLogoData ? 'present' : 'absent');
+    let headerHtml = '';
 
-    const headerHtml = `
-      <div class="header-section" style="display: flex; justify-content: center; align-items: flex-start; margin-bottom: 20px;">
-          ${leftLogo ? `<img src="${leftLogo}" class="header-logo" alt="Left Logo" style="width: 60px; height: 60px; object-fit: contain; flex-shrink: 0;">` : ''}
-          <div class="text-center" style="flex-grow: 1; text-align: center; margin-left: ${leftLogo ? leftHeaderLogoMargin : 0}px; margin-right: ${rightLogo ? rightHeaderLogoMargin : 0}px;">
-              <p style="margin: 0; font-size: 10pt;">${republicText}</p>
-              <p style="margin: 0; font-size: 10pt;">${departmentText}</p>
-              <p style="margin: 0; font-size: 10pt;">${regionText}</p>
-              <p style="margin: 0; font-size: 10pt;">${divisionText}</p>
-              <p style="margin: 0; font-size: 12pt; font-weight: bold; margin-top: 5px;">${school.toUpperCase()}</p>
-              <p style="margin: 0; font-size: 10pt;">${address}</p>
-          </div>
-          ${rightLogo ? `<img src="${rightLogo}" class="header-logo" alt="Right Logo" style="width: 60px; height: 60px; object-fit: contain; flex-shrink: 0;">` : ''}
-      </div>
-      <div class="text-center mb-8">
-          <h2 class="text-xl font-bold text-gray-900 mt-4">CERTIFICATE OF GOOD MORAL CHARACTER</h2>
-      </div>
-    `;
+    if (!hideAllHeaders) {
+      headerHtml = `
+        <div class="header-section" style="display: flex; justify-content: center; align-items: flex-start; margin-bottom: 20px;">
+            ${leftLogo ? `<img src="${leftLogo}" class="header-logo" alt="Left Logo" style="width: 60px; height: 60px; object-fit: contain; flex-shrink: 0; margin-right: 5px;">` : ''}
+            <div class="text-center" style="flex-grow: 1; text-align: center;">
+                <p style="margin: 0; font-size: 10pt;">${republicText}</p>
+                <p style="margin: 0; font-size: 10pt;">${departmentText}</p>
+                <p style="margin: 0; font-size: 10pt;">${regionText}</p>
+                <p style="margin: 0; font-size: 10pt;">${divisionText}</p>
+                <p style="margin: 0; font-size: 12pt; font-weight: bold; margin-top: 5px;">${school.toUpperCase()}</p>
+                <p style="margin: 0; font-size: 10pt;">${address}</p>
+            </div>
+            ${rightLogo ? `<img src="${rightLogo}" class="header-logo" alt="Right Logo" style="width: 60px; height: 60px; object-fit: contain; flex-shrink: 0; margin-left: 5px;">` : ''}
+        </div>
+        <div class="text-center mb-8">
+            <h2 class="text-xl font-bold text-gray-900 mt-4">CERTIFICATE OF GOOD MORAL CHARACTER</h2>
+        </div>
+      `;
+    } else {
+      headerHtml = `
+        <div class="text-center mb-8">
+            <h2 class="text-xl font-bold text-gray-900 mt-4">CERTIFICATE OF GOOD MORAL CHARACTER</h2>
+        </div>
+      `;
+    }
 
     let content = '';
     if (certificateTemplate === 'standard') {
@@ -206,7 +210,7 @@ export const useCertificateGenerator = ({
     if (isPreview) {
       showAlert('Certificate preview generated!', 'success');
     }
-  }, [certificateTemplate, customCertificateContent, schoolName, schoolAddress, leftHeaderLogoData, rightHeaderLogoData, guidanceOfficer, guidanceOfficerPosition, cpcGuidanceOfficerName, cpcGuidanceOfficerPosition, principalName, principalPosition, assistantPrincipalName, assistantPrincipalPosition, republicText, departmentText, regionText, divisionText, showAlert, leftHeaderLogoMargin, rightHeaderLogoMargin]);
+  }, [certificateTemplate, customCertificateContent, schoolName, schoolAddress, leftHeaderLogoData, rightHeaderLogoData, guidanceOfficer, guidanceOfficerPosition, cpcGuidanceOfficerName, cpcGuidanceOfficerPosition, principalName, principalPosition, assistantPrincipalName, assistantPrincipalPosition, republicText, departmentText, regionText, divisionText, showAlert, hideAllHeaders]);
 
   const generateCertificatePDF = useCallback(async () => {
     try {
@@ -234,8 +238,7 @@ export const useCertificateGenerator = ({
         departmentText: departmentText,
         regionText: regionText,
         divisionText: divisionText,
-        leftHeaderLogoMargin: leftHeaderLogoMargin,
-        rightHeaderLogoMargin: rightHeaderLogoMargin,
+        hideAllHeaders: hideAllHeaders,
       };
 
       yPosition = renderCertificateHeader(pdf, certificateData, yPosition);
@@ -255,7 +258,7 @@ export const useCertificateGenerator = ({
     guidanceOfficer, guidanceOfficerPosition, cpcGuidanceOfficerName, cpcGuidanceOfficerPosition,
     principalName, principalPosition, assistantPrincipalName, assistantPrincipalPosition,
     republicText, departmentText, regionText, divisionText,
-    leftHeaderLogoMargin, rightHeaderLogoMargin, showAlert
+    hideAllHeaders, showAlert
   ]);
 
   const printCertificate = useCallback(() => {

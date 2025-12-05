@@ -18,8 +18,7 @@ interface PrintPreviewData {
   departmentText: string;
   regionText: string;
   divisionText: string;
-  leftHeaderLogoMargin: number; // New prop
-  rightHeaderLogoMargin: number; // New prop
+  hideAllHeaders: boolean; // New prop
 }
 
 export const generatePrintPreviewHtml = ({
@@ -40,29 +39,39 @@ export const generatePrintPreviewHtml = ({
   departmentText,
   regionText,
   divisionText,
-  leftHeaderLogoMargin, // Use new prop
-  rightHeaderLogoMargin, // Use new prop
+  hideAllHeaders, // Use new prop
 }: PrintPreviewData): string => {
-  const headerHtml = `
-    <div class="header-container" style="display: flex; justify-content: center; margin-bottom: 20px;">
-        <div class="header-content" style="display: flex; align-items: center; width: 100%; max-width: 800px;">
-            ${leftHeaderLogoData ? `<img src="${leftHeaderLogoData}" class="header-logo" alt="Left Logo" style="width: 60px; height: 60px; object-fit: contain; flex-shrink: 0;">` : ''}
-            <div class="text-center" style="flex-grow: 1; text-align: center; margin-left: ${leftHeaderLogoData ? leftHeaderLogoMargin : 0}px; margin-right: ${rightHeaderLogoData ? rightHeaderLogoMargin : 0}px;">
-                <p style="margin: 0; font-size: 10pt;">${republicText}</p>
-                <p style="margin: 0; font-size: 10pt;">${departmentText}</p>
-                <p style="margin: 0; font-size: 10pt;">${regionText}</p>
-                <p style="margin: 0; font-size: 10pt;">${divisionText}</p>
-                <p style="margin: 0; font-size: 12pt; font-weight: bold; margin-top: 5px;">${schoolName.toUpperCase()}</p>
-                <p style="margin: 0; font-size: 10pt;">${schoolAddress}</p>
-            </div>
-            ${rightHeaderLogoData ? `<img src="${rightHeaderLogoData}" class="header-logo" alt="Right Logo" style="width: 60px; height: 60px; object-fit: contain; flex-shrink: 0;">` : ''}
-        </div>
-    </div>
-    <div class="text-center mb-8">
-        <h2 class="text-xl font-bold text-gray-900 mt-4">E-Guidance Record System Report</h2>
-        <div class="text-lg text-gray-600 mt-4 text-right" style="padding-right: 20px;">Total Records: ${records.length}</div>
-    </div>
-  `;
+  let headerHtml = '';
+
+  if (!hideAllHeaders) {
+    headerHtml = `
+      <div class="header-container" style="display: flex; justify-content: center; margin-bottom: 20px;">
+          <div class="header-content" style="display: flex; align-items: center; width: 100%; max-width: 800px;">
+              ${leftHeaderLogoData ? `<img src="${leftHeaderLogoData}" class="header-logo" alt="Left Logo" style="width: 60px; height: 60px; object-fit: contain; flex-shrink: 0; margin-right: 5px;">` : ''}
+              <div class="text-center" style="flex-grow: 1; text-align: center;">
+                  <p style="margin: 0; font-size: 10pt;">${republicText}</p>
+                  <p style="margin: 0; font-size: 10pt;">${departmentText}</p>
+                  <p style="margin: 0; font-size: 10pt;">${regionText}</p>
+                  <p style="margin: 0; font-size: 10pt;">${divisionText}</p>
+                  <p style="margin: 0; font-size: 12pt; font-weight: bold; margin-top: 5px;">${schoolName.toUpperCase()}</p>
+                  <p style="margin: 0; font-size: 10pt;">${schoolAddress}</p>
+              </div>
+              ${rightHeaderLogoData ? `<img src="${rightHeaderLogoData}" class="header-logo" alt="Right Logo" style="width: 60px; height: 60px; object-fit: contain; flex-shrink: 0; margin-left: 5px;">` : ''}
+          </div>
+      </div>
+      <div class="text-center mb-8">
+          <h2 class="text-xl font-bold text-gray-900 mt-4">E-Guidance Record System Report</h2>
+          <div class="text-lg text-gray-600 mt-4 text-right" style="padding-right: 20px;">Total Records: ${records.length}</div>
+      </div>
+    `;
+  } else {
+    headerHtml = `
+      <div class="text-center mb-8">
+          <h2 class="text-xl font-bold text-gray-900 mt-4">E-Guidance Record System Report</h2>
+          <div class="text-lg text-gray-600 mt-4 text-right" style="padding-right: 20px;">Total Records: ${records.length}</div>
+      </div>
+    `;
+  }
 
   const content = `
     ${headerHtml}

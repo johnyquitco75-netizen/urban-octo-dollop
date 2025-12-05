@@ -23,8 +23,7 @@ interface CertificatePdfData {
   departmentText: string;
   regionText: string;
   divisionText: string;
-  leftHeaderLogoMargin: number; // New prop
-  rightHeaderLogoMargin: number; // New prop
+  hideAllHeaders: boolean; // New prop
 }
 
 const leftMargin = 20;
@@ -36,17 +35,18 @@ export const renderCertificateHeader = (pdf: jsPDF, data: CertificatePdfData, yP
     schoolName, schoolAddress,
     leftHeaderLogoData, rightHeaderLogoData,
     republicText, departmentText, regionText, divisionText,
-    leftHeaderLogoMargin, // Use new prop
-    rightHeaderLogoMargin, // Use new prop
+    hideAllHeaders, // Use new prop
   } = data;
+
+  if (hideAllHeaders) {
+    // If headers are hidden, just return the current yPosition or a slightly advanced one
+    return yPosition + 10; // Add a small buffer for spacing
+  }
 
   const pageLeftMargin = 20; // Fixed left margin for the page
   const pageRightMargin = 20; // Fixed right margin for the page
   const logoWidth = 25;
   const logoHeight = 25;
-  // Convert px to mm for jsPDF (1px = 0.264583mm approx)
-  const leftLogoMarginMm = leftHeaderLogoMargin * 0.264583;
-  const rightLogoMarginMm = rightHeaderLogoMargin * 0.264583;
   const initialY = yPosition;
 
   // Calculate logo positions
@@ -73,20 +73,13 @@ export const renderCertificateHeader = (pdf: jsPDF, data: CertificatePdfData, yP
   let currentTextX = pageLeftMargin;
   let maxTextWidth = pdf.internal.pageSize.getWidth() - pageLeftMargin - pageRightMargin;
 
+  // Adjust text block position and width based on logo presence
   if (leftHeaderLogoData) {
-    currentTextX += logoWidth + leftLogoMarginMm;
-    maxTextWidth -= (logoWidth + leftLogoMarginMm);
-  } else {
-    // If no left logo, still apply the margin as empty space
-    currentTextX += leftLogoMarginMm;
-    maxTextWidth -= leftLogoMarginMm;
+    currentTextX += logoWidth + 5; // Fixed 5mm margin if logo is present
+    maxTextWidth -= (logoWidth + 5);
   }
-
   if (rightHeaderLogoData) {
-    maxTextWidth -= (logoWidth + rightLogoMarginMm);
-  } else {
-    // If no right logo, still apply the margin as empty space
-    maxTextWidth -= rightLogoMarginMm;
+    maxTextWidth -= (logoWidth + 5); // Fixed 5mm margin if logo is present
   }
   
   // Ensure text block doesn't go negative or too small

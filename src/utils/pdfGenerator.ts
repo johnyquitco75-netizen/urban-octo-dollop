@@ -20,8 +20,7 @@ interface PdfReportData {
   departmentText: string;
   regionText: string;
   divisionText: string;
-  leftHeaderLogoMargin: number; // New prop
-  rightHeaderLogoMargin: number; // New prop
+  hideAllHeaders: boolean; // New prop
 }
 
 export const generatePdfReport = ({
@@ -42,8 +41,7 @@ export const generatePdfReport = ({
   departmentText,
   regionText,
   divisionText,
-  leftHeaderLogoMargin, // Use new prop
-  rightHeaderLogoMargin, // Use new prop
+  hideAllHeaders, // Use new prop
 }: PdfReportData): Promise<void> => {
   return new Promise((resolve, reject) => {
     try {
@@ -53,85 +51,82 @@ export const generatePdfReport = ({
       const pageRightMargin = 20; // Fixed right margin for the page
       const logoWidth = 25;
       const logoHeight = 25;
-      // Convert px to mm for jsPDF (1px = 0.264583mm approx)
-      const leftLogoMarginMm = leftHeaderLogoMargin * 0.264583;
-      const rightLogoMarginMm = rightHeaderLogoMargin * 0.264583;
 
-      // Calculate logo positions
-      const leftLogoX = pageLeftMargin;
-      const rightLogoX = pdf.internal.pageSize.getWidth() - pageRightMargin - logoWidth;
+      if (!hideAllHeaders) {
+        // Calculate logo positions
+        const leftLogoX = pageLeftMargin;
+        const rightLogoX = pdf.internal.pageSize.getWidth() - pageRightMargin - logoWidth;
 
-      // Add logos
-      if (leftHeaderLogoData) {
-        try {
-          pdf.addImage(leftHeaderLogoData, 'JPEG', leftLogoX, yPosition, logoWidth, logoHeight);
-        } catch (e) {
-          console.log('Could not add left header logo to PDF');
+        // Add logos
+        if (leftHeaderLogoData) {
+          try {
+            pdf.addImage(leftHeaderLogoData, 'JPEG', leftLogoX, yPosition, logoWidth, logoHeight);
+          } catch (e) {
+            console.log('Could not add left header logo to PDF');
+          }
         }
-      }
-      if (rightHeaderLogoData) {
-        try {
-          pdf.addImage(rightHeaderLogoData, 'JPEG', rightLogoX, yPosition, logoWidth, logoHeight);
-        } catch (e) {
-          console.log('Could not add right header logo to PDF');
+        if (rightHeaderLogoData) {
+          try {
+            pdf.addImage(rightHeaderLogoData, 'JPEG', rightLogoX, yPosition, logoWidth, logoHeight);
+          } catch (e) {
+            console.log('Could not add right header logo to PDF');
+          }
         }
-      }
 
-      // Calculate the available space for the central text block
-      // The text block starts after the left logo (if present) + its margin
-      // And ends before the right logo (if present) - its margin
-      let currentTextX = pageLeftMargin;
-      let maxTextWidth = pdf.internal.pageSize.getWidth() - pageLeftMargin - pageRightMargin;
+        // Calculate the available space for the central text block
+        let currentTextX = pageLeftMargin;
+        let maxTextWidth = pdf.internal.pageSize.getWidth() - pageLeftMargin - pageRightMargin;
 
-      if (leftHeaderLogoData) {
-        currentTextX += logoWidth + leftLogoMarginMm;
-        maxTextWidth -= (logoWidth + leftLogoMarginMm);
+        // Adjust text block position and width based on logo presence
+        if (leftHeaderLogoData) {
+          currentTextX += logoWidth + 5; // Fixed 5mm margin if logo is present
+          maxTextWidth -= (logoWidth + 5);
+        }
+        if (rightHeaderLogoData) {
+          maxTextWidth -= (logoWidth + 5); // Fixed 5mm margin if logo is present
+        }
+        
+        // Ensure text block doesn't go negative or too small
+        if (maxTextWidth < 0) maxTextWidth = 10; // Minimum width
+        if (currentTextX >= pdf.internal.pageSize.getWidth() - pageRightMargin) currentTextX = pageLeftMargin; // Fallback if logos push it too far
+
+        const textBlockCenterX = currentTextX + (maxTextWidth / 2);
+
+
+        // Center institutional text
+        yPosition += 5; // Start text slightly below logos
+        pdf.setFontSize(9);
+        pdf.setFont(undefined, 'normal');
+        pdf.text(republicText, textBlockCenterX, yPosition, { align: 'center' });
+        yPosition += 4;
+        pdf.text(departmentText, textBlockCenterX, yPosition, { align: 'center' });
+        yPosition += 4;
+        pdf.text(regionText, textBlockCenterX, yPosition, { align: 'center' });
+        yPosition += 4;
+        pdf.text(divisionText, textBlockCenterX, yPosition, { align: 'center' });
+        yPosition += 6;
+        pdf.setFontSize(12);
+        pdf.setFont(undefined, 'bold');
+        pdf.text(schoolName.toUpperCase(), textBlockCenterX, yPosition, { align: 'center' });
+        yPosition += 5;
+        pdf.setFontSize(9);
+        pdf.setFont(undefined, 'normal');
+        pdf.text(schoolAddress, textBlockCenterX, yPosition, { align: 'center' });
+        yPosition += 10; // Space after address
+
+        // Main Report Title
+        pdf.setFontSize(14);
+        pdf.setFont(undefined, 'bold');
+        pdf.text('E-Guidance Record System Report', textBlockCenterX, yPosition, { align: 'center' });
+        yPosition += 15;
       } else {
-        // If no left logo, still apply the margin as empty space
-        currentTextX += leftLogoMarginMm;
-        maxTextWidth -= leftLogoMarginMm;
+        // If headers are hidden, just add a title for the report
+        yPosition += 10; // Small buffer
+        pdf.setFontSize(14);
+        pdf.setFont(undefined, 'bold');
+        pdf.text('E-Guidance Record System Report', pdf.internal.pageSize.getWidth() / 2, yPosition, { align: 'center' });
+        yPosition += 15;
       }
-
-      if (rightHeaderLogoData) {
-        maxTextWidth -= (logoWidth + rightLogoMarginMm);
-      } else {
-        // If no right logo, still apply the margin as empty space
-        maxTextWidth -= rightLogoMarginMm;
-      }
-      
-      // Ensure text block doesn't go negative or too small
-      if (maxTextWidth < 0) maxTextWidth = 10; // Minimum width
-      if (currentTextX >= pdf.internal.pageSize.getWidth() - pageRightMargin) currentTextX = pageLeftMargin; // Fallback if logos push it too far
-
-      const textBlockCenterX = currentTextX + (maxTextWidth / 2);
-
-
-      // Center institutional text
-      yPosition += 5; // Start text slightly below logos
-      pdf.setFontSize(9);
-      pdf.setFont(undefined, 'normal');
-      pdf.text(republicText, textBlockCenterX, yPosition, { align: 'center' });
-      yPosition += 4;
-      pdf.text(departmentText, textBlockCenterX, yPosition, { align: 'center' });
-      yPosition += 4;
-      pdf.text(regionText, textBlockCenterX, yPosition, { align: 'center' });
-      yPosition += 4;
-      pdf.text(divisionText, textBlockCenterX, yPosition, { align: 'center' });
-      yPosition += 6;
-      pdf.setFontSize(12);
-      pdf.setFont(undefined, 'bold');
-      pdf.text(schoolName.toUpperCase(), textBlockCenterX, yPosition, { align: 'center' });
-      yPosition += 5;
-      pdf.setFontSize(9);
-      pdf.setFont(undefined, 'normal');
-      pdf.text(schoolAddress, textBlockCenterX, yPosition, { align: 'center' });
-      yPosition += 10; // Space after address
-
-      // Main Report Title
-      pdf.setFontSize(14);
-      pdf.setFont(undefined, 'bold');
-      pdf.text('E-Guidance Record System Report', textBlockCenterX, yPosition, { align: 'center' });
-      yPosition += 15;
 
       // Total Records count
       pdf.setFontSize(11);

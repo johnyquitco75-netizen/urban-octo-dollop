@@ -80,11 +80,9 @@ interface AppContextType {
   setDateTimeFontSize: (size: string) => void;
   dateTimeFontColor: string;
   setDateTimeFontColor: (color: string) => void;
-  // New logo margin settings
-  leftHeaderLogoMargin: number;
-  setLeftHeaderLogoMargin: (margin: number) => void;
-  rightHeaderLogoMargin: number;
-  setRightHeaderLogoMargin: (margin: number) => void;
+  // New state for hiding all headers
+  hideAllHeaders: boolean;
+  setHideAllHeaders: (hide: boolean) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -131,9 +129,8 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const [dateTimeFontSize, setDateTimeFontSize] = useState("1rem"); // Default to 16px
   const [dateTimeFontColor, setDateTimeFontColor] = useState("#ffffff"); // Default to white
 
-  // New logo margin settings
-  const [leftHeaderLogoMargin, setLeftHeaderLogoMargin] = useState(5); // Default to 5mm/px
-  const [rightHeaderLogoMargin, setRightHeaderLogoMargin] = useState(5); // Default to 5mm/px
+  // New state for hiding all headers
+  const [hideAllHeaders, setHideAllHeaders] = useState(false);
 
 
   // Modals state
@@ -178,9 +175,8 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     const savedCustomPhraseFontColor = await db.getSetting('customPhraseFontColor') || '#ffffff';
     const savedDateTimeFontSize = await db.getSetting('dateTimeFontSize') || '1rem';
     const savedDateTimeFontColor = await db.getSetting('dateTimeFontColor') || '#ffffff';
-    // Load new logo margin settings, ensuring they are numbers
-    const savedLeftHeaderLogoMargin = parseInt(await db.getSetting('leftHeaderLogoMargin')) || 5;
-    const savedRightHeaderLogoMargin = parseInt(await db.getSetting('rightHeaderLogoMargin')) || 5;
+    // Load new hideAllHeaders setting
+    const savedHideAllHeaders = await db.getSetting('hideAllHeaders') || false;
 
 
     setSchoolName(savedSchoolName);
@@ -208,9 +204,8 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     setCustomPhraseFontColor(savedCustomPhraseFontColor);
     setDateTimeFontSize(savedDateTimeFontSize);
     setDateTimeFontColor(savedDateTimeFontColor);
-    // Set new logo margin settings, with default if not found
-    setLeftHeaderLogoMargin(savedLeftHeaderLogoMargin);
-    setRightHeaderLogoMargin(savedRightHeaderLogoMargin);
+    // Set new hideAllHeaders state
+    setHideAllHeaders(savedHideAllHeaders);
   }, []);
 
   const loadCustomViolations = useCallback(async () => {
@@ -393,9 +388,8 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     customPhraseFontColor, setCustomPhraseFontColor,
     dateTimeFontSize, setDateTimeFontSize,
     dateTimeFontColor, setDateTimeFontColor,
-    // New logo margin settings
-    leftHeaderLogoMargin, setLeftHeaderLogoMargin,
-    rightHeaderLogoMargin, setRightHeaderLogoMargin,
+    // New state for hiding all headers
+    hideAllHeaders, setHideAllHeaders,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

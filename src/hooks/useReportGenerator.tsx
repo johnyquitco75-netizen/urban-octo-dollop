@@ -30,7 +30,7 @@ export const useReportGenerator = ({
     principalName, principalPosition,
     assistantPrincipalName, assistantPrincipalPosition,
     republicText, departmentText, regionText, divisionText,
-    leftHeaderLogoMargin, rightHeaderLogoMargin, // Get new margin settings
+    hideAllHeaders, // Get new state
   } = useAppContext();
 
   const [reportPreviewContent, setReportPreviewContent] = useState<string | null>(null);
@@ -76,12 +76,6 @@ export const useReportGenerator = ({
 
 
   const handleGeneratePDFReport = useCallback(async (records: any[]) => {
-    // Debugging logs
-    console.log('PDF Report - Left Header Logo Margin (px):', leftHeaderLogoMargin);
-    console.log('PDF Report - Right Header Logo Margin (px):', rightHeaderLogoMargin);
-    console.log('PDF Report - Left Header Logo Data:', leftHeaderLogoData ? 'present' : 'absent');
-    console.log('PDF Report - Right Header Logo Data:', rightHeaderLogoData ? 'present' : 'absent');
-
     try {
       await generatePdfReport({
         records,
@@ -101,15 +95,14 @@ export const useReportGenerator = ({
         departmentText,
         regionText,
         divisionText,
-        leftHeaderLogoMargin, // Pass new prop
-        rightHeaderLogoMargin, // Pass new prop
+        hideAllHeaders, // Pass new prop
       });
       showAlert('PDF report generated successfully!', 'success');
     } catch (error) {
       console.error('PDF generation error:', error);
       showAlert('Failed to generate PDF report. Please try again.', 'error');
     }
-  }, [showAlert, schoolName, schoolAddress, leftHeaderLogoData, rightHeaderLogoData, guidanceOfficer, guidanceOfficerPosition, cpcGuidanceOfficerName, cpcGuidanceOfficerPosition, principalName, principalPosition, assistantPrincipalName, assistantPrincipalPosition, republicText, departmentText, regionText, divisionText, leftHeaderLogoMargin, rightHeaderLogoMargin]);
+  }, [showAlert, schoolName, schoolAddress, leftHeaderLogoData, rightHeaderLogoData, guidanceOfficer, guidanceOfficerPosition, cpcGuidanceOfficerName, cpcGuidanceOfficerPosition, principalName, principalPosition, assistantPrincipalName, assistantPrincipalPosition, republicText, departmentText, regionText, divisionText, hideAllHeaders]);
 
   const handleExportCSV = useCallback(async (records: any[]) => {
     try {
@@ -122,12 +115,6 @@ export const useReportGenerator = ({
   }, [showAlert]);
 
   const handleGeneratePrintPreview = useCallback(async (records: any[]) => {
-    // Debugging logs
-    console.log('Print Preview - Left Header Logo Margin (px):', leftHeaderLogoMargin);
-    console.log('Print Preview - Right Header Logo Margin (px):', rightHeaderLogoMargin);
-    console.log('Print Preview - Left Header Logo Data:', leftHeaderLogoData ? 'present' : 'absent');
-    console.log('Print Preview - Right Header Logo Data:', rightHeaderLogoData ? 'present' : 'absent');
-
     try {
       const htmlContent = generatePrintPreviewHtml({
         records,
@@ -147,8 +134,7 @@ export const useReportGenerator = ({
         departmentText,
         regionText,
         divisionText,
-        leftHeaderLogoMargin, // Pass new prop
-        rightHeaderLogoMargin, // Pass new prop
+        hideAllHeaders, // Pass new prop
       });
       setReportPreviewContent(htmlContent);
       showAlert('Print preview generated!', 'success');
@@ -156,7 +142,7 @@ export const useReportGenerator = ({
       console.error('Print preview generation error:', error);
       showAlert('Failed to generate print preview. Please try again.', 'error');
     }
-  }, [showAlert, schoolName, schoolAddress, leftHeaderLogoData, rightHeaderLogoData, guidanceOfficer, guidanceOfficerPosition, cpcGuidanceOfficerName, cpcGuidanceOfficerPosition, principalName, principalPosition, assistantPrincipalName, assistantPrincipalPosition, republicText, departmentText, regionText, divisionText, leftHeaderLogoMargin, rightHeaderLogoMargin]);
+  }, [showAlert, schoolName, schoolAddress, leftHeaderLogoData, rightHeaderLogoData, guidanceOfficer, guidanceOfficerPosition, cpcGuidanceOfficerName, cpcGuidanceOfficerPosition, principalName, principalPosition, assistantPrincipalName, assistantPrincipalPosition, republicText, departmentText, regionText, divisionText, hideAllHeaders]);
 
   const printReport = useCallback(() => {
     if (!reportPreviewContent) {
