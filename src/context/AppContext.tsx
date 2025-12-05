@@ -83,9 +83,60 @@ interface AppContextType {
   // New state for hiding all headers
   hideAllHeaders: boolean;
   setHideAllHeaders: (hide: boolean) => void;
+  // New state for theme background color
+  themeBackgroundColor: string;
+  setThemeBackgroundColor: (color: string) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
+
+// Utility function to convert hex to HSL
+function hexToHsl(hex: string): string | null {
+  if (!hex || typeof hex !== 'string') return null;
+  const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+  hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+    return r + r + g + g + b + b;
+  });
+
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  if (!result) return null;
+
+  let r = parseInt(result[1], 16) / 255;
+  let g = parseInt(result[2], 16) / 255;
+  let b = parseInt(result[3], 16) / 255;
+
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  let h = 0;
+  let s = 0;
+  let l = (max + min) / 2;
+
+  if (max === min) {
+    h = s = 0; // achromatic
+  } else {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case r:
+        h = (g - b) / d + (g < b ? 6 : 0);
+        break;
+      case g:
+        h = (b - r) / d + 2;
+        break;
+      case b:
+        h = (r - g) / d + 4;
+        break;
+    }
+    h /= 6;
+  }
+
+  h = Math.round(h * 360);
+  s = Math.round(s * 100);
+  l = Math.round(l * 100);
+
+  return `${h} ${s}% ${l}%`;
+}
+
 
 export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -112,7 +163,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const [assistantPrincipalPosition, setAssistantPrincipalPosition] = useState("Assistant Principal"); // Default position
   const [customViolations, setCustomViolations] = useState<string[]>([]);
   const [currentTheme, setCurrentTheme] = useState("default");
-  // Removed themeBackgroundColor state
+  const [themeBackgroundColor, setThemeBackgroundColor] = useState("#ffffff"); // Restored
 
   // New editable header fields
   const [republicText, setRepublicText] = useState("Republic of the Philippines");
@@ -166,7 +217,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     const savedAssistantPrincipal = await db.getSetting('assistantPrincipalName') || '';
     const savedAssistantPrincipalPosition = await db.getSetting('assistantPrincipalPosition') || 'Assistant Principal'; // Load new setting
     const savedTheme = await db.getSetting('theme') || 'default';
-    // Removed savedThemeBackgroundColor
+    const savedThemeBackgroundColor = await db.getSetting('themeBackgroundColor') || '#ffffff'; // Restored
     // Load new editable header fields
     const savedRepublicText = await db.getSetting('republicText') || 'Republic of the Philippines';
     const savedDepartmentText = await db.getSetting('departmentText') || 'Department of Education';
@@ -196,7 +247,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     setAssistantPrincipalName(savedAssistantPrincipal);
     setAssistantPrincipalPosition(savedAssistantPrincipalPosition); // Set new state
     setCurrentTheme(savedTheme);
-    // Removed setThemeBackgroundColor
+    setThemeBackgroundColor(savedThemeBackgroundColor); // Restored
     // Set new editable header fields
     setRepublicText(savedRepublicText);
     setDepartmentText(savedDepartmentText);
@@ -342,8 +393,15 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
         root.style.setProperty(key, value);
       }
     }
-    // Removed the line that explicitly set --background from themeBackgroundColor
-  }, [currentTheme]);
+    // Apply the custom background color if it's set, converting hex to HSL
+    if (themeBackgroundColor) {
+      const hslColor = hexToHsl(themeBackgroundColor);
+      if (hslColor) {
+        root.style.setProperty('--background', hslColor);
+      }
+    }
+
+  }, [currentTheme, themeBackgroundColor]);
 
 
   const value = {
@@ -391,7 +449,8 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     dateTimeFontColor, setDateTimeFontColor,
     // New state for hiding all headers
     hideAllHeaders, setHideAllHeaders,
-    // Removed themeBackgroundColor from context value
+    // New state for theme background color
+    themeBackgroundColor, setThemeBackgroundColor, // Restored
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
