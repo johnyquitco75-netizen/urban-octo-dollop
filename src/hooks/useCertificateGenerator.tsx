@@ -208,6 +208,56 @@ export const useCertificateGenerator = ({
     }
   }, [certificateTemplate, customCertificateContent, schoolName, schoolAddress, leftHeaderLogoData, rightHeaderLogoData, guidanceOfficer, guidanceOfficerPosition, cpcGuidanceOfficerName, cpcGuidanceOfficerPosition, principalName, principalPosition, assistantPrincipalName, assistantPrincipalPosition, republicText, departmentText, regionText, divisionText, showAlert, leftHeaderLogoMargin, rightHeaderLogoMargin]);
 
+  const generateCertificatePDF = useCallback(async () => {
+    try {
+      const pdf = new jsPDF();
+      let yPosition = 10; // Initial Y position
+
+      const certificateData = {
+        studentName: previewStudentName,
+        certificateDate: certificateDate,
+        certificateTemplate: certificateTemplate,
+        customCertificateContent: customCertificateContent,
+        schoolName: schoolName,
+        schoolAddress: schoolAddress,
+        leftHeaderLogoData: leftHeaderLogoData,
+        rightHeaderLogoData: rightHeaderLogoData,
+        guidanceOfficer: guidanceOfficer,
+        guidanceOfficerPosition: guidanceOfficerPosition,
+        cpcGuidanceOfficerName: cpcGuidanceOfficerName,
+        cpcGuidanceOfficerPosition: cpcGuidanceOfficerPosition,
+        principalName: principalName,
+        principalPosition: principalPosition,
+        assistantPrincipalName: assistantPrincipalName,
+        assistantPrincipalPosition: assistantPrincipalPosition,
+        republicText: republicText,
+        departmentText: departmentText,
+        regionText: regionText,
+        divisionText: divisionText,
+        leftHeaderLogoMargin: leftHeaderLogoMargin,
+        rightHeaderLogoMargin: rightHeaderLogoMargin,
+      };
+
+      yPosition = renderCertificateHeader(pdf, certificateData, yPosition);
+      yPosition = renderCertificateBody(pdf, certificateData, yPosition);
+      renderCertificateSignatures(pdf, certificateData, yPosition);
+
+      const fileName = `certificate-of-good-moral-${previewStudentName.replace(/\s/g, '-')}-${new Date().toISOString().split('T')[0]}.pdf`;
+      pdf.save(fileName);
+      showAlert('Certificate PDF generated successfully!', 'success');
+    } catch (error) {
+      console.error('Error generating certificate PDF:', error);
+      showAlert('Failed to generate certificate PDF. Please try again.', 'error');
+    }
+  }, [
+    previewStudentName, certificateDate, certificateTemplate, customCertificateContent,
+    schoolName, schoolAddress, leftHeaderLogoData, rightHeaderLogoData,
+    guidanceOfficer, guidanceOfficerPosition, cpcGuidanceOfficerName, cpcGuidanceOfficerPosition,
+    principalName, principalPosition, assistantPrincipalName, assistantPrincipalPosition,
+    republicText, departmentText, regionText, divisionText,
+    leftHeaderLogoMargin, rightHeaderLogoMargin, showAlert
+  ]);
+
   const printCertificate = useCallback(() => {
     if (!certificatePreviewHtml) {
       showAlert('Please generate a preview first.', 'error');
