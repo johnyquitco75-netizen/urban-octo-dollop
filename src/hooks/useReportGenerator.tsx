@@ -76,6 +76,12 @@ export const useReportGenerator = ({
 
 
   const handleGeneratePDFReport = useCallback(async (records: any[]) => {
+    // Debugging logs
+    console.log('PDF Report - Left Header Logo Margin (px):', leftHeaderLogoMargin);
+    console.log('PDF Report - Right Header Logo Margin (px):', rightHeaderLogoMargin);
+    console.log('PDF Report - Left Header Logo Data:', leftHeaderLogoData ? 'present' : 'absent');
+    console.log('PDF Report - Right Header Logo Data:', rightHeaderLogoData ? 'present' : 'absent');
+
     try {
       await generatePdfReport({
         records,
@@ -116,6 +122,12 @@ export const useReportGenerator = ({
   }, [showAlert]);
 
   const handleGeneratePrintPreview = useCallback(async (records: any[]) => {
+    // Debugging logs
+    console.log('Print Preview - Left Header Logo Margin (px):', leftHeaderLogoMargin);
+    console.log('Print Preview - Right Header Logo Margin (px):', rightHeaderLogoMargin);
+    console.log('Print Preview - Left Header Logo Data:', leftHeaderLogoData ? 'present' : 'absent');
+    console.log('Print Preview - Right Header Logo Data:', rightHeaderLogoData ? 'present' : 'absent');
+
     try {
       const htmlContent = generatePrintPreviewHtml({
         records,

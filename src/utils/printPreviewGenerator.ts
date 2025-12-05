@@ -46,8 +46,8 @@ export const generatePrintPreviewHtml = ({
   const headerHtml = `
     <div class="header-container" style="display: flex; justify-content: center; margin-bottom: 20px;">
         <div class="header-content" style="display: flex; align-items: center; width: 100%; max-width: 800px;">
-            ${leftHeaderLogoData ? `<img src="${leftHeaderLogoData}" class="header-logo" alt="Left Logo" style="width: 60px; height: 60px; object-fit: contain; margin-right: ${leftHeaderLogoMargin}px; flex-shrink: 0;">` : `<div style="width: ${leftHeaderLogoMargin}px; flex-shrink: 0;"></div>`}
-            <div class="text-center" style="flex-grow: 1; text-align: center;">
+            ${leftHeaderLogoData ? `<img src="${leftHeaderLogoData}" class="header-logo" alt="Left Logo" style="width: 60px; height: 60px; object-fit: contain; flex-shrink: 0;">` : ''}
+            <div class="text-center" style="flex-grow: 1; text-align: center; margin-left: ${leftHeaderLogoData ? leftHeaderLogoMargin : 0}px; margin-right: ${rightHeaderLogoData ? rightHeaderLogoMargin : 0}px;">
                 <p style="margin: 0; font-size: 10pt;">${republicText}</p>
                 <p style="margin: 0; font-size: 10pt;">${departmentText}</p>
                 <p style="margin: 0; font-size: 10pt;">${regionText}</p>
@@ -55,7 +55,7 @@ export const generatePrintPreviewHtml = ({
                 <p style="margin: 0; font-size: 12pt; font-weight: bold; margin-top: 5px;">${schoolName.toUpperCase()}</p>
                 <p style="margin: 0; font-size: 10pt;">${schoolAddress}</p>
             </div>
-            ${rightHeaderLogoData ? `<img src="${rightHeaderLogoData}" class="header-logo" alt="Right Logo" style="width: 60px; height: 60px; object-fit: contain; margin-left: ${rightHeaderLogoMargin}px; flex-shrink: 0;">` : `<div style="width: ${rightHeaderLogoMargin}px; flex-shrink: 0;"></div>`}
+            ${rightHeaderLogoData ? `<img src="${rightHeaderLogoData}" class="header-logo" alt="Right Logo" style="width: 60px; height: 60px; object-fit: contain; flex-shrink: 0;">` : ''}
         </div>
     </div>
     <div class="text-center mb-8">
