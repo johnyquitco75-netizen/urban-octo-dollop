@@ -14,7 +14,7 @@ import ThemeSelectorSettings from "./ThemeSelectorSettings";
 import SettingsActionButtons from "./SettingsActionButtons";
 import PasswordChangeSettings from "./PasswordChangeSettings";
 import HeaderVisibilitySettings from "./HeaderVisibilitySettings"; // Import new component
-import ThemeBackgroundColorSettings from "./ThemeBackgroundColorSettings"; // New import
+
 
 const SettingsSection = () => {
   const {
@@ -31,7 +31,6 @@ const SettingsSection = () => {
     customPhraseFontSize, customPhraseFontColor,
     dateTimeFontSize, dateTimeFontColor,
     hideAllHeaders,
-    themeBackgroundColor, // Get new state
     loadSettings, // Still need to call this after saving
   } = useAppContext();
 
@@ -59,7 +58,7 @@ const SettingsSection = () => {
     await db.setSetting('dateTimeFontSize', dateTimeFontSize);
     await db.setSetting('dateTimeFontColor', dateTimeFontColor);
     await db.setSetting('hideAllHeaders', hideAllHeaders); // Save new state
-    await db.setSetting('themeBackgroundColor', themeBackgroundColor); // Save new state
+    // Removed await db.setSetting('themeBackgroundColor', themeBackgroundColor);
 
     showAlert('Settings saved successfully!', 'success');
     loadSettings(); // Reload settings to ensure UI reflects changes
@@ -95,7 +94,7 @@ const SettingsSection = () => {
       <LogoUploadSettings />
       <PersonnelSignatureSettings />
       <ThemeSelectorSettings />
-      <ThemeBackgroundColorSettings /> {/* New component */}
+      {/* Removed ThemeBackgroundColorSettings */}
 
       <SettingsActionButtons
         onSaveSettings={saveSettings}

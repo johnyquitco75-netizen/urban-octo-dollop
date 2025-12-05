@@ -83,9 +83,6 @@ interface AppContextType {
   // New state for hiding all headers
   hideAllHeaders: boolean;
   setHideAllHeaders: (hide: boolean) => void;
-  // New state for theme background color
-  themeBackgroundColor: string;
-  setThemeBackgroundColor: (color: string) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -115,7 +112,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const [assistantPrincipalPosition, setAssistantPrincipalPosition] = useState("Assistant Principal"); // Default position
   const [customViolations, setCustomViolations] = useState<string[]>([]);
   const [currentTheme, setCurrentTheme] = useState("default");
-  const [themeBackgroundColor, setThemeBackgroundColor] = useState("#ffffff"); // Default to white
+  // Removed themeBackgroundColor state
 
   // New editable header fields
   const [republicText, setRepublicText] = useState("Republic of the Philippines");
@@ -169,7 +166,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     const savedAssistantPrincipal = await db.getSetting('assistantPrincipalName') || '';
     const savedAssistantPrincipalPosition = await db.getSetting('assistantPrincipalPosition') || 'Assistant Principal'; // Load new setting
     const savedTheme = await db.getSetting('theme') || 'default';
-    const savedThemeBackgroundColor = await db.getSetting('themeBackgroundColor') || '#ffffff'; // Load new setting
+    // Removed savedThemeBackgroundColor
     // Load new editable header fields
     const savedRepublicText = await db.getSetting('republicText') || 'Republic of the Philippines';
     const savedDepartmentText = await db.getSetting('departmentText') || 'Department of Education';
@@ -199,7 +196,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     setAssistantPrincipalName(savedAssistantPrincipal);
     setAssistantPrincipalPosition(savedAssistantPrincipalPosition); // Set new state
     setCurrentTheme(savedTheme);
-    setThemeBackgroundColor(savedThemeBackgroundColor); // Set new state
+    // Removed setThemeBackgroundColor
     // Set new editable header fields
     setRepublicText(savedRepublicText);
     setDepartmentText(savedDepartmentText);
@@ -345,11 +342,8 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
         root.style.setProperty(key, value);
       }
     }
-    // Always apply the custom background color to the root (html)
-    // This will override the theme's default --background if themeBackgroundColor is set
-    root.style.setProperty('--background', themeBackgroundColor);
-
-  }, [currentTheme, themeBackgroundColor]);
+    // Removed the line that explicitly set --background from themeBackgroundColor
+  }, [currentTheme]);
 
 
   const value = {
@@ -397,8 +391,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     dateTimeFontColor, setDateTimeFontColor,
     // New state for hiding all headers
     hideAllHeaders, setHideAllHeaders,
-    // New state for theme background color
-    themeBackgroundColor, setThemeBackgroundColor,
+    // Removed themeBackgroundColor from context value
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
