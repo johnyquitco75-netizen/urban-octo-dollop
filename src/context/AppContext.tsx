@@ -245,6 +245,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     const root = document.documentElement;
     const themes: { [key: string]: { [key: string]: string } } = {
       default: {
+        '--background': '0 0% 100%', // Default background for theme
         '--foreground': '222.2 84% 4.9%',
         '--card': '0 0% 100%',
         '--card-foreground': '222.2 84% 4.9%',
@@ -275,6 +276,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
         '--sidebar-ring': '217.2 91.2% 59.8%',
       },
       green: {
+        '--background': '0 0% 100%', // Default background for theme
         '--foreground': '222.2 84% 4.9%',
         '--card': '0 0% 100%',
         '--card-foreground': '222.2 84% 4.9%',
@@ -305,6 +307,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
         '--sidebar-ring': '142.1 76.2% 36.3%',
       },
       purple: {
+        '--background': '0 0% 100%', // Default background for theme
         '--foreground': '222.2 84% 4.9%',
         '--card': '0 0% 100%',
         '--card-foreground': '222.2 84% 4.9%',
@@ -343,6 +346,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
       }
     }
     // Always apply the custom background color to the root (html)
+    // This will override the theme's default --background if themeBackgroundColor is set
     root.style.setProperty('--background', themeBackgroundColor);
 
   }, [currentTheme, themeBackgroundColor]);
