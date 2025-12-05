@@ -82,7 +82,7 @@ export const PwaApp = () => {
   }
 
   return (
-    <div className="min-h-screen text-gray-900 dark:text-gray-100">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       {/* Header */}
       <header className="bg-green-600 text-white p-6 shadow-md flex flex-col md:flex-row items-start justify-between gap-4">
         {/* Left Section: Custom Phrase */}
@@ -198,7 +198,7 @@ export const PwaApp = () => {
       </nav>
 
       {/* Main Content */}
-      <main className="p-4 md:p-6 min-h-[calc(100vh-180px)]">
+      <main className="p-4 md:p-6 bg-gray-50 dark:bg-gray-900 min-h-[calc(100vh-180px)]">
         <React.Suspense fallback={<div>Loading...</div>}>
           {currentSection === "dashboard" && <DashboardSection />}
           {currentSection === "add-record" && <AddRecordSection />}

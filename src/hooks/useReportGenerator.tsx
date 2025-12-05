@@ -30,7 +30,7 @@ export const useReportGenerator = ({
     principalName, principalPosition,
     assistantPrincipalName, assistantPrincipalPosition,
     republicText, departmentText, regionText, divisionText,
-    hideAllHeaders, // Get new state
+    leftHeaderLogoMargin, rightHeaderLogoMargin, // Get new margin settings
   } = useAppContext();
 
   const [reportPreviewContent, setReportPreviewContent] = useState<string | null>(null);
@@ -95,14 +95,15 @@ export const useReportGenerator = ({
         departmentText,
         regionText,
         divisionText,
-        hideAllHeaders, // Pass new prop
+        leftHeaderLogoMargin, // Pass new prop
+        rightHeaderLogoMargin, // Pass new prop
       });
       showAlert('PDF report generated successfully!', 'success');
     } catch (error) {
       console.error('PDF generation error:', error);
       showAlert('Failed to generate PDF report. Please try again.', 'error');
     }
-  }, [showAlert, schoolName, schoolAddress, leftHeaderLogoData, rightHeaderLogoData, guidanceOfficer, guidanceOfficerPosition, cpcGuidanceOfficerName, cpcGuidanceOfficerPosition, principalName, principalPosition, assistantPrincipalName, assistantPrincipalPosition, republicText, departmentText, regionText, divisionText, hideAllHeaders]);
+  }, [showAlert, schoolName, schoolAddress, leftHeaderLogoData, rightHeaderLogoData, guidanceOfficer, guidanceOfficerPosition, cpcGuidanceOfficerName, cpcGuidanceOfficerPosition, principalName, principalPosition, assistantPrincipalName, assistantPrincipalPosition, republicText, departmentText, regionText, divisionText, leftHeaderLogoMargin, rightHeaderLogoMargin]);
 
   const handleExportCSV = useCallback(async (records: any[]) => {
     try {
@@ -134,7 +135,8 @@ export const useReportGenerator = ({
         departmentText,
         regionText,
         divisionText,
-        hideAllHeaders, // Pass new prop
+        leftHeaderLogoMargin, // Pass new prop
+        rightHeaderLogoMargin, // Pass new prop
       });
       setReportPreviewContent(htmlContent);
       showAlert('Print preview generated!', 'success');
@@ -142,7 +144,7 @@ export const useReportGenerator = ({
       console.error('Print preview generation error:', error);
       showAlert('Failed to generate print preview. Please try again.', 'error');
     }
-  }, [showAlert, schoolName, schoolAddress, leftHeaderLogoData, rightHeaderLogoData, guidanceOfficer, guidanceOfficerPosition, cpcGuidanceOfficerName, cpcGuidanceOfficerPosition, principalName, principalPosition, assistantPrincipalName, assistantPrincipalPosition, republicText, departmentText, regionText, divisionText, hideAllHeaders]);
+  }, [showAlert, schoolName, schoolAddress, leftHeaderLogoData, rightHeaderLogoData, guidanceOfficer, guidanceOfficerPosition, cpcGuidanceOfficerName, cpcGuidanceOfficerPosition, principalName, principalPosition, assistantPrincipalName, assistantPrincipalPosition, republicText, departmentText, regionText, divisionText, leftHeaderLogoMargin, rightHeaderLogoMargin]);
 
   const printReport = useCallback(() => {
     if (!reportPreviewContent) {

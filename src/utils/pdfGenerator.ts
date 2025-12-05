@@ -20,7 +20,8 @@ interface PdfReportData {
   departmentText: string;
   regionText: string;
   divisionText: string;
-  hideAllHeaders: boolean; // New prop
+  leftHeaderLogoMargin: number; // New prop
+  rightHeaderLogoMargin: number; // New prop
 }
 
 export const generatePdfReport = ({
@@ -41,7 +42,8 @@ export const generatePdfReport = ({
   departmentText,
   regionText,
   divisionText,
-  hideAllHeaders, // Use new prop
+  leftHeaderLogoMargin, // Use new prop
+  rightHeaderLogoMargin, // Use new prop
 }: PdfReportData): Promise<void> => {
   return new Promise((resolve, reject) => {
     try {
@@ -51,65 +53,84 @@ export const generatePdfReport = ({
       const pageRightMargin = 20; // Fixed right margin for the page
       const logoWidth = 25;
       const logoHeight = 25;
+      // Convert px to mm for jsPDF (1px = 0.264583mm approx)
+      const leftLogoMarginMm = leftHeaderLogoMargin * 0.264583;
+      const rightLogoMarginMm = rightHeaderLogoMargin * 0.264583;
 
+      // Calculate logo positions
+      const leftLogoX = pageLeftMargin;
+      const rightLogoX = pdf.internal.pageSize.getWidth() - pageRightMargin - logoWidth;
+
+      // Add logos
+      if (leftHeaderLogoData) {
+        try {
+          pdf.addImage(leftHeaderLogoData, 'JPEG', leftLogoX, yPosition, logoWidth, logoHeight);
+        } catch (e) {
+          console.log('Could not add left header logo to PDF');
+        }
+      }
+      if (rightHeaderLogoData) {
+        try {
+          pdf.addImage(rightHeaderLogoData, 'JPEG', rightLogoX, yPosition, logoWidth, logoHeight);
+        } catch (e) {
+          console.log('Could not add right header logo to PDF');
+        }
+      }
+
+      // Calculate the available space for the central text block
+      // The text block starts after the left logo (if present) + its margin
+      // And ends before the right logo (if present) - its margin
       let currentTextX = pageLeftMargin;
       let maxTextWidth = pdf.internal.pageSize.getWidth() - pageLeftMargin - pageRightMargin;
 
-      if (!hideAllHeaders) {
-        const leftLogoX = pageLeftMargin;
-        const rightLogoX = pdf.internal.pageSize.getWidth() - pageRightMargin - logoWidth;
-
-        if (leftHeaderLogoData) {
-          try { pdf.addImage(leftHeaderLogoData, 'JPEG', leftLogoX, yPosition, logoWidth, logoHeight); } catch (e) { console.log('Could not add left header logo to PDF'); }
-        }
-        if (rightHeaderLogoData) {
-          try { pdf.addImage(rightHeaderLogoData, 'JPEG', rightLogoX, yPosition, logoWidth, logoHeight); } catch (e) { console.log('Could not add right header logo to PDF'); }
-        }
-
-        if (leftHeaderLogoData) {
-          currentTextX += logoWidth + 5;
-          maxTextWidth -= (logoWidth + 5);
-        }
-        if (rightHeaderLogoData) {
-          maxTextWidth -= (logoWidth + 5);
-        }
-        
-        if (maxTextWidth < 0) maxTextWidth = 10;
-        if (currentTextX >= pdf.internal.pageSize.getWidth() - pageRightMargin) currentTextX = pageLeftMargin;
-
-        const textBlockCenterX = currentTextX + (maxTextWidth / 2);
-
-        yPosition += 5;
-        pdf.setFontSize(9);
-        pdf.setFont(undefined, 'normal');
-        pdf.text(republicText, textBlockCenterX, yPosition, { align: 'center' });
-        yPosition += 4;
-        pdf.text(departmentText, textBlockCenterX, yPosition, { align: 'center' });
-        yPosition += 4;
-        pdf.text(regionText, textBlockCenterX, yPosition, { align: 'center' });
-        yPosition += 4;
-        pdf.text(divisionText, textBlockCenterX, yPosition, { align: 'center' });
-        yPosition += 6;
+      if (leftHeaderLogoData) {
+        currentTextX += logoWidth + leftLogoMarginMm;
+        maxTextWidth -= (logoWidth + leftLogoMarginMm);
       } else {
-        currentTextX = pdf.internal.pageSize.getWidth() / 2;
-        maxTextWidth = pdf.internal.pageSize.getWidth() - pageLeftMargin - pageRightMargin;
-        yPosition += 10; // Add some initial spacing if no logos/top text
+        // If no left logo, still apply the margin as empty space
+        currentTextX += leftLogoMarginMm;
+        maxTextWidth -= leftLogoMarginMm;
       }
 
-      // Always render school name and address
+      if (rightHeaderLogoData) {
+        maxTextWidth -= (logoWidth + rightLogoMarginMm);
+      } else {
+        // If no right logo, still apply the margin as empty space
+        maxTextWidth -= rightLogoMarginMm;
+      }
+      
+      // Ensure text block doesn't go negative or too small
+      if (maxTextWidth < 0) maxTextWidth = 10; // Minimum width
+      if (currentTextX >= pdf.internal.pageSize.getWidth() - pageRightMargin) currentTextX = pageLeftMargin; // Fallback if logos push it too far
+
+      const textBlockCenterX = currentTextX + (maxTextWidth / 2);
+
+
+      // Center institutional text
+      yPosition += 5; // Start text slightly below logos
+      pdf.setFontSize(9);
+      pdf.setFont(undefined, 'normal');
+      pdf.text(republicText, textBlockCenterX, yPosition, { align: 'center' });
+      yPosition += 4;
+      pdf.text(departmentText, textBlockCenterX, yPosition, { align: 'center' });
+      yPosition += 4;
+      pdf.text(regionText, textBlockCenterX, yPosition, { align: 'center' });
+      yPosition += 4;
+      pdf.text(divisionText, textBlockCenterX, yPosition, { align: 'center' });
+      yPosition += 6;
       pdf.setFontSize(12);
       pdf.setFont(undefined, 'bold');
-      pdf.text(schoolName.toUpperCase(), currentTextX, yPosition, { align: 'center' });
+      pdf.text(schoolName.toUpperCase(), textBlockCenterX, yPosition, { align: 'center' });
       yPosition += 5;
       pdf.setFontSize(9);
       pdf.setFont(undefined, 'normal');
-      pdf.text(schoolAddress, currentTextX, yPosition, { align: 'center' });
-      yPosition += 10;
+      pdf.text(schoolAddress, textBlockCenterX, yPosition, { align: 'center' });
+      yPosition += 10; // Space after address
 
       // Main Report Title
       pdf.setFontSize(14);
       pdf.setFont(undefined, 'bold');
-      pdf.text('E-Guidance Record System Report', currentTextX, yPosition, { align: 'center' });
+      pdf.text('E-Guidance Record System Report', textBlockCenterX, yPosition, { align: 'center' });
       yPosition += 15;
 
       // Total Records count
@@ -215,30 +236,30 @@ export const generatePdfReport = ({
         // PREPARED BY: CPC/Guidance Officer (Left)
         if (cpcGuidanceOfficerName) {
           const labelX = 20;
-          const cpcNameX = labelX + 40; // Center name over a block starting at labelX + 10
+          const nameX = labelX + 40; // Center name over a block starting at labelX + 10
           pdf.setFontSize(9);
           pdf.setFont(undefined, 'normal');
           pdf.text('PREPARED BY:', labelX, yPosition);
           pdf.setFontSize(11);
           pdf.setFont(undefined, 'bold');
-          pdf.text(cpcGuidanceOfficerName.toUpperCase(), cpcNameX, yPosition + nameLineOffset, { align: 'center' });
-          pdf.line(cpcNameX - blockWidth / 2, yPosition + lineYOffset, cpcNameX + blockWidth / 2, yPosition + lineYOffset); // Underline
+          pdf.text(cpcGuidanceOfficerName.toUpperCase(), nameX, yPosition + nameLineOffset, { align: 'center' });
+          pdf.line(nameX - blockWidth / 2, yPosition + lineYOffset, nameX + blockWidth / 2, yPosition + lineYOffset); // Underline
           pdf.setFontSize(9);
           pdf.setFont(undefined, 'normal');
-          pdf.text(cpcGuidanceOfficerPosition, cpcNameX, yPosition + positionYOffset, { align: 'center' });
+          pdf.text(cpcGuidanceOfficerPosition, nameX, yPosition + positionYOffset, { align: 'center' });
         }
 
         // Guidance Officer (Right)
         if (guidanceOfficer) {
           const labelX = 120; // Adjusted X for right column
-          const guidanceNameX = labelX + 35; // Center name over a block starting at labelX
+          const nameX = labelX + 35; // Center name over a block starting at labelX
           pdf.setFontSize(11);
           pdf.setFont(undefined, 'bold');
-          pdf.text(guidanceOfficer.toUpperCase(), guidanceNameX, yPosition + nameLineOffset, { align: 'center' });
-          pdf.line(guidanceNameX - blockWidth / 2, yPosition + lineYOffset, guidanceNameX + blockWidth / 2, yPosition + lineYOffset); // Underline
+          pdf.text(guidanceOfficer.toUpperCase(), nameX, yPosition + nameLineOffset, { align: 'center' });
+          pdf.line(nameX - blockWidth / 2, yPosition + lineYOffset, nameX + blockWidth / 2, yPosition + lineYOffset); // Underline
           pdf.setFontSize(9);
           pdf.setFont(undefined, 'normal');
-          pdf.text(guidanceOfficerPosition, guidanceNameX, yPosition + positionYOffset, { align: 'center' });
+          pdf.text(guidanceOfficerPosition, nameX, yPosition + positionYOffset, { align: 'center' });
         }
         yPosition += rowSpacing; // Move down for next row
       }
@@ -250,33 +271,33 @@ export const generatePdfReport = ({
         // NOTED BY: Assistant Principal (Left)
         if (assistantPrincipalName) {
           const labelX = 20;
-          const assistantNameX = labelX + 40;
+          const nameX = labelX + 40;
           pdf.setFontSize(9);
           pdf.setFont(undefined, 'normal');
           pdf.text('NOTED BY:', labelX, yPosition);
           pdf.setFontSize(11);
           pdf.setFont(undefined, 'bold');
-          pdf.text(assistantPrincipalName.toUpperCase(), assistantNameX, yPosition + nameLineOffset, { align: 'center' });
-          pdf.line(assistantNameX - blockWidth / 2, yPosition + lineYOffset, assistantNameX + blockWidth / 2, yPosition + lineYOffset); // Underline
+          pdf.text(assistantPrincipalName.toUpperCase(), nameX, yPosition + nameLineOffset, { align: 'center' });
+          pdf.line(nameX - blockWidth / 2, yPosition + lineYOffset, nameX + blockWidth / 2, yPosition + lineYOffset); // Underline
           pdf.setFontSize(9);
           pdf.setFont(undefined, 'normal');
-          pdf.text(assistantPrincipalPosition, assistantNameX, yPosition + positionYOffset, { align: 'center' });
+          pdf.text(assistantPrincipalPosition, nameX, yPosition + positionYOffset, { align: 'center' });
         }
 
         // APPROVED BY: Principal (Right)
         if (principalName) {
           const labelX = 120;
-          const principalNameX = labelX + 35;
+          const nameX = labelX + 35;
           pdf.setFontSize(9);
           pdf.setFont(undefined, 'normal');
           pdf.text('APPROVED BY:', labelX, yPosition);
           pdf.setFontSize(11);
           pdf.setFont(undefined, 'bold');
-          pdf.text(principalName.toUpperCase(), principalNameX, yPosition + nameLineOffset, { align: 'center' });
-          pdf.line(principalNameX - blockWidth / 2, yPosition + lineYOffset, principalNameX + blockWidth / 2, yPosition + lineYOffset); // Underline
+          pdf.text(principalName.toUpperCase(), nameX, yPosition + nameLineOffset, { align: 'center' });
+          pdf.line(nameX - blockWidth / 2, yPosition + lineYOffset, nameX + blockWidth / 2, yPosition + lineYOffset); // Underline
           pdf.setFontSize(9);
           pdf.setFont(undefined, 'normal');
-          pdf.text(principalPosition, principalNameX, yPosition + positionYOffset, { align: 'center' });
+          pdf.text(principalPosition, nameX, yPosition + positionYOffset, { align: 'center' });
         }
         yPosition += rowSpacing; // Move down for next row
       }

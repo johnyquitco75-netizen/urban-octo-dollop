@@ -18,7 +18,8 @@ interface PrintPreviewData {
   departmentText: string;
   regionText: string;
   divisionText: string;
-  hideAllHeaders: boolean; // New prop
+  leftHeaderLogoMargin: number; // New prop
+  rightHeaderLogoMargin: number; // New prop
 }
 
 export const generatePrintPreviewHtml = ({
@@ -39,51 +40,22 @@ export const generatePrintPreviewHtml = ({
   departmentText,
   regionText,
   divisionText,
-  hideAllHeaders, // Use new prop
+  leftHeaderLogoMargin, // Use new prop
+  rightHeaderLogoMargin, // Use new prop
 }: PrintPreviewData): string => {
-  let headerHtml = '';
-
-  // Start with the container for the header
-  headerHtml += `
+  const headerHtml = `
     <div class="header-container" style="display: flex; justify-content: center; margin-bottom: 20px;">
         <div class="header-content" style="display: flex; align-items: center; width: 100%; max-width: 800px;">
-  `;
-
-  // Add left logo if not hidden
-  if (!hideAllHeaders && leftHeaderLogoData) {
-    headerHtml += `<img src="${leftHeaderLogoData}" class="header-logo" alt="Left Logo" style="width: 60px; height: 60px; object-fit: contain; flex-shrink: 0; margin-right: 5px;">`;
-  }
-
-  // Add central text block
-  headerHtml += `<div class="text-center" style="flex-grow: 1; text-align: center;">`;
-
-  // Add top institutional headers only if not hidden
-  if (!hideAllHeaders) {
-    headerHtml += `
-      <p style="margin: 0; font-size: 10pt;">${republicText}</p>
-      <p style="margin: 0; font-size: 10pt;">${departmentText}</p>
-      <p style="margin: 0; font-size: 10pt;">${regionText}</p>
-      <p style="margin: 0; font-size: 10pt;">${divisionText}</p>
-    `;
-  } else {
-    // Add some spacing if top headers are hidden but school info is shown
-    headerHtml += `<div style="height: 20px;"></div>`;
-  }
-
-  // Always add school name and address
-  headerHtml += `
-    <p style="margin: 0; font-size: 12pt; font-weight: bold; margin-top: 5px;">${schoolName.toUpperCase()}</p>
-    <p style="margin: 0; font-size: 10pt;">${schoolAddress}</p>
-  `;
-
-  headerHtml += `</div>`; // Close text-center div
-
-  // Add right logo if not hidden
-  if (!hideAllHeaders && rightHeaderLogoData) {
-    headerHtml += `<img src="${rightHeaderLogoData}" class="header-logo" alt="Right Logo" style="width: 60px; height: 60px; object-fit: contain; flex-shrink: 0; margin-left: 5px;">`;
-  }
-
-  headerHtml += `
+            ${leftHeaderLogoData ? `<img src="${leftHeaderLogoData}" class="header-logo" alt="Left Logo" style="width: 60px; height: 60px; object-fit: contain; margin-right: ${leftHeaderLogoMargin}px; flex-shrink: 0;">` : `<div style="width: ${leftHeaderLogoMargin}px; flex-shrink: 0;"></div>`}
+            <div class="text-center" style="flex-grow: 1; text-align: center;">
+                <p style="margin: 0; font-size: 10pt;">${republicText}</p>
+                <p style="margin: 0; font-size: 10pt;">${departmentText}</p>
+                <p style="margin: 0; font-size: 10pt;">${regionText}</p>
+                <p style="margin: 0; font-size: 10pt;">${divisionText}</p>
+                <p style="margin: 0; font-size: 12pt; font-weight: bold; margin-top: 5px;">${schoolName.toUpperCase()}</p>
+                <p style="margin: 0; font-size: 10pt;">${schoolAddress}</p>
+            </div>
+            ${rightHeaderLogoData ? `<img src="${rightHeaderLogoData}" class="header-logo" alt="Right Logo" style="width: 60px; height: 60px; object-fit: contain; margin-left: ${rightHeaderLogoMargin}px; flex-shrink: 0;">` : `<div style="width: ${rightHeaderLogoMargin}px; flex-shrink: 0;"></div>`}
         </div>
     </div>
     <div class="text-center mb-8">

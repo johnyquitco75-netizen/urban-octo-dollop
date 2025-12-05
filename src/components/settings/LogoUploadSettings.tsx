@@ -3,7 +3,6 @@
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button"; // Import Button
 import { useAppContext } from "@/context/AppContext";
 
 const LogoUploadSettings = () => {
@@ -41,20 +40,6 @@ const LogoUploadSettings = () => {
     reader.readAsDataURL(file);
   };
 
-  const handleClearLogo = async (type: 'school' | 'leftHeader' | 'rightHeader') => {
-    if (type === 'school') {
-      setLogoData(null);
-      await db.setSetting('logoData', null);
-    } else if (type === 'leftHeader') {
-      setLeftHeaderLogoData(null);
-      await db.setSetting('leftHeaderLogoData', null);
-    } else if (type === 'rightHeader') {
-      setRightHeaderLogoData(null);
-      await db.setSetting('rightHeaderLogoData', null);
-    }
-    showAlert('Logo cleared successfully!', 'info');
-  };
-
   return (
     <div className="space-y-4">
       <div>
@@ -70,12 +55,7 @@ const LogoUploadSettings = () => {
         </div>
         <Input type="file" id="schoolLogoFileInput" accept="image/*" className="hidden" onChange={(e) => handleLogoUpload(e, 'school')} />
         {logoData && (
-          <div className="flex items-center gap-4 mt-4">
-            <img src={logoData} className="max-w-[200px] rounded-xl shadow-md border border-gray-200 dark:border-gray-700" alt="School Logo Preview" />
-            <Button variant="destructive" onClick={() => handleClearLogo('school')}>
-              Clear Logo
-            </Button>
-          </div>
+          <img src={logoData} className="max-w-[200px] mt-4 rounded-xl shadow-md border border-gray-200 dark:border-gray-700" alt="School Logo Preview" />
         )}
       </div>
 
@@ -93,12 +73,7 @@ const LogoUploadSettings = () => {
           </div>
           <Input type="file" id="leftHeaderLogoFileInput" accept="image/*" className="hidden" onChange={(e) => handleLogoUpload(e, 'leftHeader')} />
           {leftHeaderLogoData && (
-            <div className="flex items-center gap-4 mt-4">
-              <img src={leftHeaderLogoData} className="max-w-[100px] rounded-xl shadow-md border border-gray-200 dark:border-gray-700" alt="Left Header Logo Preview" />
-              <Button variant="destructive" onClick={() => handleClearLogo('leftHeader')}>
-                Clear Logo
-              </Button>
-            </div>
+            <img src={leftHeaderLogoData} className="max-w-[100px] mt-4 rounded-xl shadow-md border border-gray-200 dark:border-gray-700" alt="Left Header Logo Preview" />
           )}
         </div>
         <div>
@@ -114,12 +89,7 @@ const LogoUploadSettings = () => {
           </div>
           <Input type="file" id="rightHeaderLogoFileInput" accept="image/*" className="hidden" onChange={(e) => handleLogoUpload(e, 'rightHeader')} />
           {rightHeaderLogoData && (
-            <div className="flex items-center gap-4 mt-4">
-              <img src={rightHeaderLogoData} className="max-w-[100px] rounded-xl shadow-md border border-gray-200 dark:border-gray-700" alt="Right Header Logo Preview" />
-              <Button variant="destructive" onClick={() => handleClearLogo('rightHeader')}>
-                Clear Logo
-              </Button>
-            </div>
+            <img src={rightHeaderLogoData} className="max-w-[100px] mt-4 rounded-xl shadow-md border border-gray-200 dark:border-gray-700" alt="Right Header Logo Preview" />
           )}
         </div>
       </div>

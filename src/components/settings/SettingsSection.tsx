@@ -9,13 +9,11 @@ import SchoolInfoSettings from "./SchoolInfoSettings";
 import CustomPhraseSettings from "./CustomPhraseSettings";
 import DateTimeDisplaySettings from "./DateTimeDisplaySettings";
 import LogoUploadSettings from "./LogoUploadSettings";
+import LogoMarginSettings from "./LogoMarginSettings";
 import PersonnelSignatureSettings from "./PersonnelSignatureSettings";
 import ThemeSelectorSettings from "./ThemeSelectorSettings";
 import SettingsActionButtons from "./SettingsActionButtons";
 import PasswordChangeSettings from "./PasswordChangeSettings";
-import HeaderVisibilitySettings from "./HeaderVisibilitySettings"; // Import new component
-import ThemeBackgroundColorSettings from "./ThemeBackgroundColorSettings"; // Re-import
-
 
 const SettingsSection = () => {
   const {
@@ -31,8 +29,7 @@ const SettingsSection = () => {
     republicText, departmentText, regionText, divisionText,
     customPhraseFontSize, customPhraseFontColor,
     dateTimeFontSize, dateTimeFontColor,
-    hideAllHeaders,
-    themeBackgroundColor, // Re-added
+    leftHeaderLogoMargin, rightHeaderLogoMargin,
     loadSettings, // Still need to call this after saving
   } = useAppContext();
 
@@ -59,8 +56,8 @@ const SettingsSection = () => {
     await db.setSetting('customPhraseFontColor', customPhraseFontColor);
     await db.setSetting('dateTimeFontSize', dateTimeFontSize);
     await db.setSetting('dateTimeFontColor', dateTimeFontColor);
-    await db.setSetting('hideAllHeaders', hideAllHeaders); // Save new state
-    await db.setSetting('themeBackgroundColor', themeBackgroundColor); // Re-added
+    await db.setSetting('leftHeaderLogoMargin', leftHeaderLogoMargin);
+    await db.setSetting('rightHeaderLogoMargin', rightHeaderLogoMargin);
 
     showAlert('Settings saved successfully!', 'success');
     loadSettings(); // Reload settings to ensure UI reflects changes
@@ -88,15 +85,14 @@ const SettingsSection = () => {
     <section id="settings" className="space-y-6">
       <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6">Settings</h2>
 
-      <HeaderVisibilitySettings />
       <HeaderTextFields />
       <SchoolInfoSettings />
       <CustomPhraseSettings />
       <DateTimeDisplaySettings />
       <LogoUploadSettings />
+      <LogoMarginSettings />
       <PersonnelSignatureSettings />
       <ThemeSelectorSettings />
-      <ThemeBackgroundColorSettings /> {/* Re-added */}
 
       <SettingsActionButtons
         onSaveSettings={saveSettings}

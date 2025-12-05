@@ -80,63 +80,14 @@ interface AppContextType {
   setDateTimeFontSize: (size: string) => void;
   dateTimeFontColor: string;
   setDateTimeFontColor: (color: string) => void;
-  // New state for hiding all headers
-  hideAllHeaders: boolean;
-  setHideAllHeaders: (hide: boolean) => void;
-  // New state for theme background color
-  themeBackgroundColor: string;
-  setThemeBackgroundColor: (color: string) => void;
+  // New logo margin settings
+  leftHeaderLogoMargin: number;
+  setLeftHeaderLogoMargin: (margin: number) => void;
+  rightHeaderLogoMargin: number;
+  setRightHeaderLogoMargin: (margin: number) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
-
-// Utility function to convert hex to HSL
-function hexToHsl(hex: string): string | null {
-  if (!hex || typeof hex !== 'string') return null;
-  const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-  hex = hex.replace(shorthandRegex, function(m, r, g, b) {
-    return r + r + g + g + b + b;
-  });
-
-  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  if (!result) return null;
-
-  let r = parseInt(result[1], 16) / 255;
-  let g = parseInt(result[2], 16) / 255;
-  let b = parseInt(result[3], 16) / 255;
-
-  const max = Math.max(r, g, b);
-  const min = Math.min(r, g, b);
-  let h = 0;
-  let s = 0;
-  let l = (max + min) / 2;
-
-  if (max === min) {
-    h = s = 0; // achromatic
-  } else {
-    const d = max - min;
-    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-    switch (max) {
-      case r:
-        h = (g - b) / d + (g < b ? 6 : 0);
-        break;
-      case g:
-        h = (b - r) / d + 2;
-        break;
-      case b:
-        h = (r - g) / d + 4;
-        break;
-    }
-    h /= 6;
-  }
-
-  h = Math.round(h * 360);
-  s = Math.round(s * 100);
-  l = Math.round(l * 100);
-
-  return `${h} ${s}% ${l}%`;
-}
-
 
 export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -163,7 +114,6 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const [assistantPrincipalPosition, setAssistantPrincipalPosition] = useState("Assistant Principal"); // Default position
   const [customViolations, setCustomViolations] = useState<string[]>([]);
   const [currentTheme, setCurrentTheme] = useState("default");
-  const [themeBackgroundColor, setThemeBackgroundColor] = useState("#ffffff"); // Restored
 
   // New editable header fields
   const [republicText, setRepublicText] = useState("Republic of the Philippines");
@@ -181,8 +131,9 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const [dateTimeFontSize, setDateTimeFontSize] = useState("1rem"); // Default to 16px
   const [dateTimeFontColor, setDateTimeFontColor] = useState("#ffffff"); // Default to white
 
-  // New state for hiding all headers
-  const [hideAllHeaders, setHideAllHeaders] = useState(false);
+  // New logo margin settings
+  const [leftHeaderLogoMargin, setLeftHeaderLogoMargin] = useState(5); // Default to 5mm/px
+  const [rightHeaderLogoMargin, setRightHeaderLogoMargin] = useState(5); // Default to 5mm/px
 
 
   // Modals state
@@ -217,7 +168,6 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     const savedAssistantPrincipal = await db.getSetting('assistantPrincipalName') || '';
     const savedAssistantPrincipalPosition = await db.getSetting('assistantPrincipalPosition') || 'Assistant Principal'; // Load new setting
     const savedTheme = await db.getSetting('theme') || 'default';
-    const savedThemeBackgroundColor = await db.getSetting('themeBackgroundColor') || '#ffffff'; // Restored
     // Load new editable header fields
     const savedRepublicText = await db.getSetting('republicText') || 'Republic of the Philippines';
     const savedDepartmentText = await db.getSetting('departmentText') || 'Department of Education';
@@ -228,8 +178,9 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     const savedCustomPhraseFontColor = await db.getSetting('customPhraseFontColor') || '#ffffff';
     const savedDateTimeFontSize = await db.getSetting('dateTimeFontSize') || '1rem';
     const savedDateTimeFontColor = await db.getSetting('dateTimeFontColor') || '#ffffff';
-    // Load new hideAllHeaders setting
-    const savedHideAllHeaders = await db.getSetting('hideAllHeaders') || false;
+    // Load new logo margin settings, ensuring they are numbers
+    const savedLeftHeaderLogoMargin = parseInt(await db.getSetting('leftHeaderLogoMargin')) || 5;
+    const savedRightHeaderLogoMargin = parseInt(await db.getSetting('rightHeaderLogoMargin')) || 5;
 
 
     setSchoolName(savedSchoolName);
@@ -247,7 +198,6 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     setAssistantPrincipalName(savedAssistantPrincipal);
     setAssistantPrincipalPosition(savedAssistantPrincipalPosition); // Set new state
     setCurrentTheme(savedTheme);
-    setThemeBackgroundColor(savedThemeBackgroundColor); // Restored
     // Set new editable header fields
     setRepublicText(savedRepublicText);
     setDepartmentText(savedDepartmentText);
@@ -258,8 +208,9 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     setCustomPhraseFontColor(savedCustomPhraseFontColor);
     setDateTimeFontSize(savedDateTimeFontSize);
     setDateTimeFontColor(savedDateTimeFontColor);
-    // Set new hideAllHeaders state
-    setHideAllHeaders(savedHideAllHeaders);
+    // Set new logo margin settings, with default if not found
+    setLeftHeaderLogoMargin(savedLeftHeaderLogoMargin);
+    setRightHeaderLogoMargin(savedRightHeaderLogoMargin);
   }, []);
 
   const loadCustomViolations = useCallback(async () => {
@@ -293,7 +244,8 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     const root = document.documentElement;
     const themes: { [key: string]: { [key: string]: string } } = {
       default: {
-        '--background': '0 0% 100%', // Default background for theme
+        // Base colors from globals.css :root
+        '--background': '0 0% 100%',
         '--foreground': '222.2 84% 4.9%',
         '--card': '0 0% 100%',
         '--card-foreground': '222.2 84% 4.9%',
@@ -324,7 +276,8 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
         '--sidebar-ring': '217.2 91.2% 59.8%',
       },
       green: {
-        '--background': '0 0% 100%', // Default background for theme
+        // Base colors (can inherit or redefine if needed)
+        '--background': '0 0% 100%',
         '--foreground': '222.2 84% 4.9%',
         '--card': '0 0% 100%',
         '--card-foreground': '222.2 84% 4.9%',
@@ -355,7 +308,8 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
         '--sidebar-ring': '142.1 76.2% 36.3%',
       },
       purple: {
-        '--background': '0 0% 100%', // Default background for theme
+        // Base colors (can inherit or redefine if needed)
+        '--background': '0 0% 100%',
         '--foreground': '222.2 84% 4.9%',
         '--card': '0 0% 100%',
         '--card-foreground': '222.2 84% 4.9%',
@@ -393,15 +347,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
         root.style.setProperty(key, value);
       }
     }
-    // Apply the custom background color if it's set, converting hex to HSL
-    if (themeBackgroundColor) {
-      const hslColor = hexToHsl(themeBackgroundColor);
-      if (hslColor) {
-        root.style.setProperty('--background', hslColor);
-      }
-    }
-
-  }, [currentTheme, themeBackgroundColor]);
+  }, [currentTheme]);
 
 
   const value = {
@@ -447,10 +393,9 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     customPhraseFontColor, setCustomPhraseFontColor,
     dateTimeFontSize, setDateTimeFontSize,
     dateTimeFontColor, setDateTimeFontColor,
-    // New state for hiding all headers
-    hideAllHeaders, setHideAllHeaders,
-    // New state for theme background color
-    themeBackgroundColor, setThemeBackgroundColor, // Restored
+    // New logo margin settings
+    leftHeaderLogoMargin, setLeftHeaderLogoMargin,
+    rightHeaderLogoMargin, setRightHeaderLogoMargin,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
