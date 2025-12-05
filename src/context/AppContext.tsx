@@ -404,7 +404,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   }, [currentTheme, themeBackgroundColor]);
 
 
-  const value = {
+  const value = React.useMemo(() => ({
     isLoggedIn, setIsLoggedIn,
     currentUserRole, setCurrentUserRole,
     appPasswords, setAppPasswords,
@@ -414,16 +414,16 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     schoolAddress, setSchoolAddress,
     customPhrase, setCustomPhrase,
     logoData, setLogoData,
-    leftHeaderLogoData, setLeftHeaderLogoData, // Added to context value
-    rightHeaderLogoData, setRightHeaderLogoData, // Added to context value
+    leftHeaderLogoData, setLeftHeaderLogoData,
+    rightHeaderLogoData, setRightHeaderLogoData,
     guidanceOfficer, setGuidanceOfficer,
-    guidanceOfficerPosition, setGuidanceOfficerPosition, // Added to context value
+    guidanceOfficerPosition, setGuidanceOfficerPosition,
     cpcGuidanceOfficerName, setCpcGuidanceOfficerName,
-    cpcGuidanceOfficerPosition, setCpcGuidanceOfficerPosition, // Added to context value
+    cpcGuidanceOfficerPosition, setCpcGuidanceOfficerPosition,
     principalName, setPrincipalName,
-    principalPosition, setPrincipalPosition, // Added to context value
+    principalPosition, setPrincipalPosition,
     assistantPrincipalName, setAssistantPrincipalName,
-    assistantPrincipalPosition, setAssistantPrincipalPosition, // Added to context value
+    assistantPrincipalPosition, setAssistantPrincipalPosition,
     customViolations, setCustomViolations,
     currentTheme, setCurrentTheme,
     loadSettings,
@@ -434,24 +434,37 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     confirmMessage, setConfirmMessage,
     confirmActionRef,
     isAppInitialized,
-    // New editable header fields
     republicText, setRepublicText,
     departmentText, setDepartmentText,
     regionText, setRegionText,
     divisionText, setDivisionText,
-    // New states for navigation and editing
     currentSection, setCurrentSection,
     recordToEditId, setRecordToEditId,
-    // New font settings
     customPhraseFontSize, setCustomPhraseFontSize,
     customPhraseFontColor, setCustomPhraseFontColor,
     dateTimeFontSize, setDateTimeFontSize,
     dateTimeFontColor, setDateTimeFontColor,
-    // New state for hiding all headers
     hideAllHeaders, setHideAllHeaders,
-    // New state for theme background color
-    themeBackgroundColor, setThemeBackgroundColor, // Restored
-  };
+    themeBackgroundColor, setThemeBackgroundColor,
+  }), [
+    isLoggedIn, currentUserRole, appPasswords, schoolName, schoolAddress, customPhrase, logoData,
+    leftHeaderLogoData, rightHeaderLogoData, guidanceOfficer, guidanceOfficerPosition,
+    cpcGuidanceOfficerName, cpcGuidanceOfficerPosition, principalName, principalPosition,
+    assistantPrincipalName, assistantPrincipalPosition, customViolations, currentTheme,
+    isPhotoModalOpen, modalPhotoSrc, isConfirmModalOpen, confirmMessage, isAppInitialized,
+    republicText, departmentText, regionText, divisionText, currentSection, recordToEditId,
+    customPhraseFontSize, customPhraseFontColor, dateTimeFontSize, dateTimeFontColor,
+    hideAllHeaders, themeBackgroundColor,
+    // Callbacks (showAlert, loadSettings, loadCustomViolations, setters) are stable due to useCallback or useState's guarantee
+    showAlert, setIsLoggedIn, setCurrentUserRole, setAppPasswords, setSchoolName, setSchoolAddress,
+    setCustomPhrase, setLogoData, setLeftHeaderLogoData, setRightHeaderLogoData, setGuidanceOfficer,
+    setGuidanceOfficerPosition, setCpcGuidanceOfficerName, setCpcGuidanceOfficerPosition,
+    setPrincipalName, setPrincipalPosition, setAssistantPrincipalName, setAssistantPrincipalPosition,
+    setCustomViolations, setCurrentTheme, loadSettings, loadCustomViolations, setIsPhotoModalOpen,
+    setModalPhotoSrc, setIsConfirmModalOpen, setConfirmMessage, setRepublicText, setDepartmentText,
+    setRegionText, setDivisionText, setCurrentSection, setRecordToEditId, setCustomPhraseFontSize,
+    setCustomPhraseFontColor, setDateTimeFontSize, setDateTimeFontColor, setHideAllHeaders, setThemeBackgroundColor,
+  ]);
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };
