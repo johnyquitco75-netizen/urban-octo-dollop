@@ -10,6 +10,7 @@ const DashboardSection = () => {
   const { db, schoolName, schoolAddress, logoData, currentUserRole, showAlert, setModalPhotoSrc, setIsPhotoModalOpen, setConfirmMessage, confirmActionRef, setIsConfirmModalOpen, setCurrentSection, setRecordToEditId } = useAppContext();
 
   // Dashboard state
+  const [allRecords, setAllRecords] = useState<any[]>([]); // New state to hold all records
   const [totalRecords, setTotalRecords] = useState(0);
   const [totalStudents, setTotalStudents] = useState(0);
   const [thisMonthRecords, setThisMonthRecords] = useState(0);
@@ -18,8 +19,7 @@ const DashboardSection = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const recordsPerPage = 10;
   const [totalPages, setTotalPages] = useState(1);
-  const [violationChartData, setViolationChartData] = useState<any[]>([]);
-  const [severityChartData, setSeverityChartData] = useState<any[]>([]);
+  // violationChartData and severityChartData will now be memoized
 
   // Define a color palette for the bar chart
   const BAR_COLORS = ['#4f46e5', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899', '#6366f1', '#22c55e', '#f97316'];
@@ -32,58 +32,9 @@ const DashboardSection = () => {
     };
   };
 
-  const updateViolationBarChart = (records: any[]) => {
-    const violationCounts: { [key: string]: number } = {};
-    records.forEach(record => {
-      violationCounts[record.violationType] = (violationCounts[record.violationType] || 0) + 1;
-    });
-    const chartData = Object.entries(violationCounts).map(([name, count], index) => ({
-      name,
-      count,
-      percentage: records.length > 0 ? Math.round((count / records.length) * 100) : 0,
-      fill: BAR_COLORS[index % BAR_COLORS.length] // Assign color to 'fill' property
-    }));
-    setViolationChartData(chartData);
-  };
-
-  const updateSeverityPieChart = (records: any[]) => {
-    const severityCounts = { Minor: 0, Major: 0, Severe: 0 };
-    const severityMapping: { [key: string]: "Minor" | "Major" | "Severe" } = {
-      'Late Arrival': 'Minor',
-      'Uniform Violation': 'Minor',
-      'Disruptive Behavior': 'Major',
-      'Academic Dishonesty': 'Major',
-      'Bullying': 'Severe',
-      'Property Damage': 'Severe',
-      'Inappropriate Language': 'Major',
-      'Technology Misuse': 'Major',
-      'Other': 'Minor'
-    };
-    records.forEach(record => {
-      const severity = severityMapping[record.violationType] || 'Minor';
-      severityCounts[severity]++;
-    });
-
-    const total = records.length;
-    const chartData = [
-      { name: 'Minor', value: severityCounts.Minor, percentage: total > 0 ? Math.round((severityCounts.Minor / total) * 100) : 0, color: '#10b981' },
-      { name: 'Major', value: severityCounts.Major, percentage: total > 0 ? Math.round((severityCounts.Major / total) * 100) : 0, color: '#f59e0b' },
-      { name: 'Severe', value: severityCounts.Severe, percentage: total > 0 ? Math.round((severityCounts.Severe / total) * 100) : 0, color: '#ef4444' },
-    ].filter(item => item.value > 0); // Only show slices with values
-    setSeverityChartData(chartData);
-  };
-
-  const updateRecentRecords = useCallback(async (records: any[]) => {
-    const sortedRecords = records.sort((a, b) => new Date(b.dateTime).getTime() - new Date(a.dateTime).getTime());
-    const totalPagesCount = Math.ceil(sortedRecords.length / recordsPerPage);
-    setTotalPages(totalPagesCount);
-    const startIndex = (currentPage - 1) * recordsPerPage;
-    const endIndex = startIndex + recordsPerPage;
-    setRecentRecords(sortedRecords.slice(startIndex, endIndex));
-  }, [currentPage]);
-
   const updateDashboard = useCallback(async () => {
     const records = await db.getAllRecords();
+    setAllRecords(records); // Store all records
     setTotalRecords(records.length);
     const uniqueStudents = new Set(records.map(r => r.name)).size;
     setTotalStudents(uniqueStudents);
@@ -98,14 +49,65 @@ const DashboardSection = () => {
       new Date(Math.max(...records.map(r => new Date(r.dateTime).getTime()))).toLocaleDateString() :
       'Never';
     setLastEntryDate(lastEntry);
-    updateViolationBarChart(records);
-    updateSeverityPieChart(records);
-    updateRecentRecords(records);
-  }, [db, updateRecentRecords]);
+  }, [db]);
 
   useEffect(() => {
     updateDashboard();
-  }, [currentPage, updateDashboard]);
+  }, [updateDashboard]);
+
+  // Memoize sorted records for pagination
+  const sortedAllRecords = React.useMemo(() => {
+    return allRecords.sort((a, b) => new Date(b.dateTime).getTime() - new Date(a.dateTime).getTime());
+  }, [allRecords]);
+
+  // Update recent records based on sortedAllRecords and currentPage
+  useEffect(() => {
+    const totalPagesCount = Math.ceil(sortedAllRecords.length / recordsPerPage);
+    setTotalPages(totalPagesCount);
+    const startIndex = (currentPage - 1) * recordsPerPage;
+    const endIndex = startIndex + recordsPerPage;
+    setRecentRecords(sortedAllRecords.slice(startIndex, endIndex));
+  }, [currentPage, sortedAllRecords]);
+
+  // Memoize chart data calculations
+  const memoizedViolationChartData = React.useMemo(() => {
+    const violationCounts: { [key: string]: number } = {};
+    allRecords.forEach(record => {
+      violationCounts[record.violationType] = (violationCounts[record.violationType] || 0) + 1;
+    });
+    return Object.entries(violationCounts).map(([name, count], index) => ({
+      name,
+      count,
+      percentage: allRecords.length > 0 ? Math.round((count / allRecords.length) * 100) : 0,
+      fill: BAR_COLORS[index % BAR_COLORS.length] // Assign color to 'fill' property
+    }));
+  }, [allRecords]); // Recalculate only when allRecords changes
+
+  const memoizedSeverityChartData = React.useMemo(() => {
+    const severityCounts = { Minor: 0, Major: 0, Severe: 0 };
+    const severityMapping: { [key: string]: "Minor" | "Major" | "Severe" } = {
+      'Late Arrival': 'Minor',
+      'Uniform Violation': 'Minor',
+      'Disruptive Behavior': 'Major',
+      'Academic Dishonesty': 'Major',
+      'Bullying': 'Severe',
+      'Property Damage': 'Severe',
+      'Inappropriate Language': 'Major',
+      'Technology Misuse': 'Major',
+      'Other': 'Minor'
+    };
+    allRecords.forEach(record => {
+      const severity = severityMapping[record.violationType] || 'Minor';
+      severityCounts[severity]++;
+    });
+
+    const total = allRecords.length;
+    return [
+      { name: 'Minor', value: severityCounts.Minor, percentage: total > 0 ? Math.round((severityCounts.Minor / total) * 100) : 0, color: '#10b981' },
+      { name: 'Major', value: severityCounts.Major, percentage: total > 0 ? Math.round((severityCounts.Major / total) * 100) : 0, color: '#f59e0b' },
+      { name: 'Severe', value: severityCounts.Severe, percentage: total > 0 ? Math.round((severityCounts.Severe / total) * 100) : 0, color: '#ef4444' },
+    ].filter(item => item.value > 0); // Only show slices with values
+  }, [allRecords]); // Recalculate only when allRecords changes
 
   const changePage = (page: number) => {
     if (page >= 1 && page <= totalPages) {
@@ -123,7 +125,7 @@ const DashboardSection = () => {
       try {
         await db.deleteRecord(recordId);
         showAlert('Record deleted!', 'success');
-        updateDashboard();
+        updateDashboard(); // Re-fetch and update dashboard data
       } catch (error) {
         console.error('Error deleting record:', error);
         showAlert('Failed to delete record.', 'error');
@@ -178,7 +180,7 @@ const DashboardSection = () => {
           <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4 text-center">Violation Types</h3>
           <p className="text-gray-600 dark:text-gray-300 text-sm mb-6 text-center">Distribution of violation severity</p>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={violationChartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+            <BarChart data={memoizedViolationChartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" className="stroke-gray-200 dark:stroke-gray-700" />
               <XAxis dataKey="name" className="text-xs text-gray-600 dark:text-gray-300" />
               <YAxis className="text-xs text-gray-600 dark:text-gray-300" />
@@ -199,7 +201,7 @@ const DashboardSection = () => {
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie
-                data={severityChartData}
+                data={memoizedSeverityChartData}
                 cx="50%"
                 cy="50%"
                 labelLine={false}
@@ -208,7 +210,7 @@ const DashboardSection = () => {
                 dataKey="value"
                 label={({ name, percentage }) => `${name} ${percentage}%`}
               >
-                {severityChartData.map((entry, index) => (
+                {memoizedSeverityChartData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.color} />
                 ))}
               </Pie>
@@ -257,6 +259,7 @@ const DashboardSection = () => {
                     </td>
                     <td className="py-3 px-4 text-gray-700 dark:text-gray-200">{record.gradeLevel || 'N/A'}</td>
                     <td className="py-3 px-4 text-gray-700 dark:text-gray-200">{record.gradeSection || 'N/A'}</td> {/* Display Grade Section */}
+                    <td className="py-3 px-4 text-gray-700 dark:text-gray-200">{record.violationType}</td>
                     <td className="py-3 px-4 text-gray-700 dark:text-gray-200">{new Date(record.dateTime).toLocaleDateString()}</td>
                     <td className="py-3 px-4 text-gray-700 dark:text-gray-200 max-w-[150px] truncate">{record.details || 'N/A'}</td> {/* Display details, truncated */}
                     <td className="py-3 px-4">
