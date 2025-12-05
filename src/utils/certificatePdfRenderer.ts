@@ -245,27 +245,29 @@ export const renderCertificateSignatures = (pdf: jsPDF, data: CertificatePdfData
     
     // PREPARED BY: CPC/Guidance Officer (Left)
     if (cpcGuidanceOfficerName) {
+      const cpcNameX = blockStartXLeft + blockWidth / 2; // Define nameX for CPC
       pdf.setFontSize(9);
       pdf.setFont(undefined, 'normal');
       pdf.text('PREPARED BY:', blockStartXLeft, yPosition);
       pdf.setFontSize(11);
       pdf.setFont(undefined, 'bold');
-      pdf.text(cpcGuidanceOfficerName.toUpperCase(), blockStartXLeft + blockWidth / 2, yPosition + nameYOffset, { align: 'center' });
-      pdf.line(blockStartXLeft, yPosition + lineYOffset, blockStartXLeft + blockWidth, yPosition + lineYOffset); // Underline
+      pdf.text(cpcGuidanceOfficerName.toUpperCase(), cpcNameX, yPosition + nameYOffset, { align: 'center' });
+      pdf.line(cpcNameX - blockWidth / 2, yPosition + lineYOffset, cpcNameX + blockWidth / 2, yPosition + lineYOffset); // Underline
       pdf.setFontSize(9);
       pdf.setFont(undefined, 'normal');
-      pdf.text(cpcGuidanceOfficerPosition, blockStartXLeft + blockWidth / 2, yPosition + positionYOffset, { align: 'center' });
+      pdf.text(cpcGuidanceOfficerPosition, cpcNameX, yPosition + positionYOffset, { align: 'center' });
     }
 
     // Guidance Officer (Right)
     if (guidanceOfficer) {
+      const guidanceNameX = blockStartXRight + blockWidth / 2; // Define nameX for Guidance Officer
       pdf.setFontSize(11);
       pdf.setFont(undefined, 'bold');
-      pdf.text(guidanceOfficer.toUpperCase(), blockStartXRight + blockWidth / 2, yPosition + nameYOffset, { align: 'center' });
-      pdf.line(blockStartXRight, yPosition + lineYOffset, blockStartXRight + blockWidth, yPosition + lineYOffset); // Underline
+      pdf.text(guidanceOfficer.toUpperCase(), guidanceNameX, yPosition + nameYOffset, { align: 'center' });
+      pdf.line(guidanceNameX - blockWidth / 2, yPosition + lineYOffset, guidanceNameX + blockWidth / 2, yPosition + lineYOffset); // Underline
       pdf.setFontSize(9);
       pdf.setFont(undefined, 'normal');
-      pdf.text(guidanceOfficerPosition, blockStartXRight + blockWidth / 2, yPosition + positionYOffset, { align: 'center' });
+      pdf.text(guidanceOfficerPosition, guidanceNameX, yPosition + positionYOffset, { align: 'center' });
     }
     yPosition += rowSpacing; // Move down for next row
   }
@@ -276,30 +278,32 @@ export const renderCertificateSignatures = (pdf: jsPDF, data: CertificatePdfData
 
     // NOTED BY: Assistant Principal (Left)
     if (assistantPrincipalName) {
+      const assistantNameX = blockStartXLeft + blockWidth / 2; // Define nameX for Assistant Principal
       pdf.setFontSize(9);
       pdf.setFont(undefined, 'normal');
       pdf.text('NOTED BY:', blockStartXLeft, yPosition);
       pdf.setFontSize(11);
       pdf.setFont(undefined, 'bold');
-      pdf.text(assistantPrincipalName.toUpperCase(), blockStartXLeft + blockWidth / 2, yPosition + nameYOffset, { align: 'center' });
-      pdf.line(blockStartXLeft, yPosition + lineYOffset, blockStartXLeft + blockWidth, yPosition + lineYOffset); // Underline
+      pdf.text(assistantPrincipalName.toUpperCase(), assistantNameX, yPosition + nameYOffset, { align: 'center' });
+      pdf.line(assistantNameX - blockWidth / 2, yPosition + lineYOffset, assistantNameX + blockWidth / 2, yPosition + lineYOffset); // Underline
       pdf.setFontSize(9);
       pdf.setFont(undefined, 'normal');
-      pdf.text(assistantPrincipalPosition, blockStartXLeft + blockWidth / 2, yPosition + positionYOffset, { align: 'center' });
+      pdf.text(assistantPrincipalPosition, assistantNameX, yPosition + positionYOffset, { align: 'center' });
     }
 
     // APPROVED BY: Principal (Right)
     if (principalName) {
+      const principalNameX = blockStartXRight + blockWidth / 2; // Define nameX for Principal
       pdf.setFontSize(9);
       pdf.setFont(undefined, 'normal');
       pdf.text('APPROVED BY:', blockStartXRight, yPosition);
       pdf.setFontSize(11);
       pdf.setFont(undefined, 'bold');
-      pdf.text(principalName.toUpperCase(), blockStartXRight + blockWidth / 2, yPosition + nameYOffset, { align: 'center' });
-      pdf.line(nameX - blockWidth / 2, yPosition + lineYOffset, nameX + blockWidth / 2, yPosition + lineYOffset); // Underline
+      pdf.text(principalName.toUpperCase(), principalNameX, yPosition + nameYOffset, { align: 'center' });
+      pdf.line(principalNameX - blockWidth / 2, yPosition + lineYOffset, principalNameX + blockWidth / 2, yPosition + lineYOffset); // Underline
       pdf.setFontSize(9);
       pdf.setFont(undefined, 'normal');
-      pdf.text(principalPosition, nameX, yPosition + positionYOffset, { align: 'center' });
+      pdf.text(principalPosition, principalNameX, yPosition + positionYOffset, { align: 'center' });
     }
     yPosition += rowSpacing; // Move down for next row
   }

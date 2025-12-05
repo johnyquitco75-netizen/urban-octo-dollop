@@ -46,10 +46,16 @@ export const useCertificateGenerator = ({
     const assistant = assistantPrincipalName;
     const assistantPos = assistantPrincipalPosition;
 
+    // Debugging logs
+    console.log('Certificate Preview - Left Header Logo Margin (px):', leftHeaderLogoMargin);
+    console.log('Certificate Preview - Right Header Logo Margin (px):', rightHeaderLogoMargin);
+    console.log('Certificate Preview - Left Header Logo Data:', leftHeaderLogoData ? 'present' : 'absent');
+    console.log('Certificate Preview - Right Header Logo Data:', rightHeaderLogoData ? 'present' : 'absent');
+
     const headerHtml = `
       <div class="header-section" style="display: flex; justify-content: center; align-items: flex-start; margin-bottom: 20px;">
-          ${leftLogo ? `<img src="${leftLogo}" class="header-logo" alt="Left Logo" style="width: 60px; height: 60px; object-fit: contain; margin-right: ${leftHeaderLogoMargin}px; flex-shrink: 0;">` : `<div style="width: ${leftHeaderLogoMargin}px; flex-shrink: 0;"></div>`}
-          <div class="text-center" style="flex-grow: 1; text-align: center;">
+          ${leftLogo ? `<img src="${leftLogo}" class="header-logo" alt="Left Logo" style="width: 60px; height: 60px; object-fit: contain; flex-shrink: 0;">` : ''}
+          <div class="text-center" style="flex-grow: 1; text-align: center; margin-left: ${leftLogo ? leftHeaderLogoMargin : 0}px; margin-right: ${rightLogo ? rightHeaderLogoMargin : 0}px;">
               <p style="margin: 0; font-size: 10pt;">${republicText}</p>
               <p style="margin: 0; font-size: 10pt;">${departmentText}</p>
               <p style="margin: 0; font-size: 10pt;">${regionText}</p>
@@ -57,7 +63,7 @@ export const useCertificateGenerator = ({
               <p style="margin: 0; font-size: 12pt; font-weight: bold; margin-top: 5px;">${school.toUpperCase()}</p>
               <p style="margin: 0; font-size: 10pt;">${address}</p>
           </div>
-          ${rightLogo ? `<img src="${rightLogo}" class="header-logo" alt="Right Logo" style="width: 60px; height: 60px; object-fit: contain; margin-left: ${rightHeaderLogoMargin}px; flex-shrink: 0;">` : `<div style="width: ${rightHeaderLogoMargin}px; flex-shrink: 0;"></div>`}
+          ${rightLogo ? `<img src="${rightLogo}" class="header-logo" alt="Right Logo" style="width: 60px; height: 60px; object-fit: contain; flex-shrink: 0;">` : ''}
       </div>
       <div class="text-center mb-8">
           <h2 class="text-xl font-bold text-gray-900 mt-4">CERTIFICATE OF GOOD MORAL CHARACTER</h2>
